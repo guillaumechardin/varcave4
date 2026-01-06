@@ -1,0 +1,108 @@
+@media screen and (max-width: 1023px) {
+
+  /* neutralise le hover Bulma */
+  .navbar-item.has-dropdown.is-hoverable:hover .navbar-dropdown {
+    display: block;
+  }
+
+  /* et laisse is-active décider */
+  .navbar-item.has-dropdown:not(.is-active) .navbar-dropdown {
+    display: none;
+  }
+}
+
+/*#server-show tr:hover {
+        background-color: red;
+    }
+*/
+.fixed-top-message {
+  position: fixed;
+  top: 1rem;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.word-break{
+  word-break: break-all;
+  white-space: normal;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+  display: inline-block;
+}
+
+.pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+
+/* ------------------- Dygraphs axes et légende ------------------- */
+
+/* Mode clair forcé ou fallback par défaut */
+body.is-light,
+body:not(.is-light):not(.is-dark) { 
+  .dygraph-axis-label-x,
+  .dygraph-axis-label-y,
+  .dygraph-axis-label-y1 {
+    color: #363636 !important; /* Bulma text-dark */
+    font-weight: bold;
+  }
+
+  .dygraph-legend {
+    color: #363636 !important;
+    background-color: #f5f5f5 !important; /* Bulma background-light */
+    border-radius: 4px;
+    padding: 4px;
+  }
+}
+
+/* Mode sombre forcé */
+body.is-dark {
+  .dygraph-axis-label-x,
+  .dygraph-axis-label-y,
+  .dygraph-axis-label-y1 {
+    color: #f5f5f5 !important; /* Bulma text-light */
+    font-weight: bold;
+  }
+
+  .dygraph-legend {
+    color: #f5f5f5 !important;
+    background-color: #363636 !important; /* Bulma background-dark */
+    border-radius: 4px;
+    padding: 4px;
+  }
+}
+
+:root {
+  --dygraph-nth-perc-dark: #f5f5f5;
+  --dygraph-nth-perc-light: #363636;
+}
+
+/* Theme classes */
+body.is-dark {
+  --dygraph-nth-perc: var(--dygraph-nth-perc-dark);
+}
+
+body.is-light {
+  --dygraph-nth-perc: var(--dygraph-nth-perc-light);
+}
+
+
