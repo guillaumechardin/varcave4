@@ -53,17 +53,6 @@ $(document).ready(function() {
     };  
     sendAjaxRequest(url, method, data, 'success', 'error');
   });
-
-  /*Close dropdowns*/
-  /*
-    $('.navbar-burger').on('click', function () {
-      if (!$(this).hasClass('is-active')) {
-        $('.navbar-item.has-dropdown').removeClass('is-active');
-      }
-    });
-  */
-
-
 });
 
 /*
@@ -159,8 +148,33 @@ function showModal(title, bodyContent, $el = $('#modal-message') ){
   $el.toggleClass('is-active');
 }
 
-/*
- * Show a  msg box
+/**
+ * Display a message inside the Varcave message box component.
+ *
+ * This function is designed to handle both raw JSON responses and jQuery AJAX
+ * error/success responses (responseJSON).
+ * 
+ *
+ * @param {Object} response
+ *   The response object. Can be:
+ *   - a plain object containing `title`, `message`, `redirecturl`
+ *   - a jQuery AJAX response containing `responseJSON`
+ *      
+ *   Each kind of response MUST contain an object of this type :
+ *      {
+ *        'title' : 'Displayed title',
+ *        'message' : 'Main message body',
+ *        'redirecturl : 'An optionnal redirection URL', 
+ *      }
+ *
+ * @param {String} statusClass
+ *   Bulma status class applied to the message box.
+ *   Expected values: "is-success", "is-warning", "is-danger", etc.
+ *   Default: "is-success"
+ *
+ * @param {Number} duration
+ *   Time in milliseconds before the message box is hidden.
+ *   Default: 3000 ms
  */
 function showMessageBox(response, statusClass = "is-success", duration = 3000){
   Logger.info("show message in box");
@@ -191,7 +205,6 @@ function showMessageBox(response, statusClass = "is-success", duration = 3000){
       window.location.replace(response.redirecturl);
     }, duration + 500)
   }
-  
 }
 
 function closeMessageBox(){
@@ -226,7 +239,7 @@ const Logger = (function () {
             if (levels.includes(level)) {
                 currentLevel = level;
             } else {
-                console.warn("Niveau invalide : " + level);
+                console.warn("bad level : " + level);
             }
         },
         debug: function (msg) {
@@ -348,3 +361,145 @@ function getTheme()
   return $('html').attr('data-theme');
 }
 
+
+
+const varcaveHttpService = {
+
+    /**
+     * Main request function
+     * @param {string} url - endpoint
+     * @param {string} method - HTTP method (GET, POST…)
+     * @param {any} data - request body / query
+     * @param {object} options - { onSuccess, onError, successMode, errorMode, headers, timeout }
+     * @returns Promise if no callbacks are provided
+     */
+    request(url, method = 'GET', data = null, options = {}) {
+
+        const {
+            onSuccess,
+            onError,
+            successMode = null,   // silent | redirect | message
+            errorMode = null,     // silent | message
+            headers = {},          // custom headers
+            timeout = 1000,       // default 5000ms
+        } = options;
+
+        const usePromise = (!onSuccess && !onError);
+
+        if (usePromise) {
+          return new Promise((resolve, reject) => {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+              // nettoyer le timeout quand resolve ou reject est appelé
+              const cleanUp = () => clearTimeout(timeoutId);
+              const wrappedResolve = data => { cleanUp(); resolve(data); };
+              const wrappedReject = err => { cleanUp(); reject(err); };
+
+              // remplacer onSuccess/onError par wrappers
+              this._send(url, method, data, wrappedResolve, wrappedReject, successMode, errorMode, headers, controller.signal);
+          });
+
+        }
+
+        this._send(url, method, data, onSuccess, onError, successMode, errorMode, headers);
+    },
+
+    _send(url, method, data, onSuccess, onError, successMode, errorMode, headers, signal) {
+
+        let fetchOptions = {
+            method: method.toUpperCase(),
+            headers: {
+                'Accept': 'application/json',
+                ...headers
+            },
+            signal
+        };
+
+        if (data) {
+            if (method === 'GET') {
+                // add query string
+                const params = new URLSearchParams(data).toString();
+                url += (url.includes('?') ? '&' : '?') + params;
+            } else {
+                if(fetchOptions.headers['Content-Type'] = 'application/json'){
+                  fetchOptions.body = JSON.stringify(data);
+                }
+            }
+        }
+
+        fetch(url, fetchOptions)
+            .then(async response => {
+              const contentType = response.headers.get('Content-Type') || '';
+              const isJson = contentType.includes('application/json');
+              const responseData = isJson ? await response.json() : await response.text();
+
+              if (!response.ok) {
+                  throw { status: response.status, data: responseData };
+              }
+
+              if (typeof onSuccess === 'function') {
+                  onSuccess(responseData);
+                  return;
+              }
+
+              this._handleSuccessMode(responseData, successMode);
+            })
+            .catch(err => {
+              if (err.name === 'AbortError') {
+                // Timeout
+                console.warn('Request timed out');
+                //  callback
+                if (typeof onError === 'function'){
+                  onError(err);
+                } 
+                else { 
+                  this._handleErrorMode(err, errorMode);
+                }
+                
+              }
+              Logger.error('Http request failed' + err, err);
+              
+              if (typeof onError === 'function') {
+                onError(err);
+                return;
+              }
+
+              this._handleErrorMode(err, errorMode);
+            });
+    },
+
+    _handleSuccessMode(response, mode) {
+        switch (mode) {
+            case 'silent':
+                return;
+
+            case 'redirect':
+                if (response.redirectUrl) {
+                    window.location.replace(response.redirectUrl);
+                }
+                return;
+
+            case 'message':
+                showGenericSuccessMsg();
+                return;
+
+            default:
+                Logger.info('AJAX success without explicit mode', response);
+        }
+    },
+
+    _handleErrorMode(err, mode) {
+        switch (mode) {
+            case 'silent':
+                return;
+
+            case 'message':
+                showGenericErrorMsg();
+                return;
+
+            default:
+                showGenericErrorMsg("Generic AJAX error");
+        }
+    }
+};

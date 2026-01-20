@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\belongsTo;
 
 class CaveFile extends Model
@@ -16,14 +17,23 @@ class CaveFile extends Model
     }
 
 
-    /** 
-     * get files for a cave
-     * 
+    /**
+     * Retrieve files associated with a cave.
+     *
+     * Fetches up to a given number of files linked to a cave identified by its UUID.
+     * Optionally filters files by type. If the file type is set to '*' (default), no filtering
+     * is applied and all file types are returned.
+     *
+     * @param string $caveUuid UUID v4 identifying the cave
+     * @param string $fileType File type filter ('*' to retrieve all types)
+     * @param int    $count    Maximum number of files to retrieve
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|null
+     *         Returns a collection of files on success, or null if the cave does not exist
      */
-    public static function get(string $caveUuid, string $fileType = '*', int $count = 100)
+    public static function get(string $caveUuid, string $fileType = '*', int $count = 100): ?Collection
     {
-        $cave = Cave::getFromUuid($caveUuid);
-
+        $cave = Cave::getByUuid($caveUuid);
         if(!$cave)
         {
             return null;

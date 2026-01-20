@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -48,6 +49,23 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+
+        //inject default user admin
+        DB::unprepared('INSERT INTO users (username, firstname, lastname, email, password, created_at, updated_at)
+            VALUES (
+                \'admin\',
+                \'Admin\',
+                \'Admin\',
+                \'email@host.com\',
+                \'$2y$12$ToCxlRNWAQJKR44hssHS5eC5trIHaZgwVk0qnkSzPC3Z1Ahkn.0Aa\', -- speleo2025
+                NOW(),
+                NOW()
+            )');
+
+        //change/shorten default site name
+        DB::unprepared('UPDATE settings SET value = \'Fichier des cavités du Var\' WHERE name=\'websiteFullName\'') ;
+
     }
 
     /**

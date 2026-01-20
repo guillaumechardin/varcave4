@@ -33,6 +33,17 @@ class FortifyServiceProvider extends ServiceProvider
             return view('varcave.login');
         });
 
+        /**
+         * Not implemented
+         *
+        Fortify::resetPasswordView(function (Request $request) {
+            return view('varcave.reset-password', ['request' => $request]);
+        });
+        */
+        Fortify::confirmPasswordView(function () {
+            return view('varcave.confirm-password');
+        });
+
         
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);

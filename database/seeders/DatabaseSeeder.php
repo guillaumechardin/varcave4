@@ -20,10 +20,10 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'username' => 'admin',
-            'firstname' => 'Guillaume',
-            'lastname' => 'CHARDIN',
-            'email' => 'guillaume.chardin@speleo83cds.fr',
-            'password' => Hash::make('speleo2025'),
+            'firstname' => 'admin',
+            'lastname' => '',
+            'email' => 'email@host.com',
+            'password' => Hash::make('passw0rd'),
         ]);
     }
 }

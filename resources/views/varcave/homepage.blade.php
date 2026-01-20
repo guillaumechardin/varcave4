@@ -9,6 +9,8 @@
       </h1>
       <p class="subtitle">
        {{ $settings->get('legal_notice') }}
+       <p><a href="http://192.168.1.100:3000/cave/dc10957e-0e00-4b20-acb5-312a391c4c46?display=legacy&id=1111">Affichage classique</a></p>
+       <p><a href="http://192.168.1.100:3000/cave/dc10957e-0e00-4b20-acb5-312a391c4c46?display=v4">Affichage Varcave4</a></p>
       </p>
       <p>
         @guest
@@ -20,7 +22,7 @@
 
 <section class="section">
   <div class="container">
-    <div class="columns">
+    <div class="columns is-5">
       <div class="column ml-2 mr-2">
           <h3 class="title is-3">{{ __('varcave.homepage.homeAnnouncements') }}</h3>
           @foreach($homeAnnouncements as $announce)
@@ -66,7 +68,7 @@
                       />
                     </figure>
                   </div>
-                  <a href="display.php?uuid={{$cavelog->cave->uuid}}"><div class="media-content ">
+                  <a href="{{url('cave/' . $cavelog->cave->uuid)}}"><div class="media-content ">
                     <p class="title is-5 has-text-weight-semibold">{{ $cavelog->cave->name }}</p>
                     <p class="subtitle is-7">{{$cavelog->created_at}}</p>
                   </div></a>
@@ -93,7 +95,7 @@
                   />
                 </figure>
               </div>
-              <a href="display.php?uuid={{$randomCave->uuid}}"><div class="media-content ">
+              <a href="{{ url('cave/' . $randomCave->uuid) }}"><div class="media-content ">
                 <p class="title is-5 has-text-weight-semibold">{{ $randomCave->name }}</p>
                 <p class="subtitle is-7">{{$randomCave->created_at}}</p>
               </div></a>

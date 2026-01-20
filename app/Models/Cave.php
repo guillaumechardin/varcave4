@@ -21,7 +21,7 @@ class Cave extends Model
         return $this->hasMany(caveFile::class);
     }
 
-    public static function getFromUuid(string $uuid)
+    public static function getByUuid(string $uuid)
     {
         Log::debug(__METHOD__ . ' called.', [
             'uuid' => $uuid,
