@@ -1,0 +1,13 @@
+<div class="box">
+    <div class="field is-grouped is-grouped-multiline">
+        @foreach($bibliography as $item)
+            <div class="control">
+                <div class="tags has-addons">
+                <a class="tag is-medium">{{ $item }}</a>
+                <!-- <a class="tag is-delete"></a>-->
+                </div>
+            </div>
+
+        @endforeach
+    </div>
+</div>

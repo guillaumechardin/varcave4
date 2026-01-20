@@ -24,4 +24,4 @@ Homestead.yaml
 Thumbs.db
 /.vscode/
 /.vs/
-/.databaseInit/*.sql
+/.database-init/*.sql

@@ -5,10 +5,15 @@ namespace App\Models;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cave extends Model
 {
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
+
     //relation to cave_changelog table
     public function changelog(): HasMany
     {
@@ -21,7 +26,7 @@ class Cave extends Model
         return $this->hasMany(caveFile::class);
     }
 
-    public static function getByUuid(string $uuid)
+    public static function getByUuid(string $uuid): ?Cave
     {
         Log::debug(__METHOD__ . ' called.', [
             'uuid' => $uuid,
@@ -36,6 +41,6 @@ class Cave extends Model
             Log::warning(__METHOD__ . ' cave not found.', ['uuid' => $uuid]);
             return null;
         }
-        return self::where('uuid', $uuid)->first();
+        return self::with('caveFiles')->where('uuid', $uuid)->first();
     }
 }

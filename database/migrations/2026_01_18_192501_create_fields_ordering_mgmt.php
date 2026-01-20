@@ -163,13 +163,30 @@ return new class extends Migration
                     'field_id' => $i,
                     'section_key' => 'main',
                     'is_visible' => 1,
-                    'sort_order' => 1,
+                    'sort_order' => 100,
                     'created_at' => now(),
                     'updated_at' => now()
                 ];
             }
         }
         DB::table('page_fields')->insert($insertArray);
+
+        //populate db with real usage info
+        $updates = [
+            1 => ['is_visible' => 0],
+            2 => ['is_visible' => 0, 'sort_order' => 1],
+            5 => ['section_key' => 'bibliography', 'is_visible' => 0],
+            7 => ['sort_order' => 2],
+            9 => ['section_key' => 'access', 'is_visible' => 0],
+            12 => ['section_key' => 'description', 'is_visible' => 0],
+            26 => ['sort_order' => 1],
+            21 => ['sort_order' => 3],
+        ];
+
+        foreach ($updates as $fieldId => $values) {
+            DB::table('page_fields')->where('field_id', $fieldId)->update($values);
+        }
+
     }
 
     public function down(): void

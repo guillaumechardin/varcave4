@@ -61,6 +61,7 @@ return new class extends Migration
 			//a confirmer si champ inutile
             //$table->dropColumn('editYear');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         /*** CAVE COORDINATES  ***/

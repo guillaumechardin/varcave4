@@ -56,19 +56,19 @@
               <a class="navbar-item">
                 <button class="button-select-theme" data-theme="light">
                   <i class="bi bi-brightness-high-fill has-text-warning"></i>
-                  <span class="ml-3">{{__('varcave.myaccount.modeLight')}}</span>
+                  <span class="ml-3">{{__('varcave.navbar.modeLight')}}</span>
                 </button>
               </a>
               <a class="navbar-item">
                 <button class="button-select-theme" data-theme="dark">
                   <i class="bi bi-moon-stars-fill has-text-link"></i>
-                  <span class="ml-3">{{__('varcave.myaccount.modeDark')}}</span>
+                  <span class="ml-3">{{__('varcave.navbar.modeDark')}}</span>
                 </button>
               </a>
               <a class="navbar-item">
                 <button class="button-select-theme" data-theme="system">
                   <i class="bi bi-circle-half has-text-light"></i>
-                  <span class="ml-3">{{__('varcave.myaccount.modeSystem')}}</span>
+                  <span class="ml-3">{{__('varcave.navbar.modeSystem')}}</span>
                 </button>
               </a>
             </div>

@@ -72,6 +72,9 @@ return [
         'log-in' => 'Connexion',
         'logout' => 'Déconnexion',
         'account' => 'Mon compte',
+        'modeLight' => 'Clair',
+        'modeDark' => 'Sombre',
+        'modeSystem' => 'Système',
     ],
 
     /**
@@ -83,9 +86,6 @@ return [
         'confirm-password' => 'Confirmez le mot de passe',
         'changepassword' => 'Modification du mot de passe',
         'password-updated' => 'Mot de passe modifié avec succès',
-        'modeLight' => 'Clair',
-        'modeDark' => 'Sombre',
-        'modeSystem' => 'Système',
         'settings' => 'paramètres',
         'security' => 'sécurité',
         'others' => 'autres',

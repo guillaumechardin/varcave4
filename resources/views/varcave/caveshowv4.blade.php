@@ -1,6 +1,9 @@
 @include('varcave.template.header')
 @include('varcave.template.navbar')
 
+<link rel="stylesheet" href="/lib/glightbox/3.3.0/dist/css/glightbox.css" />
+<script src="/lib/glightbox/3.3.0/dist/js/glightbox.min.js"></script>
+
 <script src="/varcave/profile.js"></script>
 <!-- to delete no more used ?
 <script>
@@ -12,7 +15,10 @@
         <div class="hero-body">
             <p class="title">{{$caveData->name }}</p>
     </section>
-    <div class="tabs is-centered" data-bulma="tabs">
+
+
+
+    <div class="tabs is-toggle is-toggle-rounded is-centered is-fullwidth" data-bulma="tabs">
         <ul>
             <li>
                 <a  data-tabs-target="tab-cave-info">
@@ -55,7 +61,6 @@
                 <div id="tab-cave-info" class="tab-content mx-2 mt-2">
                     <div class="fixed-grid has-2-cols-mobile has-5-cols-desktop">
                         <div class="grid">
-                            <!-- <pre>{{print_r($pageFields->pageFields)}}</pre>-->
                             @foreach ($pageFields->pageFields as $pf )
                                 <div class="cell">
                                     <p class="title is-5"> {{ $pf->field->label() }} :</p>
@@ -68,23 +73,32 @@
             </li>
             <li>
                 <div id="tab-cave-description" class="tab-content mx-2 mt-2">
-                    <x-varcave.caveshow.tab-description />
+                    <x-varcave.caveshow.tab-description :caveData="$caveData"/>
                 </div>
             </li>
             <li>
                 <div id="tab-cave-maps" class="tab-content mx-2 mt-2">
-                    autres
+                    <div class="gallery">
+                        @foreach ($cave_maps as  $map)
+                            <a href="{{ asset('storage/'.$map['file_path']) }}" class="glightbox" data-glightbox="gallery1">
+                                <img src="{{ asset('storage/'.$map['file_path']) }}" />
+                            </a>
+                            
+                        @endforeach
+                    </div>
+                    <script>
+                        const lightbox = GLightbox({
+                            selector: '.glightbox',
+                            touchNavigation: true,
+                            loop: true,
+                            zoomable: true
+                        });
+                    </script>
                 </div>
             </li> 
             <li>
                 <div id="tab-bibliography" class="tab-content mx-2 mt-2">
-                    Bibliographie
-                    <ul>
-                        <li>Livre 1</li>
-                        <li>Livre 2</li>
-                        <li>Livre 3</li>
-                        <li>Livre 4</li>
-                    </ul>
+                    <x-varcave.caveshow.tab-bibliography :bibliography="explode('/', $caveData->bibliography)" />
                 </div>
             </li> 
         </ul>

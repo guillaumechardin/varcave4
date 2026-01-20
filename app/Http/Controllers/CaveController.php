@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cave;
 use App\Models\Page;
+use App\Models\CaveFile;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -26,14 +27,24 @@ class CaveController extends Controller
         }
         
         $pageKey = 'display';
-        $page = Page::pageFieldsFor($pageKey);
-
-        
+        $page = Page::pageFieldsFor($pageKey);        
 
         if($request->query('display') == 'legacy') {
-            return view('varcave.caveshowLegacy', ['caveData' => $cave, 'pageFields' => $page ]);
+            return view('varcave.caveshowLegacy', 
+                [
+                    'caveData' => $cave, 
+                    'pageFields' => $page,
+                    'photos' => $cave->caveFiles->get()->toArray(),
+                ]
+            );
         }
-        return view('varcave.caveshowv4', ['caveData' => $cave, 'pageFields' => $page ]);
+        return view('varcave.caveshowv4',
+            [
+                'caveData' => $cave,
+                'pageFields' => $page,
+                'cave_maps' => CaveFile::get($cave->uuid, 'cave_maps')->toArray(),
+            ]
+        );
         
     }
 }
