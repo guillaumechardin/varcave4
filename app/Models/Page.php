@@ -17,7 +17,7 @@ class Page extends Model
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public static function pageFieldsFor(string $page = 'display', string $sectionKey = 'main'): Page
+    public static function pageFieldsFor(string $page, string $sectionKey): Page
     {
         return Page::where('key', $page)
             ->with(['pageFields' => fn($q) => 

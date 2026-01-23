@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\ViewModels\CaveViewModel;
 use App\Models\Cave;
 use App\Models\Page;
-use App\Models\CaveFile;
 
+use App\Models\CaveFile;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
@@ -26,23 +27,28 @@ class CaveController extends Controller
             abort(404, Str::ucfirst( __('varcave.cave.caveNotFound') ) ); 
         }
         
-        $pageKey = 'display';
-        $page = Page::pageFieldsFor($pageKey);        
+        $page = Page::pageFieldsFor('display', 'main');
+        
+        $vm = new CaveViewModel(
+            Cave::getByuuid($uuid),
+            Page::pageFieldsFor('display', 'main')
+        );
 
         if($request->query('display') == 'legacy') {
             return view('varcave.caveshowLegacy', 
                 [
-                    'caveData' => $cave, 
-                    'pageFields' => $page,
-                    'photos' => $cave->caveFiles->get()->toArray(),
+                    'caveData'   => $cave, 
+                    'caveFields' => $vm->getFields(),
+                    'cave_maps'  => CaveFile::get($cave->uuid, 'cave_maps')->toArray(),
                 ]
             );
         }
         return view('varcave.caveshowv4',
             [
-                'caveData' => $cave,
-                'pageFields' => $page,
+                'caveData'   => $cave, 
+                'caveFields' => $vm->getFields(),
                 'cave_maps' => CaveFile::get($cave->uuid, 'cave_maps')->toArray(),
+                'cave_docs' => CaveFile::get($cave->uuid, 'documents')->toArray(),
             ]
         );
         

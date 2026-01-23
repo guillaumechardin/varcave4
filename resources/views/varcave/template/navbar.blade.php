@@ -2,7 +2,7 @@
   
   <div class="navbar-brand">
     <a class="navbar-item" href="{{route('varcave.homepage')}}">
-      <span> {{ $settings->get('websiteFullName') }}</span>
+      <span class="has-text-weight-bold">{{ $settings->get('websiteFullName') }}</span>
       <img src="/img/logo_cds83_800x600.png">
     </a>
 

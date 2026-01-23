@@ -35,7 +35,7 @@ return [
 
     'homepage' => [
         'title' => 'Page d\'accueil Varcave',
-        'hometext' => 'Bienvenue sur ce site',
+        'hometext' => 'Bienvenue sur la base de données des cavités du Var',
         'connectinfo' => 'Connectez vous accédez à plus d\'options',
         'homeAnnouncements' => 'Actualités',
         'lastCavesUpdates' => 'Dernières nouveautés',
@@ -107,7 +107,6 @@ return [
         'document_of_origin' => "Documents d'origine",
         'length' => "Développement",
         'explorers' => "Explorateurs",
-        'editDate' => "Date de modification",
         'geology' => "Géologie",
         'hydrology' => "Hydrologie",
         'inventor' => "Inventeur",
@@ -129,6 +128,9 @@ return [
         'anchors' => "Brochage",
         'no_access' => "Inaccessible",
         'PNR_SB' => "PNR Sainte-Baume",
+        'created_at' => "Date de création",
+        'updated_at' => "Date de modification",
+        'deleted_at' => "Date de suppression",
         'ENS' => "Espace Naturel Sensible",
         'foret_domaniale' => "Forêt domaniale",
         'cave_type' => "Type cavité",

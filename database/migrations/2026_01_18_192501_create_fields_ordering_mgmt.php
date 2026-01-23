@@ -1,9 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use App\Models\Field;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -38,7 +39,7 @@ return new class extends Migration
             'document_of_origin'    => ['data_type'=>'string', 'storage_type'=>'column'],
             'length'                => ['data_type'=>'number', 'storage_type'=>'column'],
             'explorers'             => ['data_type'=>'string', 'storage_type'=>'column'],
-            'editDate'              => ['data_type'=>'number', 'storage_type'=>'column'],
+            //'edit_date'             => ['data_type'=>'number', 'storage_type'=>'column'], //no more exist, migrated to updated_at
             'geology'               => ['data_type'=>'string', 'storage_type'=>'column'],
             'hydrology'             => ['data_type'=>'string', 'storage_type'=>'column'],
             'inventor'              => ['data_type'=>'string', 'storage_type'=>'column'],
@@ -60,6 +61,9 @@ return new class extends Migration
             'anchors'               => ['data_type'=>'bool',   'storage_type'=>'column'],
             'no_access'             => ['data_type'=>'bool',   'storage_type'=>'column'],
             'PNR_SB'                => ['data_type'=>'bool',   'storage_type'=>'column'],
+            'created_at'            => ['data_type'=>'date',   'storage_type'=>'column'],
+            'updated_at'            => ['data_type'=>'date',   'storage_type'=>'column'],
+            'deleted_at'            => ['data_type'=>'date',   'storage_type'=>'column'],
         ];
 
         $now = now();
@@ -75,6 +79,7 @@ return new class extends Migration
                 'updated_at' => $now,
             ];
         }
+
         $insertData = array_merge($insertData, [ 
             [
                 'key' => 'photos', 
@@ -109,7 +114,7 @@ return new class extends Migration
                 'updated_at' => $now,
             ],
             [
-                'key' => 'coords', 
+                'key' => 'coordinates', 
                 'data_type' => 'string',
                 'storage_type' => 'relation',
                 'storage_target' => 'cave_coordinates',
@@ -156,11 +161,12 @@ return new class extends Migration
         // Seed example page_fields for display.php
         $insertArray = array();
         $pages = ['display', 'pdf', 'edit', 'search'];
+        $fields = Field::all();
         foreach($pages as $page){
-            for($i=1;$i<=37;$i++){
+            foreach($fields as $field){
                 $insertArray[] = [
                     'page_key' => $page,
-                    'field_id' => $i,
+                    'field_id' => $field['id'],
                     'section_key' => 'main',
                     'is_visible' => 1,
                     'sort_order' => 100,
@@ -173,18 +179,31 @@ return new class extends Migration
 
         //populate db with real usage info
         $updates = [
-            1 => ['is_visible' => 0],
-            2 => ['is_visible' => 0, 'sort_order' => 1],
-            5 => ['section_key' => 'bibliography', 'is_visible' => 0],
-            7 => ['sort_order' => 2],
-            9 => ['section_key' => 'access', 'is_visible' => 0],
-            12 => ['section_key' => 'description', 'is_visible' => 0],
-            26 => ['sort_order' => 1],
-            21 => ['sort_order' => 3],
+            'uuid' => ['is_visible' => 0],
+            'name' => ['is_visible' => 0, 'sort_order' => 1],
+            'bibliography' => ['section_key' => 'bibliography', 'is_visible' => 0],
+            'town' => ['sort_order' => 2],
+            'access_text' => ['section_key' => 'access', 'is_visible' => 0],
+            'description' => ['section_key' => 'description', 'is_visible' => 0],
+            'cave_ref' => ['sort_order' => 1],
+            'mountain_range' => ['sort_order' => 3],
+            'deleted_at' => ['is_visible' => 0], //deleted_at
+
+            //change section for non main fields
+            'photos' => ['section_key' => 'photos'],
+            'bio_documents' => ['section_key' => 'bio_documents'],
+            'rescue_data' => ['section_key' => 'rescue_data'],
+            'coordinates' => ['section_key' => 'coordinates'],
         ];
 
-        foreach ($updates as $fieldId => $values) {
-            DB::table('page_fields')->where('field_id', $fieldId)->update($values);
+        foreach ($updates as $fieldKey => $values) {
+            DB::table('page_fields')
+        ->whereIn('field_id', function ($query) use ($fieldKey) {
+            $query->select('id')
+                  ->from('fields')
+                  ->where('key', $fieldKey);
+        })
+        ->update($values);
         }
 
     }

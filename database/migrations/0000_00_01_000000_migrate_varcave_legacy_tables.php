@@ -17,6 +17,7 @@ return new class extends Migration
              $table->renameColumn('guidv4', 'uuid');
             //$table->tinyText('name');
             //$table->tinyText('addendum');
+            $table->renameColumn('editDate', 'edit_date');
             $table->renameColumn('editYear', 'edit_year');
             //$table->text('bibliography');
             $table->renameColumn('mapName', 'map_name');
@@ -193,11 +194,6 @@ return new class extends Migration
             $table->renameColumn('userid', 'user_id');
             $table->timestamps();
         });
-
-
-
-
-
     }
 
     /**

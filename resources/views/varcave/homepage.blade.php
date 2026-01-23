@@ -9,8 +9,8 @@
       </h1>
       <p class="subtitle">
        {{ $settings->get('legal_notice') }}
-       <p><a href="http://192.168.1.100:3000/cave/dc10957e-0e00-4b20-acb5-312a391c4c46?display=legacy&id=1111">Affichage classique</a></p>
-       <p><a href="http://192.168.1.100:3000/cave/dc10957e-0e00-4b20-acb5-312a391c4c46?display=v4">Affichage Varcave4</a></p>
+       <p><a href="{{config('APP_URL')}}/cave/dc10957e-0e00-4b20-acb5-312a391c4c46?display=legacy&id=1111">Affichage classique</a></p>
+       <p><a href="{{config('APP_URL')}}/cave/dc10957e-0e00-4b20-acb5-312a391c4c46?display=v4">Affichage Varcave4</a></p>
       </p>
       <p>
         @guest

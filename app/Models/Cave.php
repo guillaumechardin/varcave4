@@ -23,7 +23,7 @@ class Cave extends Model
     //relation to cave_files table
     public function caveFiles(): HasMany
     {
-        return $this->hasMany(caveFile::class);
+        return $this->hasMany(CaveFile::class);
     }
 
     public static function getByUuid(string $uuid): ?Cave
