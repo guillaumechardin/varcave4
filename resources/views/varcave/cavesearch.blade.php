@@ -35,28 +35,33 @@
     </div>
 
     <div id="tabs-contents">
-        <ul>
-            <li>
-                <div id="tab-search-form" class="tab-content mx-2 mt-2">
-                        <x-varcave.search.tab-search-form :page="$page"/>
-                </div>
-            </li>
-            <li>
-                <div id="tab-search-results" class="tab-content mx-2 mt-2">
-                    <table id="results-table" class="table is-fullwidth is-striped is-hoverable">
-                        <thead>
-                            <tr>
-                                <th class="is-hidden">uuid</th>
-                                <th>Nom</th>
-                                <th>Type</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </li>
-        </ul>
+        <div id="tab-search-form" class="tab-content mx-2 mt-2">
+                <x-varcave.search.tab-search-form :page="$page"/>
+        </div>
+
+        <div id="tab-search-results" class="tab-content mx-2 mt-2">
+            <table id="results-table" class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                    <tr>
+                        <th class="is-hidden">uuid</th>
+                        <th>Nom</th>
+                        <th>town</th>
+                        <th>Numéro caviré</th>
+                        <th>profondeur</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <th class="is-hidden">uuid</th>
+                        <th>Nom</th>
+                        <th>town</th>
+                        <th>Numéro caviré</th>
+                        <th>profondeur</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
 </section>
 @include('varcave.template.footer')

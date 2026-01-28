@@ -327,22 +327,22 @@ return new class extends Migration
         'storage_type' => 'column',
         'pages' => [
             'display' => [
-                'section_key' => 'main',
+                'section_key' => 'description',
                 'is_visible' => 1,
                 'sort_order' => 40,
             ],
             'pdf' => [
-                'section_key' => 'main',
+                'section_key' => 'description',
                 'is_visible' => 1,
                 'sort_order' => 40,
             ],
             'edit' => [
-                'section_key' => 'main',
+                'section_key' => 'description',
                 'is_visible' => 1,
                 'sort_order' => 40,
             ],
             'search' => [
-                'section_key' => 'main',
+                'section_key' => 'description',
                 'is_visible' => 0,
                 'sort_order' => 40,
             ],

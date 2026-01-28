@@ -54,3 +54,7 @@
     transform: scale(1.2);
   }
 }
+
+#results-table tbody tr:hover {
+    cursor: pointer; /* Change le curseur au survol */
+}

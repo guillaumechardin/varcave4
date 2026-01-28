@@ -126,7 +126,10 @@ class CaveController extends Controller
         }
 
         if ($request->ajax()) {
-            return response()->json($query->get()); // JSON pour DataTables
+            
+            return response()->json(
+                $query->get()
+            ); // JSON pour DataTables
         }
 
         

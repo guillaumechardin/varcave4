@@ -9,20 +9,80 @@ $(document).ready(function($){
 
         var formData = $(this).serialize();
 
+        $('#cavesearch-tabs').bulmaVar(
+            'Tabs',
+            'goToTabById',
+            'tab-search-results'
+        );
+
+        //sendAjaxRequest("{{__route('varcave.cave.search')}}", 'get', formData, onSuccess, onError)
+        
         if ( $.fn.DataTable.isDataTable('#results-table') ) {
-        $('#results-table').DataTable().ajax.url('/cave/search?' + formData).load();
+           resultsTable = $('#results-table').DataTable().ajax.url('/cave/search?' + formData).load();
         } else {
-            $('#results-table').DataTable({
-                ajax: '/cave/search?' + formData,
+            resultsTable = $('#results-table').DataTable({
+                ajax: {
+                    url:'/cave/search?' + formData,
+                    method: 'get',
+                    dataSrc: '',
+                },
                 processing: true,
-                serverSide: true,
+                //serverSide: true,
                 columns: [
-                    { data: 'uuid' },
+                    { data: 'uuid',visible:false },
                     { data: 'name' },
-                    { data: 'type' },
-                    { data: 'date' }
-                ]
-            });
+                    { data: 'town' },
+                    { data: 'cave_ref' },
+                    { data: 'max_depth' }
+                ],
+                pageLength: 5,                   // nombre de lignes par défaut
+                layout: {
+                    topStart: { 
+                        pageLength: {
+                            menu: [5, 10, 15, 20],
+                            pageLength: 5,
+                        }
+                    },
+                    top: null, //'info', 
+                    topEnd: {
+                        search: {
+
+                        },
+                    }, 
+                    
+                    bottomStart: {
+                        info: {
+                            text: 'Affiche les cavités _START_ à _END_ sur un total de _TOTAL_ ',
+                            //postfix: 'All records shown are derived from real information.'
+                            search: ' - filtré sur  _MAX_ enregistremnts'
+                        },
+                    },
+                    bottom: null
+                        /* {
+                        div:{
+                            className: 'is-warning button',
+                            id: 'warn-btn',
+                            html: '<button> Click button to acknowledge</button>'
+                        }*/
+                    ,
+                    bottomEnd: {
+                        paging: {
+                        },
+                    },
+                },   
+            })
         }
     });
+
+    let resultsTable;
+
+    $('#results-table tbody').on('click', 'tr', function () {
+        let data = resultsTable.row(this).data();
+        if (data && data.uuid) {
+            window.open('/cave/' + data.uuid, '_blank');
+        }
+    });
+
+
+
 });
