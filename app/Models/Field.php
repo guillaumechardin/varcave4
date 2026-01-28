@@ -10,7 +10,8 @@ class Field extends Model
         'key', 
         'data_type',
         'storage_type',
-        'storage_target'
+        'storage_target',
+        'unit',
     ];
 
     public function pageFields()

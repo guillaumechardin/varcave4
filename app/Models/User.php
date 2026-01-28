@@ -76,18 +76,20 @@ class User extends Authenticatable
         Log::debug(__METHOD__ . ' called.', [
             'Roles to check' => $roles,
             'RequireAll' => $requireAll,
-            'Current user roles' => implode(',', $userRoles) ,
+            //'Current user roles' => implode(',', $userRoles) ,
         ]);
         
+        // check against one role
         if (is_string($roles)) {
             return in_array($roles, $userRoles);
         }
 
+        // check all roles present for user
         if ($requireAll) {
             return empty(array_diff($roles, $userRoles));
         }
 
-        // au moins un rôle présent
+        // at least one role present
         return !empty(array_intersect($roles, $userRoles));
     }
 
@@ -98,6 +100,10 @@ class User extends Authenticatable
      */
     public function getRoles(): array
     {
-        return $this->roles->pluck('name')->toArray();
+        Log::debug(__METHOD__ . ' called.');
+        $roles = $this->roles->pluck('name')->toArray();
+        Log::debug('User roles:', $roles);
+        
+        return $roles;
     }
 }

@@ -12,7 +12,7 @@
             <div class="field">
               <label class="label" for="username">{{__('varcave.login.loginFormUser')}}</label>
                <div class="control has-icons-left has-icons-right">
-                <input class="input is-success" id="username" name="username" type="text" placeholder="{{__('varcave.login.loginFormUser')}}" required>
+                <input class="input is-success" id="username" name="username" type="text" placeholder="{{ $settings->get('user_login_tip') }}" required>
                 <span class="icon is-small is-left">
                     <i class="bi bi-person-fill"></i>
                 </span>

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Cave;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -18,12 +19,12 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
+        /*User::factory()->create([
             'username' => 'admin',
             'firstname' => 'admin',
             'lastname' => '',
             'email' => 'email@host.com',
             'password' => Hash::make('passw0rd'),
-        ]);
+        ]);*/
     }
 }

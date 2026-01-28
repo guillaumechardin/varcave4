@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Cave extends Model
 {
     use SoftDeletes;
+    use HasFactory;
 
     protected $dates = ['deleted_at'];
 
@@ -18,6 +20,12 @@ class Cave extends Model
     public function changelog(): HasMany
     {
         return $this->hasMany(CaveChangelog::class);
+    }
+
+    //relation to cave_coordinates
+    public function caveCoordinates(): HasMany
+    {
+        return $this->hasMany(caveCoordinates::class);
     }
 
     //relation to cave_files table
@@ -41,6 +49,7 @@ class Cave extends Model
             Log::warning(__METHOD__ . ' cave not found.', ['uuid' => $uuid]);
             return null;
         }
-        return self::with('caveFiles')->where('uuid', $uuid)->first();
+        return self::
+                where('uuid', $uuid)->first();
     }
 }

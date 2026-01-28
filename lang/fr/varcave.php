@@ -45,9 +45,17 @@ return [
     /**
      * Cave page
      */
-    'cave' => [
+    'caveshow' => [
         'caveFound' => 'cavité trouvée',
         'caveNotFound' => 'cavité non trouvée',
+        'informations' => 'informations',
+        'description' => 'description',
+        'access' => 'accès',
+        'caveMaps' => 'topographies',
+        'bibliography' => 'bibliographie',
+        'documents' => 'documents',
+        'mainEntrance' => 'Entrée cavité',
+        'nearCaves' => 'Cavités proches',
 
     ],
 
@@ -148,6 +156,12 @@ return [
         'pollution_lst1' => "FAIBLE",
         'pollution_lst2' => "MOYENNE",
         'pollution_lst3' => "FORTE",
+    ],
+
+    'searchPage' => [
+        'title' => 'recherche avancée',
+        'topTitle' => 'Recherche',
+        'results' => 'résultats de recherche'
     ],
 
 ];

@@ -16,31 +16,37 @@
 
   <div id="navbarBasic" class="navbar-menu">
     <div class="navbar-start">
+      <!-- UNauthenticated navbar content -->
       <a class="navbar-item" href="{{route('varcave.homepage')}}">
         {{__('varcave.navbar.home')}}
       </a>
-
-      <!-- default authenticated navbar content -->
-      @auth
+      
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
           {{ Str::ucfirst( __('varcave.navbar.caves')) }}
         </a>
 
         <div class="navbar-dropdown">
-          <a class="navbar-item" href="route(varcave.allcaves)">
+          <a class="navbar-item" href=" route('varcave.allcaves')">
             {{ Str::ucfirst( __('varcave.navbar.allcaves')) }}
           </a>
           <!--<a class="navbar-item">
             Show configs
           </a>-->
-          <a class="navbar-item" href="route(varcave.search)">
+          <a class="navbar-item" href="{{ route('varcave.cave.search') }}">
             {{ Str::ucfirst( __('varcave.navbar.search')) }}
           </a>
         </div>
       </div>
-      @endauth
+      <!-- END UNauthenticated navbar content -->
+
+      
+      @auth
+      <!-- default authenticated navbar content -->
+      
       <!-- END authenticated navbar content -->
+      @endauth
+      
     </div>
     
 
