@@ -53,6 +53,7 @@ class CaveController extends Controller
                 $cave,
                 Page::pageFieldsFor('display', 'description')
             );
+            $caveDescription = $caveDescription->getFields();
 
             $caveCoordinates = CaveCoordinates::get($cave->uuid);
             if ($caveCoordinates->first()['x'] != 0) { //this cave have at least 1 set of coordinates defined !
@@ -82,7 +83,7 @@ class CaveController extends Controller
                 'cave'   => $cave2, 
                 'caveInfo' => $caveInfo->getFields(),
                 'caveBibliography' => $caveBibliography->getFields(),
-                'caveDescription' => $caveDescription?->getFields(),
+                'caveDescription' => $caveDescription,
                 'caveCoordinates' => $caveCoordinates,
                 'nearCaves' => $nearCaves,
                 'caveAccess' => $caveAccess?->getFields(),
