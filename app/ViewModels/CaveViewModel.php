@@ -5,6 +5,7 @@ use App\Models\Cave;
 use App\Models\Page;
 use App\Models\Field;
 use App\Models\PageField;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CaveViewModel
@@ -24,11 +25,13 @@ class CaveViewModel
      */
     public function getFields(): array
     {
+        Log::debug(__METHOD__ . ' called.');
         $output = [];
 
         foreach ($this->page->pageFields as $pageField) {
             $field = $pageField->field  ;
             $key   = $field->key;
+            Log::debug(' processing : '. $field->key);
 
             $raw = $this->cave->$key ?? null;
         
@@ -44,11 +47,13 @@ class CaveViewModel
 
     protected function formatValue(mixed $value, Field $field): mixed
     {
+        Log::debug(__METHOD__ . ' called.');
         if(empty($value)){
+            //field->data_type = 'string';
             $value = '---';
-            $field->data_type = 'string';
+            return $value;
         }
-
+        Log::debug(' format value for : ', [$field->data_type, $value]) ;
         return match ($field->data_type) {
             'bool' => $value ? __('varcave.general.yes') : __('varcave.general.no'),
             'timestamp'    => date('d/m/Y', $value),
