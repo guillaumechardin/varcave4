@@ -10,13 +10,17 @@
         </div>
     </section>
 
-    <script src="/varcave/cavesearch.js"></script>
+    <script>
+        <x-varcave.search.search-js :datatablesFields="$datatablesFields" :datatablesLang="$datatablesLang"  />
+    </script>
+    
+
     <script src="/lib/DataTables/datatables.min.js"></script>
     <link   href="/lib/DataTables/datatables.min.css" rel="stylesheet">
     <div id="cavesearch-tabs" class="tabs is-toggle is-toggle-rounded is-centered is-fullwidth" data-bulma="tabs">
         <ul>
             <li>
-                <a data-tabs-target="tab-search-form">
+                <a data-tabs-target="tab-search-form" >
                     <span class="icon is-small">
                         <i class="bi bi-search" aria-hidden="true"></i>
                     </span>
@@ -24,7 +28,7 @@
                 </a>
             </li>
             <li>
-                <a data-tabs-target="tab-search-results">
+                <a data-tabs-target="tab-search-results" class="button is-disabled">
                     <span class="icon is-small">
                         <i class="bi bi-table" aria-hidden="true"></i>
                     </span>
@@ -36,28 +40,27 @@
 
     <div id="tabs-contents">
         <div id="tab-search-form" class="tab-content mx-2 mt-2">
-                <x-varcave.search.tab-search-form :page="$page"/>
+                <x-varcave.search.tab-search-form :formFields="$formFields" />
         </div>
-
-        <div id="tab-search-results" class="tab-content mx-2 mt-2">
+        
+        <div id="tab-search-results" class="tab-content mx-2 mt-2 ">
             <table id="results-table" class="table is-fullwidth is-striped is-hoverable">
                 <thead>
-                    <tr>
-                        <th class="is-hidden">uuid</th>
-                        <th>Nom</th>
-                        <th>town</th>
-                        <th>Numéro caviré</th>
-                        <th>profondeur</th>
+                    <tr class="is-info">
+                        
+                        @foreach($datatablesFields as $key => $col)
+                            @continue($key === 'uuid')
+                            <th class="">{{ $col['i18n_label'] }}</th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody></tbody>
                 <tfoot>
-                    <tr>
-                        <th class="is-hidden">uuid</th>
-                        <th>Nom</th>
-                        <th>town</th>
-                        <th>Numéro caviré</th>
-                        <th>profondeur</th>
+                    <tr class="is-info">
+                        @foreach($datatablesFields as $key => $col)
+                            @continue($key === 'uuid')
+                            <th class="">{{ $col['i18n_label'] }}</th>
+                        @endforeach
                     </tr>
                 </tfoot>
             </table>

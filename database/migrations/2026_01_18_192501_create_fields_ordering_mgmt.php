@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('fields', function (Blueprint $table) {
             $table->id();
             $table->string('key', 64)->unique();
-            $table->enum('data_type', ['string','number','bool','date','json','geo', 'delimitedArray']);
-            $table->enum('storage_type', ['column','relation','json','computed', 'list']);
+            $table->enum('data_type', ['string','number','bool','date','json','geo', 'delimitedArray','list']);
+            $table->enum('storage_type', ['column','relation','json','computed','list']);
             $table->char('unit', length: 10)->nullable()->default(null);
             $table->string('storage_target', 128);
             $table->timestamps();
@@ -49,6 +49,11 @@ return new class extends Migration
                 'is_visible' => 0,
                 'sort_order' => 1,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 1,
+            ],
         ],
     ],
     
@@ -76,6 +81,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 10,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 1,
+            ],
         ],
     ],
     
@@ -99,6 +109,11 @@ return new class extends Migration
                 'sort_order' => 20,
             ],
             'search' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 20,
+            ],
+            'searchResultsColumns' => [
                 'section_key' => 'main',
                 'is_visible' => 0,
                 'sort_order' => 20,
@@ -130,6 +145,11 @@ return new class extends Migration
                 'is_visible' => 0,
                 'sort_order' => 30,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 20,
+            ],
         ],
     ],
     
@@ -154,6 +174,11 @@ return new class extends Migration
             ],
             'search' => [
                 'section_key' => 'bibliography',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
                 'is_visible' => 0,
                 'sort_order' => 10,
             ],
@@ -184,6 +209,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 10,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -210,6 +240,11 @@ return new class extends Migration
                 'section_key' => 'main',
                 'is_visible' => 1,
                 'sort_order' => 12,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 10,
             ],
         ],
     ],
@@ -238,6 +273,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 10,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 50,
+            ],
         ],
     ],
     
@@ -262,6 +302,11 @@ return new class extends Migration
             ],
             'search' => [
                 'section_key' => 'access',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
                 'is_visible' => 0,
                 'sort_order' => 10,
             ],
@@ -292,6 +337,11 @@ return new class extends Migration
                 'is_visible' => 0,
                 'sort_order' => 30,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -315,6 +365,11 @@ return new class extends Migration
                 'sort_order' => 10,
             ],
             'search' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
+            'searchResultsColumns' => [
                 'section_key' => 'main',
                 'is_visible' => 0,
                 'sort_order' => 10,
@@ -346,6 +401,11 @@ return new class extends Migration
                 'is_visible' => 0,
                 'sort_order' => 40,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -372,6 +432,11 @@ return new class extends Migration
                 'section_key' => 'main',
                 'is_visible' => 0,
                 'sort_order' => 20,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
             ],
         ],
     ],
@@ -401,6 +466,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 10,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 40,
+            ],
         ],
     ],
     
@@ -428,6 +498,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 20,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -451,6 +526,11 @@ return new class extends Migration
                 'sort_order' => 10,
             ],
             'search' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
+            'searchResultsColumns' => [
                 'section_key' => 'main',
                 'is_visible' => 0,
                 'sort_order' => 10,
@@ -482,6 +562,11 @@ return new class extends Migration
                 'is_visible' => 0,
                 'sort_order' => 20,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -509,6 +594,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 30,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -532,6 +622,11 @@ return new class extends Migration
                 'sort_order' => 30,
             ],
             'search' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 30,
+            ],
+            'searchResultsColumns' => [
                 'section_key' => 'main',
                 'is_visible' => 1,
                 'sort_order' => 30,
@@ -563,6 +658,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 13,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 20,
+            ],
         ],
     ],
     
@@ -590,6 +690,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 20,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 45,
+            ],
         ],
     ],
     
@@ -615,6 +720,11 @@ return new class extends Migration
             'search' => [
                 'section_key' => 'main',
                 'is_visible' => 1,
+                'sort_order' => 10,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
                 'sort_order' => 10,
             ],
         ],
@@ -644,6 +754,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 20,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -670,6 +785,11 @@ return new class extends Migration
                 'section_key' => 'main',
                 'is_visible' => 1,
                 'sort_order' => 30,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
             ],
         ],
     ],
@@ -698,6 +818,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 9,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 5,
+            ],
         ],
     ],
     
@@ -724,6 +849,11 @@ return new class extends Migration
                 'section_key' => 'main',
                 'is_visible' => 1,
                 'sort_order' => 20,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 30,
             ],
         ],
     ],
@@ -753,6 +883,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 30,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 35,
+            ],
         ],
     ],
     
@@ -779,6 +914,11 @@ return new class extends Migration
                 'section_key' => 'main',
                 'is_visible' => 1,
                 'sort_order' => 50,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 1,
+                'sort_order' => 25,
             ],
         ],
     ],
@@ -807,12 +947,18 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 30,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
     'pollution' => [
         'data_type' => 'number', 
-        'storage_type' => 'column',
+        'storage_type' => 'list',
+        'storage_target' => 'lists.cave_pollution',
         'pages' => [
             'display' => [
                 'section_key' => 'main',
@@ -834,10 +980,15 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 10,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
-    'random_coordinates' => [
+    'is_location_protected' => [
         'data_type' => 'bool', 
         'storage_type' => 'column',
         'pages' => [
@@ -860,6 +1011,11 @@ return new class extends Migration
                 'section_key' => 'main',
                 'is_visible' => 1,
                 'sort_order' => 60,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
             ],
         ],
     ],
@@ -888,6 +1044,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 70,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -914,6 +1075,11 @@ return new class extends Migration
                 'section_key' => 'main',
                 'is_visible' => 1,
                 'sort_order' => 20,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
             ],
         ],
     ],
@@ -942,6 +1108,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 20,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -969,6 +1140,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 30,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -995,6 +1171,11 @@ return new class extends Migration
                 'section_key' => 'main',
                 'is_visible' => 1,
                 'sort_order' => 30,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
             ],
         ],
     ],
@@ -1024,6 +1205,11 @@ return new class extends Migration
                 'is_visible' => 0,
                 'sort_order' => 80,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -1052,6 +1238,11 @@ return new class extends Migration
                 'is_visible' => 0,
                 'sort_order' => 40,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -1077,6 +1268,11 @@ return new class extends Migration
             ],
             'search' => [
                 'section_key' => 'photos',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
                 'is_visible' => 0,
                 'sort_order' => 10,
             ],
@@ -1108,6 +1304,11 @@ return new class extends Migration
                 'is_visible' => 0,
                 'sort_order' => 10,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     
@@ -1136,6 +1337,11 @@ return new class extends Migration
                 'is_visible' => 0,
                 'sort_order' => 20,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     'deleted_at' => [
@@ -1162,6 +1368,11 @@ return new class extends Migration
                 'section_key' => 'main',
                 'is_visible' => 0,
                 'sort_order' => 99,
+            ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
             ],
         ],
     ],
@@ -1190,6 +1401,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 98,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
     'created_at' => [
@@ -1217,6 +1433,11 @@ return new class extends Migration
                 'is_visible' => 1,
                 'sort_order' => 97,
             ],
+            'searchResultsColumns' => [
+                'section_key' => 'main',
+                'is_visible' => 0,
+                'sort_order' => 10,
+            ],
         ],
     ],
 ];
@@ -1228,7 +1449,7 @@ return new class extends Migration
             $insertData[] = [
                 'key' => $key,
                 'data_type' => $props['data_type'],
-                'storage_type' => $props['storage_type'],
+                'storage_type' => $props['storage_type'] ?? 'cave.' . $key,
                 'storage_target' => 'cave.' . $key,
                 'unit' => $props['unit'] ?? null,
                 'created_at' => $now,
@@ -1249,12 +1470,14 @@ return new class extends Migration
         });
 
         // Seed example pages
-        DB::table('pages')->insert([
+        $pagesData =[
             ['key' => 'display', 'description' => 'Affichage de la cavité', 'created_at' => now(), 'updated_at' => now()],
             ['key' => 'pdf',     'description' => 'Export PDF', 'created_at' => now(), 'updated_at' => now()],
             ['key' => 'edit',    'description' => 'Édition cavité', 'created_at' => now(), 'updated_at' => now()],
             ['key' => 'search',  'description' => 'Recherche cavité', 'created_at' => now(), 'updated_at' => now()],
-        ]);
+            ['key' => 'searchResultsColumns',  'description' => 'Tableau des résultats de recherche', 'created_at' => now(), 'updated_at' => now()],
+        ];
+        DB::table('pages')->insert($pagesData);
 
         // -------------------------
         // Table page_fields with section_key
@@ -1273,7 +1496,7 @@ return new class extends Migration
 
         // Seed example page_fields for display.php
         $insertArray = array();
-        $pages = ['display', 'pdf', 'edit', 'search'];
+        $pages = ['display', 'pdf', 'edit', 'search', 'searchResultsColumns'];
         $fields = new Field();
         $fields = $fields->where('id','>',0)->get();;
         foreach ($fields as $field) {

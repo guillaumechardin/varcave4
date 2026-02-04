@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
 		Schema::rename('users', 'varcave4_users');
+        
         Schema::table('caves', function (Blueprint $table) {
             $table->renameColumn('indexid', 'id');
              $table->renameColumn('guidv4', 'uuid');
@@ -44,7 +45,7 @@ return new class extends Migration
             $table->renameColumn('maxDepth', 'max_depth');
             //$table->tinyText('area');
             //$table->tinyText('topographer');
-            //$table->boolean('random_coordinates');
+            $table->renameColumn('random_coordinates', 'is_location_protected');
             //$table->boolean('coords_GPS_checked');
             //$table->boolean('zone_natura_2000');
             //$table->boolean('anchors');

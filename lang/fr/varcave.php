@@ -30,7 +30,9 @@ return [
         'none' => 'Aucun',
         'ok' => 'ok',
         'change' => 'changer',
+        'caveNotFound' => 'cavité non trouvée',
         'send' => 'envoyer',
+        
     ],
 
     'homepage' => [
@@ -53,9 +55,11 @@ return [
         'access' => 'accès',
         'caveMaps' => 'topographies',
         'bibliography' => 'bibliographie',
+        'nobiblio'  => 'Aucune bibliographie',
         'documents' => 'documents',
         'mainEntrance' => 'Entrée cavité',
         'nearCaves' => 'Cavités proches',
+
 
     ],
 
@@ -83,6 +87,7 @@ return [
         'modeLight' => 'Clair',
         'modeDark' => 'Sombre',
         'modeSystem' => 'Système',
+        'findCave' => 'chercher une cavité',
     ],
 
     /**
@@ -152,16 +157,45 @@ return [
         'sketch_access' => "Croquis d'accès",
         'rescue_data' => "Données secours spéléo",
         'pollution' => "Pollution cavité",
-        'pollution_lst0' => "NULLE",
-        'pollution_lst1' => "FAIBLE",
-        'pollution_lst2' => "MOYENNE",
-        'pollution_lst3' => "FORTE",
+        'pollution_list' => [
+            'none' => "NULLE",
+            'low' => "FAIBLE",
+            'medium' => "MOYENNE",
+            'hight' => "FORTE",
+        ],
+
     ],
 
     'searchPage' => [
         'title' => 'recherche avancée',
         'topTitle' => 'Recherche',
-        'results' => 'résultats de recherche'
+        'results' => 'résultats de recherche',
+        'datatables' => [
+            
+                "decimal"=>        "",
+                "emptyTable"=>    "Pas de données disponible",
+                "info"=>          "Showing _START_ to _END_ of _TOTAL_ entries",
+                "infoEmpty"=>      "Showing 0 to 0 of 0 entries",
+                "infoFiltered"=>   "(filtered from _MAX_ total entries)",
+                "infoPostFix"=>    "",
+                "thousands"=>      ",",
+                "lengthMenu"=>    "Show _MENU_ entries",
+                "loadingRecords"=> "Chargement des enregistrements...",
+                "processing"=>     "Chargement...",
+                "search"=>         "Search:",
+                "zeroRecords"=>    "No matching records found",
+                "paginate"=> [
+                    "first"=>      "Premier",
+                    "last"=>       "Dernier",
+                    "next"=>       "Suivant",
+                    "previous"=>   "Précédent"
+                ],
+                "aria"=> [
+                    "orderable"=>  "Order by this column",
+                    "orderableReverse"=> "Reverse order this column"
+                ],
+            
+        ],
     ],
 
 ];

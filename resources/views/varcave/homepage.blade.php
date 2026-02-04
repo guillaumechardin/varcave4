@@ -9,10 +9,6 @@
       </h1>
       <p class="subtitle">
        {{ $settings->get('legal_notice') }}
-       <!-- <p><a href="{{config('APP_URL')}}/cave/dc10957e-0e00-4b20-acb5-312a391c4c46?display=legacy&id=1111">Affichage classique</a></p>-->
-       <p><a href="{{config('APP_URL')}}/cave/dc10957e-0e00-4b20-acb5-312a391c4c46?display=v4">Affichage maramoye</a></p>
-       <p><a href="{{config('APP_URL')}}/cave/00000000-0000-0000-0000-000000000000">Affichage random</a></p>
-       <p><a href="{{config('APP_URL')}}/cave/06f4df08-2152-47a3-9f34-5ab07f7a446d">Affichage Fenouil</a></p>
       </p>
       <p>
         @guest
@@ -28,16 +24,6 @@
       <div class="column ml-2 mr-2">
           <h3 class="title is-3">{{ __('varcave.homepage.homeAnnouncements') }}</h3>
           @foreach($homeAnnouncements as $announce)
-            <!-- <div class="card">
-              <header class="card-header">
-                <p class="card-header-title">{{$announce->title}}</p>
-              </header>
-              <div class="card-content">
-                <div class="content">
-                  {!! $announce->content !!}
-                </div>
-              </div>
-            </div>-->
 
             <article id="announcement-{{$announce->id}}" class="message">
               <div class="message-header">
@@ -70,7 +56,7 @@
                       />
                     </figure>
                   </div>
-                  <a href="{{url('cave/' . $cavelog->cave->uuid)}}"><div class="media-content ">
+                  <a href="{{route('varcave.caves.show', $cavelog->cave->uuid)}}"><div class="media-content ">
                     <p class="title is-5 has-text-weight-semibold">{{ $cavelog->cave->name }}</p>
                     <p class="subtitle is-7">{{$cavelog->created_at}}</p>
                   </div></a>

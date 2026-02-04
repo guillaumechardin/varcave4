@@ -4,7 +4,9 @@
 
 <div class="box">
     <div class="field is-grouped is-grouped-multiline">
-         
+        @if(empty($bibliography['value']))
+            {{ __('varcave.caveshow.nobiblio')}}
+        @else
         @foreach($bibliography['value'] as   $item)
             <div class="control">
                 <div class="tags has-addons">
@@ -14,5 +16,6 @@
             </div>
 
         @endforeach
+        @endif
     </div>
 </div>

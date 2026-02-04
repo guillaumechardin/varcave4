@@ -1,5 +1,7 @@
-$(document).ready(function() {
+const generalLogLevel =  "{{ env('LOG_LEVEL') }}" ;
+const caveShowTemplaceUrl = "{{route('varcave.caves.show', '__UUID__')}}";
 
+$(document).ready(function() {
   // Check for click events on the navbar burger icon
   $(".navbar-burger").click(function() {
       // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
@@ -53,6 +55,48 @@ $(document).ready(function() {
     };  
     sendAjaxRequest(url, method, data, 'success', 'error');
   });
+
+  /**
+   * Enable autocomplete on search input in naavbar
+   */
+    $("#quick-search-value").autocomplete({
+      minLength: 2, // max char before request
+      delay: 150,   // small delay to prevent server spamming
+      source: "{{route('varcave.caves.quicksearch')}}",
+      select: function( event, ui ) {
+        Logger.debug( "Selected: " + ui.item.value + " aka " + ui.item.id );
+        if (ui.item.uuid) {
+          const target = caveShowTemplaceUrl.replace('__UUID__', ui.item.uuid);
+          window.open(target, '_blank');
+        }
+      },
+    });
+
+    $('#quick-search-value').on('keydown', function (e) {
+      if (e.key === 'Enter') {
+          e.preventDefault();
+      }
+    });
+
+    /**
+     * Start result processing from quicksearch,  
+     * redirect to search page with few args
+     */
+    $("#quick-search-button, #quick-search-value").on('click keydown', function(e) {
+      if (e.type === 'keydown' && e.key !== 'Enter') {
+        return;
+      }
+
+      const value = $("#quick-search-value").val();
+      
+      if(value != ''){
+        window.location.href = "{{ route('varcave.caves.search') }}?quicksearch=1&type_name=LIKE&value_name=" + value;
+      }
+      Logger.info('Empty request');
+      return false;
+
+    })
+
 });
 
 /*
@@ -363,143 +407,4 @@ function getTheme()
 
 
 
-const varcaveHttpService = {
 
-    /**
-     * Main request function
-     * @param {string} url - endpoint
-     * @param {string} method - HTTP method (GET, POST…)
-     * @param {any} data - request body / query
-     * @param {object} options - { onSuccess, onError, successMode, errorMode, headers, timeout }
-     * @returns Promise if no callbacks are provided
-     */
-    request(url, method = 'GET', data = null, options = {}) {
-
-        const {
-            onSuccess,
-            onError,
-            successMode = null,   // silent | redirect | message
-            errorMode = null,     // silent | message
-            headers = {},          // custom headers
-            timeout = 1000,       // default 5000ms
-        } = options;
-
-        const usePromise = (!onSuccess && !onError);
-
-        if (usePromise) {
-          return new Promise((resolve, reject) => {
-              const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-              // nettoyer le timeout quand resolve ou reject est appelé
-              const cleanUp = () => clearTimeout(timeoutId);
-              const wrappedResolve = data => { cleanUp(); resolve(data); };
-              const wrappedReject = err => { cleanUp(); reject(err); };
-
-              // remplacer onSuccess/onError par wrappers
-              this._send(url, method, data, wrappedResolve, wrappedReject, successMode, errorMode, headers, controller.signal);
-          });
-
-        }
-
-        this._send(url, method, data, onSuccess, onError, successMode, errorMode, headers);
-    },
-
-    _send(url, method, data, onSuccess, onError, successMode, errorMode, headers, signal) {
-
-        let fetchOptions = {
-            method: method.toUpperCase(),
-            headers: {
-                'Accept': 'application/json',
-                ...headers
-            },
-            signal
-        };
-
-        if (data) {
-            if (method === 'GET') {
-                // add query string
-                const params = new URLSearchParams(data).toString();
-                url += (url.includes('?') ? '&' : '?') + params;
-            } else {
-                if(fetchOptions.headers['Content-Type'] = 'application/json'){
-                  fetchOptions.body = JSON.stringify(data);
-                }
-            }
-        }
-
-        fetch(url, fetchOptions)
-            .then(async response => {
-              const contentType = response.headers.get('Content-Type') || '';
-              const isJson = contentType.includes('application/json');
-              const responseData = isJson ? await response.json() : await response.text();
-
-              if (!response.ok) {
-                  throw { status: response.status, data: responseData };
-              }
-
-              if (typeof onSuccess === 'function') {
-                  onSuccess(responseData);
-                  return;
-              }
-
-              this._handleSuccessMode(responseData, successMode);
-            })
-            .catch(err => {
-              if (err.name === 'AbortError') {
-                // Timeout
-                console.warn('Request timed out');
-                //  callback
-                if (typeof onError === 'function'){
-                  onError(err);
-                } 
-                else { 
-                  this._handleErrorMode(err, errorMode);
-                }
-                
-              }
-              Logger.error('Http request failed' + err, err);
-              
-              if (typeof onError === 'function') {
-                onError(err);
-                return;
-              }
-
-              this._handleErrorMode(err, errorMode);
-            });
-    },
-
-    _handleSuccessMode(response, mode) {
-        switch (mode) {
-            case 'silent':
-                return;
-
-            case 'redirect':
-                if (response.redirectUrl) {
-                    window.location.replace(response.redirectUrl);
-                }
-                return;
-
-            case 'message':
-                showGenericSuccessMsg();
-                return;
-
-            default:
-                Logger.info('AJAX success without explicit mode', response);
-        }
-    },
-
-    _handleErrorMode(err, mode) {
-        switch (mode) {
-            case 'silent':
-                return;
-
-            case 'message':
-                showGenericErrorMsg();
-                return;
-
-            default:
-                showGenericErrorMsg("Generic AJAX error");
-        }
-    }
-};

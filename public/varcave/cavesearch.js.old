@@ -1,6 +1,18 @@
 $(document).ready(function($){
     $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-search-form');
 
+    const urlParams = new URLSearchParams(window.location.search);
+    Logger.debug('### SEARCH load');
+    Logger.debug(urlParams);
+    // Vérifie si le paramètre "id" existe
+    if (urlParams.has('quicksearch')) {
+        if(urlParams.get('value_name') != ''){
+            Logger.debug(urlParams.get('value_name'));
+            Logger.debug('ok');
+        }
+        Logger.error('Unsupported cave search');
+       
+    }
 
     //Handle search button and results
     $('#search-form').submit(function(e){
@@ -14,8 +26,6 @@ $(document).ready(function($){
             'goToTabById',
             'tab-search-results'
         );
-
-        //sendAjaxRequest("{{__route('varcave.cave.search')}}", 'get', formData, onSuccess, onError)
         
         if ( $.fn.DataTable.isDataTable('#results-table') ) {
            resultsTable = $('#results-table').DataTable().ajax.url('/cave/search?' + formData).load();

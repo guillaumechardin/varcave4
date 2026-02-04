@@ -16,6 +16,14 @@ class Cave extends Model
 
     protected $dates = ['deleted_at'];
 
+    public const POLLUTION_LEVELS = [
+        0 => 'varcave.pollution.none',
+        1 => 'varcave.pollution.low',
+        2 => 'varcave.pollution.medium',
+        3 => 'varcave.pollution.high',
+        4 => 'varcave.pollution.dangerous',
+    ];
+
     //relation to cave_changelog table
     public function changelog(): HasMany
     {
@@ -52,4 +60,6 @@ class Cave extends Model
         return self::
                 where('uuid', $uuid)->first();
     }
+
+    
 }

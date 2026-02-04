@@ -21,6 +21,15 @@ class caveCoordinates extends Model
         //'protected',
     ];
 
+    protected $emptyCoordsCollection = 
+        [
+            'x' => 0,
+            'y' => 0,
+            'lon' => 0,
+            'lat' => 0,
+        ];
+    
+
     //relation to cave table
     public function cave(): belongsTo
     {
@@ -35,6 +44,10 @@ class caveCoordinates extends Model
             return null;
         }
         
+        if($cave->is_location_protected){
+            return collect([self::$emptyCoordsCollection]);
+        }
+        
         $coords =  self::where('cave_id', $cave->id)->selectRaw('ST_X(location) as x, ST_Y(location) as y, z');
  
         Log::debug(__METHOD__ . ' coordinates.', [
@@ -45,14 +58,7 @@ class caveCoordinates extends Model
 
         $results = $coords->get();
         if($results->isEmpty()) {
-            return collect([
-                [
-                    'x' => 0,
-                    'y' => 0,
-                    'lon' => 0,
-                    'lat' => 0,
-                ],
-            ]);
+            return collect([self::$emptyCoordsCollection]);
         }
         
         return $coords->get()->map(function ($c) {

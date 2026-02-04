@@ -1,5 +1,4 @@
 @php
-    $key = $field->key;
     $typeName = 'type_' . $key;
     $valueName = 'value_' . $key;
 
@@ -20,12 +19,27 @@
 <div class="form-field box">
     <label class="label">
         {{ __('varcave.table_cave.'.$key) }}
-        @if($field->unit)
-            ({{ $field->unit }})
+        @if($field['unit'])
+            ({{ $field['unit'] }})
         @endif
     </label>
     <div class="control">
-    @switch($field->data_type)
+    @if($field['storage_type'] === 'list')
+            <select name="{{ $typeName }}">
+                <option value="=" @selected($currentType === '=' || !$currentType)>=</option>
+                <option value="NOTEQUAL">≠</option>
+            </select>
+
+            <select name="{{ $valueName }}">
+                <option value=""></option>
+                @foreach($field['list_values'] as $lv) 
+                <option value="{{$loop->index}}" @selected($currentValue === $loop->index)>
+                    {{ __($lv)}} 
+                </option>
+                @endforeach
+            </select>
+    @else
+    @switch($field['data_type'])
 
         {{-- STRING --}}
         @case('string')
@@ -65,12 +79,14 @@
 
         {{-- BOOL --}}
         @case('bool')
-            <select name="{{ $typeName }}">
+            <input name="{{ $typeName }}" type="hidden" value="=" />
+
+            <select name="{{ $valueName }}">
                 <option value="" @selected($currentType === '' || !$currentType)></option>
                 <option value="1">{{ Str::upper(__('varcave.general.yes')) }}</option>
                 <option value="0">{{ Str::upper(__('varcave.general.no')) }}</option>
             </select>
-
+            
             {{-- 
             <input
                 type="checkbox"
@@ -101,5 +117,6 @@
             <em>Type non supporté</em>
 
     @endswitch
+    @endif
     </div>
 </div>

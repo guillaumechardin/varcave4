@@ -26,12 +26,13 @@ class CavePolicy
         return false;
     }
 
-    public function useAdvancedSearch(User $user, Cave $cave): bool
+    /*to be deleted 04/02/2026*/
+    /*public function useAdvancedSearch(User $user, Cave $cave): bool
     {
         Log::debug(__METHOD__  . ' called.');
         if($user->hasRole('user')) {
             return true;
         }
         return false;
-    }
+    }*/
 }

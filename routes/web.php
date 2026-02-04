@@ -11,9 +11,11 @@ use App\Http\Controllers\ProfileController;
 Route::group([], function (){
     
     Route::get('/', [HomepageController::class, 'displayHomepage'])->name('varcave.homepage');
-    Route::get('/cave/search', [CaveController::class, 'search'])->name('varcave.cave.search');
-    Route::get('/cave/{uuid}', [CaveController::class, 'show'])->whereUuid('uuid')->name('varcave.cave.show');
-    
+    Route::get('/caves/search', [CaveController::class, 'search'])->name('varcave.caves.search');
+    Route::get('/caves/{uuid}', [CaveController::class, 'show'])->whereUuid('uuid')->name('varcave.caves.show');
+    Route::get('/caves', [CaveController::class, 'search'])->name('varcave.caves.all');
+    Route::get('/vm', [CaveController::class, 'vm'])->name('varcave.vm');
+    Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');    
 });
 
 

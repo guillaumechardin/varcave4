@@ -12,7 +12,7 @@
 <section class="section">
     <section class="hero">
         <div class="hero-body">
-            <p class="title">{{$cave->name}}</p>
+            <p class="title">{{$caveData['name']['value']}}</p>
         </div>
     </section>
 
@@ -75,7 +75,7 @@
         <ul>
             <li>
                 <div id="tab-cave-info" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveshow.tab-cave-info :caveInfo="$caveInfo"/>
+                        <x-varcave.caveshow.tab-cave-info :caveData="$caveData"/>
                 </div>
             </li>
             @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}} 
@@ -86,7 +86,7 @@
                 </li>
                 <li>
                     <div id="tab-cave-access" class="tab-content mx-2 mt-2">
-                            <x-varcave.caveshow.tab-access :caveAccess="$caveAccess['access_text']" :caveCoordinates="$caveCoordinates" :nearCaves="$nearCaves" :cave="$cave" />
+                            <x-varcave.caveshow.tab-access :caveAccess="$caveAccess['access_text']" :caveCoords="$caveCoords" :caveData="$caveData" />
                     </div>
                 </li>
                 <li>

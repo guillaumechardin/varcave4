@@ -17,6 +17,7 @@ class HomepageController extends Controller
         $caveChangelogs = CaveChangelog::lastestCaveChangeLog(Setting::get('welcomePageShowLastUpdate'));
         $caveFiles = CaveFile::get('dc10957e-0e00-4b20-acb5-312a391c4c46', 'photos'); //id maram 1579
         return view('varcave.homepage', [
+            'pageTitle' => __('varcave.homepage.title'),
             'homeAnnouncements' => $homeAnnouncements,
             'caveChangelogs' => $caveChangelogs,
             'caveFiles' => $caveFiles, 

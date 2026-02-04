@@ -11,7 +11,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name') . ' - ' . __('varcave.homepage.title') }}</title>
+    <title>{{ config('app.name') }} @isset($pageTitle) - {{ $pageTitle }} @endisset</title>
     <link rel="stylesheet" href="/lib/bulma/1.0.4/css/bulma.min.css">
     <link rel="stylesheet" href="/varcave/varcave.css" />
     <!--<link rel="stylesheet" href="/fontawesome-free-6.7.2-web/css/solid.css" /> -->
@@ -23,19 +23,18 @@
     <script src="/lib/jquery-ui/1.14.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="/lib/jquery-ui/1.14.1/jquery-ui.min.css">
 
-
-    <!-- Varcave settings -->
+    <!-- GLOBAL VARCAVE AVAILABLE JS  -->
     <script>
-      const generalLogLevel =  "{{ env('LOG_LEVEL') }}" ;
+          <x-varcave.varcave-js />
     </script>
-    <script src="/varcave/varcave.js"></script>
-    <!-- END Varcave settings -->
 
     <!-- BulmaJS Section -->
     <script src="/varcave/BulmaVar/bulma-var.js"></script>
     <script src="/varcave/BulmaVar/tabs.js"></script>
     <script src="/varcave/BulmaVar/modal.js"></script>
     <!-- END BulmaJS Section -->
+    
+    
 
     <!-- <script src="/feather/js/feather.min.js"></script> -->
     

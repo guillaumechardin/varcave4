@@ -1,8 +1,7 @@
 @props([
-    'cave',
+    'caveData',
     'caveAccess',
-    'caveCoordinates',
-    'nearCaves',
+    'caveCoords',
 ])
 
 <div class="box">
@@ -30,10 +29,10 @@
                 })
             </script>
             <script>
-                var cave = @json($cave, JSON_PRETTY_PRINT);
-                var nearCavesData = @json($nearCaves, JSON_PRETTY_PRINT);
-                var caveCoordinates = @json($caveCoordinates, JSON_PRETTY_PRINT);
-                const baseCaveRouteURL = "{{ route('varcave.cave.show', ['_uuid_']) }}";
+                var cave = @json($caveData, JSON_PRETTY_PRINT);
+                var nearCavesData = @json($caveCoords['near_caves'], JSON_PRETTY_PRINT);
+                var caveCoordinates = @json($caveCoords['cave_coords'], JSON_PRETTY_PRINT);
+                const baseCaveRouteURL = "{{ route('varcave.caves.show', ['_uuid_']) }}";
 
                 // Reusable style
                 var caveStyle = new ol.style.Style({
@@ -66,10 +65,11 @@
                     var caveFeature = new ol.Feature({
                         geometry: new ol.geom.Point(ol.proj.fromLonLat([caveCoord.lon, caveCoord.lat]))
                     });
-                    caveFeature.set("name", cave.name);
-                    caveFeature.set("url", cave.url);
+                    caveFeature.set("name", cave.name.value);
+                    caveFeature.set("main", "main");
+                    caveFeature.set("url", 'none');
                     caveFeature.setStyle(caveStyle.clone());
-                    caveFeature.getStyle().getText().setText(cave.name);
+                    caveFeature.getStyle().getText().setText(cave.name.value);
                     caveFeatures_a.push(caveFeature);
                 }
                 Logger.debug('Current cave features detail:');
@@ -118,7 +118,7 @@
                         nearCavesLayer
                     ],
                     view: new ol.View({
-                        center: ol.proj.fromLonLat([{{ $caveCoordinates[0]['lon'] . ',' . $caveCoordinates[0]['lat'] }} ]),
+                        center: ol.proj.fromLonLat([{{ $caveCoords['cave_coords'][0]['lon'] . ',' . $caveCoords['cave_coords'][0]['lat'] }} ]),
                         zoom: 16
                     })
                 });
@@ -133,7 +133,7 @@
                     var feature = map.forEachFeatureAtPixel(evt.pixel, function(f){
                         return f;
                     });
-                    if(feature){
+                    if(feature && feature.get("main") != "main"){  //skip main entrance
                         var url = feature.get("url");
                         if(url) window.open(url, "_blank");
                     }
@@ -146,7 +146,7 @@
                         feat = feature;
                         return true;
                     });
-                    if (hit && feat.get("main") != "main") {
+                    if (hit && feat.get("main") != "main") { //skip main entrance
                         this.getTargetElement().style.cursor = "pointer";
                     } else {
                         this.getTargetElement().style.cursor = "";
@@ -160,7 +160,7 @@
             </script>
         </div>
         <div class="column">
-            <p class="title is-5"> {{ Str::ucfirst($caveAccess['label']) }} : </p>
+            <p class="title is-5"> {{ Str::ucfirst($caveAccess['i18n_label']) }} : </p>
             <p class="content" style="white-space: pre-line;">
                 {{ Str::ucfirst($caveAccess['value']) }}
             </p>
