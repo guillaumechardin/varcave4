@@ -10,7 +10,7 @@ return [
     */
 
     'general' => [
-        'opSuccess' => 'opération terminée',
+        'opSuccess' => 'opération réussie',
         'opFailed' => 'operation échouée',
         'cancel' => 'annuler',
         'error' => 'erreur',
@@ -54,11 +54,15 @@ return [
         'description' => 'description',
         'access' => 'accès',
         'caveMaps' => 'topographies',
+        'photos' => 'photos de la cavité',
         'bibliography' => 'bibliographie',
         'nobiblio'  => 'Aucune bibliographie',
         'documents' => 'documents',
         'mainEntrance' => 'Entrée cavité',
         'nearCaves' => 'Cavités proches',
+        'informChange' => 'Informer d\'une modification',
+        'caveAddToFav' => 'cavité ajoutée aux favoris',
+        'caveDelFav' => 'cavité supprimée des favoris',
 
 
     ],

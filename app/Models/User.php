@@ -106,4 +106,24 @@ class User extends Authenticatable
         
         return $roles;
     }
+
+    /**
+     * Eloquent relation to user_favorites
+     */
+    public function favorites()
+    {
+        return $this->hasMany(UserFavorite::class);
+    }
+
+    /**
+     * Check if cave is in user favorites
+     * 
+     *  @param string $caveUuid single uuid to check
+     *  @return bool
+     */
+    public function isFavorite($caveUuid): bool
+    {
+        return $this->favorites()->where('cave_uuid', $caveUuid)->exists();
+    }
+
 }

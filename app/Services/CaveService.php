@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\Cave;
-
-use App\Models\Page;
 use App\Models\User;
+use App\Models\Page;
+use Illuminate\Http\Request;
 use App\Models\Field;
 use App\Models\Setting;
 use App\Models\CaveFile;
@@ -73,10 +73,12 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class CaveService
 {
-    public const ADD_COORDS       = 0x1;  
-    public const ADD_FILES        = 0x2;
-    public const ADD_CHANGELOG    = 0x4;
+    public const ADD_COORDS       = 0x1;
+    public const ADD_NEAR_CAVES   = 0x2;
+    public const ADD_FILES        = 0x4;
+    public const ADD_CHANGELOG    = 0x6;
     public const ADD_ALL          = self::ADD_COORDS
+                                    | self::ADD_NEAR_CAVES
                                     | self::ADD_FILES
                                     | self::ADD_CHANGELOG;
 
@@ -89,7 +91,7 @@ class CaveService
 
     private bool $renderForView = false;
     private Cave $cave ;
-    private User $user;
+    private $user;
     private Page $page ;
     private Collection $fields;
     private $outputRaw = null;
@@ -101,7 +103,7 @@ class CaveService
         'default'   => ',',
     ];
 
-    public function __construct(Cave $cave, User $user, int $OPTIONS = 0)
+    public function __construct(Cave $cave, ?User $user, int $OPTIONS = 0)
     {
         Log::debug(__METHOD__ . ' called.',['OPTIONS' => $OPTIONS ]);
         //$this->page = new page($pageOptions[0], $pageOptions[1], $pageOptions[2],  $pageOptions[03]);
@@ -130,15 +132,18 @@ class CaveService
             {
                 $this->outputRaw['coordinates'] = array(); 
                 $caveCoordinates = CaveCoordinates::get($this->cave->uuid, $this->user);
-            
-                //Search near caves, if this cave have at least 1 set of coordinates defined !
-                if ($caveCoordinates->first()['x'] != 0) { 
-                    $nearCaves = CaveCoordinates::findNearCaves($caveCoordinates, Setting::get('near_caves_max_radius'), Setting::get('near_caves_max_number'), $this->cave->id);
-                    $this->outputRaw['coordinates']['near_caves'] = $nearCaves->toArray() ;
+
+                $this->outputRaw['coordinates']['near_caves'] = null;
+                if($this->OPTIONS & self::ADD_NEAR_CAVES)
+                {
+                    //Search near caves, if this cave have at least 1 set of coordinates defined !
+                    if ($caveCoordinates->first()['x'] != 0) { 
+                        $nearCaves = CaveCoordinates::findNearCaves($caveCoordinates, Setting::get('near_caves_max_radius'), Setting::get('near_caves_max_number'), $this->cave->id);
+                        $this->outputRaw['coordinates']['near_caves'] = $nearCaves->toArray() ;
+                    }
                 }
                 $this->outputRaw['coordinates']['entrance'] = $caveCoordinates->toArray();
             }
-
 
             if($this->OPTIONS & self::ADD_FILES){
                 //add files to results

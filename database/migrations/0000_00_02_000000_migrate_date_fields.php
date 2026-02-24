@@ -62,6 +62,21 @@ return new class extends Migration
         });
         //END CAVE CHANGELOGS
 
+        //Table USER_FAVORITES
+        DB::table('user_favorites')
+        ->whereNotNull('legacy_created_at')
+        ->update([
+            'created_at' => DB::raw('FROM_UNIXTIME(legacy_created_at)'),
+        ]);
+
+         Schema::table('user_favorites', function (Blueprint $table) {
+            $table->dropColumn(['legacy_created_at']);
+        });
+
+
+
+        //END USER_FAVORITES
+
     }
 
     /**

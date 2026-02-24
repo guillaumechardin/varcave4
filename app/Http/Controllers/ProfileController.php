@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\User;
+use App\Helpers\VarcaveApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Str;
 use App\Actions\Fortify\UpdateUserPassword;
 use Illuminate\Validation\ValidationException;
 
@@ -55,6 +57,57 @@ class ProfileController extends Controller
                 'password' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function storeFavorite(Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+
+        $validated = $request->validate([
+            'uuid' => ['required', 'uuid'],
+        ]);
+
+        $uuid = $validated['uuid'];
+        $user =  $request->user();
+
+
+        $favorite = $user->favorites()
+            ->where('cave_uuid', $uuid)
+            ->first();
+
+        if ($favorite)
+        {
+            $favorite->delete();
+            $msg = __('varcave.caveshow.caveDelFav');
+            $style = 'bi bi-star';
+
+        } 
+        else
+        {
+            $user->favorites()->create(['cave_uuid' => $uuid]);
+            $msg = __('varcave.caveshow.caveAddToFav');
+            $style = 'bi bi-star-fill';
+        }
+        
+        return VarcaveApiResponse::ajaxResponse(
+                'success',
+                Str::ucfirst(__('varcave.general.opSuccess')),
+                Str::ucfirst($msg),
+                $style,
+        );
+
+    }
+
+    public function storeTheme(Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+
+        $validated = $request->validate([
+            'theme' => ['required', 'string', 'in:dark,light,system'],
+        ]);
+
+        $request->user()->theme = $validated['theme'];
+        $request->user()->save();
     }
 
 }

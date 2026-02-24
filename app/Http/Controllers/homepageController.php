@@ -15,7 +15,7 @@ class HomepageController extends Controller
     {
         $homeAnnouncements = HomeAnnouncement::latestAnnouncements(Setting::get('max_news_homepage'));
         $caveChangelogs = CaveChangelog::lastestCaveChangeLog(Setting::get('welcomePageShowLastUpdate'));
-        $cave = Cave::getByUuid('dc10957e-0e00-4b20-acb5-312a391c4c46');//id maram 1579
+        $cave = Cave::getByUuid('dc10957e-0e00-4b20-acb5-312a391c4c46');
         $caveFiles = CaveFile::get($cave, 'photos'); 
         return view('varcave.homepage', [
             'pageTitle' => __('varcave.homepage.title'),

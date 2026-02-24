@@ -16,15 +16,17 @@ Route::group([], function (){
     Route::get('/caves', [CaveController::class, 'search'])->name('varcave.caves.all');
     Route::get('/vm', [CaveController::class, 'vm'])->name('varcave.vm');
     Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');
-    //Route::get('/test', [CaveController::class, 'test'])->name('varcave.caves.test');
+    Route::get('/test', [CaveController::class, 'test'])->name('varcave.caves.test');
     
 });
 
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('varcave.profile');
-    Route::get('/profile/theme/{theme}', [ProfileController::class, 'setTheme'])->name('varcave.profile.setTheme');
-    Route::post('/some/where/over/the/rainbow', [ProfileController::class, 'someWhereOverTheRainbow'])->name('dummy.route'); //test route to avoid route name errors
+    Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->name('varcave.caves.gpx');
+    
+    Route::post('/profile/theme', [ProfileController::class, 'storeTheme'])->name('varcave.profile.theme.store');
+    Route::post('/profile/favorites', [ProfileController::class, 'storeFavorite'])->name('varcave.profile.favorite.store');
     
 });
 

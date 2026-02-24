@@ -83,7 +83,7 @@
                   />
                 </figure>
               </div>
-              <a href="{{ url('cave/' . $randomCave->uuid) }}"><div class="media-content ">
+              <a href="{{ route('varcave.caves.show', ['uuid' => $randomCave->uuid] ) }}"><div class="media-content ">
                 <p class="title is-5 has-text-weight-semibold">{{ $randomCave->name }}</p>
                 <p class="subtitle is-7">{{$randomCave->created_at}}</p>
               </div></a>

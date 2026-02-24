@@ -104,10 +104,16 @@ $(document).ready(function() {
 */
 function sendAjaxRequest(url, method, data, onSuccess, onError) {
   $.ajax({
+    headers: {
+        'X-CSRF-TOKEN': document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute('content')
+    },
     url: url,
     method: method,
     data: data,
     success: function(response) {
+        Logger.info('Request succeed');
         if (typeof onSuccess === 'function') {
             onSuccess(response);
         }
@@ -130,9 +136,10 @@ function sendAjaxRequest(url, method, data, onSuccess, onError) {
         }
     },
     error: function(jqxhr, status, error){
+      Logger.error('Resquest failed:');
       Logger.debug(jqxhr);
-      exit();
         if (typeof onError === 'function') {
+            Logger.debug('Run function onError');
             onError(jqxhr);
         }
         else if (typeof onError === 'string') {
@@ -226,7 +233,8 @@ function showMessageBox(response, statusClass = "is-success", duration = 3000){
 
   const res = response?.responseJSON ?? response;
 
-  Logger.debug(res);
+  Logger.debug('message:');
+  Logger.debug(res.message);
 
   $("#varcave-message-box").removeClass('is-hidden  is-success  is-warning  is-danger');
 
@@ -383,6 +391,7 @@ function changeTheme(theme){
   switch (theme) {
     case "light":
       $('html').attr('data-theme', theme);
+      data = theme;
       break;
 
     case 'dark':
@@ -395,9 +404,11 @@ function changeTheme(theme){
       $('html').removeAttr('data-theme');
     
   }
-  var url=$('#theme-changer').data('targeturl');
-  url = url.replace('#', theme);
-  sendAjaxRequest(url, 'get', '', 'silent', 'silent');
+  const url='{{ route('varcave.profile.theme.store') }}';
+  var data = {
+      theme: theme,
+    };
+  sendAjaxRequest(url, 'post', data, 'silent', 'silent');
 }
 
 function getTheme()

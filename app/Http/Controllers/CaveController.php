@@ -6,7 +6,7 @@ use App\Models\Page;
 
 use App\Models\User;
 use App\Services\CaveService;
-
+use App\Services\GpxService;
 use App\ViewModels\CaveViewModel;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -22,7 +22,7 @@ class CaveController extends Controller
      * () get cave details and call dedicated view
      * 
      */
-    public function show(string $uuid, Request $request, User $user): View
+    public function show(string $uuid, Request $request): View
     {
         $cave = Cave::getByuuid($uuid);
   
@@ -36,10 +36,10 @@ class CaveController extends Controller
         {
             $csOptions = CaveService::ADD_ALL;
         }
-        $cs = new CaveService($cave, $user, $csOptions);  
+        $cs = new CaveService($cave, $request->user(), $csOptions);  
 
 
-        $pageMain = new Page()->setPageModelFor('display', 'main');
+        $pageMain = new Page()->setPageModelFor('display', 'main', true);
         $caveData = $cs->renderForPage($pageMain);
 
         $pageDescription = new Page()->setPageModelFor('display', 'description');
@@ -53,6 +53,7 @@ class CaveController extends Controller
 
         return view('varcave.caveshowv4',
             [
+                'pageTitle' => $caveData['attributes']['data']['name'],
                 'caveObj' => $cave,
                 'caveData' => $caveData,
                 'caveBibliography' => $caveBibliography ?? null,
@@ -62,7 +63,8 @@ class CaveController extends Controller
         );  
     }
 
-    public function search(Request $request, User $user): View|JsonResponse {
+    public function search(Request $request): View|JsonResponse
+    {
         Log::debug(__METHOD__ . 'called');
         Log::debug('request',['$request' => $request->toArray()]);
         
@@ -130,7 +132,7 @@ class CaveController extends Controller
 
             Log::debug(' Sql query:', [$query->toSql(), 'bindings' => $query->getBindings(),]);
             //set_time_limit(220); // 120 secondes, allcaves can be very long to process
-            $cs = new CaveService($caveObj, $user, true);
+            $cs = new CaveService($caveObj, $request->user(), true);
             foreach ($cavesSrch as $cave) {
                 $_cave = array();
                 foreach($pmDatatablesTable as $key => $field){
@@ -162,7 +164,8 @@ class CaveController extends Controller
     }
 
     
-    public function quicksearch(Request $request){
+    public function quicksearch(Request $request)
+    {
         
         $query = Cave::query();
         $qs_value = $request->input('term');
@@ -176,6 +179,26 @@ class CaveController extends Controller
                 'uuid'  => $cave->uuid,
             ])
         );
+    }
+
+    public function getGpx(string $uuid, Request $request, $filename = null)
+    {
+        $gpxService = new GpxService();
+        $cave = Cave::getByUuid($uuid);
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+       
+        $pageMain = new Page()->setPageModelFor('display', 'main', true);
+        
+        $cs = new CaveService($cave, $request->user(), CaveService::ADD_COORDS);
+        
+        $gpxFile = $gpxService->createGPX( array($cs->renderForPage($pageMain))  );
+
+        return response($gpxFile, 200)
+            ->header('Content-Type', 'application/xml')
+            ->header('Content-Disposition', 'attachment; filename="' . Str::limit( Str::slug($cave->name), 40, '') . '.gpx"');
     }
 
 }

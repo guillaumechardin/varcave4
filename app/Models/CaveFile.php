@@ -48,4 +48,11 @@ class CaveFile extends Model
         ]);
         return $files->get();
     }
+
+    public static function hasFilesType():bool
+    {
+
+        return true;
+
+    }
 }

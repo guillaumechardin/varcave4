@@ -11,7 +11,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name') }} @isset($pageTitle) - {{ $pageTitle }} @endisset</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title> 
+      @isset($pageTitle) 
+        {{ $pageTitle }}
+      @else
+        {{ config('app.name') }}
+      @endif
+    </title>
     <link rel="stylesheet" href="/lib/bulma/1.0.4/css/bulma.min.css">
     <link rel="stylesheet" href="/varcave/varcave.css" />
     <!--<link rel="stylesheet" href="/fontawesome-free-6.7.2-web/css/solid.css" /> -->

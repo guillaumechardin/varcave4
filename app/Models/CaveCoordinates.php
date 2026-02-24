@@ -36,7 +36,7 @@ class caveCoordinates extends Model
         return $this->belongsTo(Cave::class);
     }
 
-    public static function get(string $caveUuid, User $user): ?Collection
+    public static function get(string $caveUuid,  $user): ?Collection
     {
         $cave = Cave::getByUuid($caveUuid);
         if(!$cave)

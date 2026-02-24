@@ -3,16 +3,15 @@
 
 <link rel="stylesheet" href="/lib/glightbox/3.3.0/dist/css/glightbox.css" />
 <script src="/lib/glightbox/3.3.0/dist/js/glightbox.min.js"></script>
-<script src="/varcave/caveshow.js"></script>
-
 <script>
+    <x-varcave.caveshow.caveshow-js />
     const caveUuid = "{{ $caveObj->uuid }}";
 </script>
 
 <section class="section">
     <section class="hero">
         <div class="hero-body">
-            <p class="title">{{$caveData['attributes']['data']['name']}}</p>
+            <p class="title">{{ $caveData['attributes']['data']['name']}}</p>
         </div>
     </section>
 
@@ -20,7 +19,7 @@
         <div class="column is-background-info">
             <div>
                 <a href="#">
-                    <span id="caveshow-action-sendmail" class="icon is-icon-wrapper bi-xl"  >
+                    <span id="caveshow-action-sendmail" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.informChange') }}" >
                         <i class="bi bi-envelope-at-fill"></i>
                     </span>
                 </a>     
@@ -31,11 +30,15 @@
         </div>
         <div class="column is-background-info is-flex is-justify-content-flex-end ">
             @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}}
-                <span id="caveshow-action-gpxdownload" class="icon is-icon-wrapper bi-xl"  >
-                    <i class="bi bi-geo-alt-fill"></i>
+                <span id="caveshow-action-gpxdownload" class="icon is-icon-wrapper bi-xl">
+                    <a href="{{ route('varcave.caves.gpx', ['uuid' => $caveData['attributes']['data']['uuid'] ]) }}" class="bi bi-geo-alt-fill"></a>
                 </span>
                 <span id="caveshow-action-setfav" class="icon is-icon-wrapper bi-xl"  >
-                    <i class="bi bi-star"></i>
+                    @if(auth()->user()->isFavorite($caveObj->uuid))
+                        <a class="bi bi-star-fill"></a>
+                    @else
+                        <a class="bi bi-star"></a>
+                    @endif
                 </span>
                 <span id="caveshow-action-pdfdownload" class="icon is-icon-wrapper bi-xl">
                     <i class="bi bi-file-pdf-fill"></i>
@@ -127,13 +130,13 @@
                 </li>
                 <li>
                     <div id="tab-cave-maps" class="tab-content mx-2 mt-2">
-                            <x-varcave.caveshow.tab-cave-maps :caveMaps="$caveDescription['caveFiles']['cave_maps']"/>
+                            <x-varcave.caveshow.tab-cave-maps :caveMaps="$caveDescription['caveFiles']['cave_maps'] ?? []"/>
                     </div>
                 </li> 
                 <li>
                     <div id="tab-photos" class="tab-content mx-2 mt-2">
                         <h1>photos</h1>
-                            <x-varcave.caveshow.tab-photos :photos="$caveDescription['caveFiles']['photos']"/>
+                            <x-varcave.caveshow.tab-photos :photos="$caveDescription['caveFiles']['photos'] ?? []"/>
                     </div>
                 </li>
                 <li>
@@ -157,7 +160,7 @@
                                 @endforeach
                             </div>
                         <script>
-                            const lightbox2 = GLightbox({
+                            const lightbox_docs = GLightbox({
                                 selector: '.glightbox',
                                 touchNavigation: true,
                                 loop: true,

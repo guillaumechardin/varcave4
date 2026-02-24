@@ -16,7 +16,7 @@
             @endforeach
     </div>
     <script>
-        const lightbox2 = GLightbox({
+        const lightbox_photos = GLightbox({
             selector: '.glightbox',
             touchNavigation: true,
             loop: true,

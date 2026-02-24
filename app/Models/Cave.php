@@ -50,8 +50,18 @@ class Cave extends Model
             Log::warning(__METHOD__ . ' cave not found.', ['uuid' => $uuid]);
             return null;
         }
-        return self::
-                where('uuid', $uuid)->first();
+        return self::where('uuid', $uuid)->first() ;
+    }
+
+    /**
+     * Checks if the cave has a given file type
+     *
+     * @param string $type The file type to check, e.g., 'cave_maps'
+     * @return bool
+     */
+    public function hasFileType(string $type): bool
+    {
+        return $this->caveFiles()->where('file_type', $type)->exists();
     }
 
     

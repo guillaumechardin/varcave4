@@ -195,6 +195,7 @@ return new class extends Migration
         Schema::rename('users_favorites', 'user_favorites');
         Schema::table('user_favorites', function (Blueprint $table) {
             $table->renameColumn('indexid', 'id');
+            $table->renameColumn('cave_guid', 'cave_uuid');
             $table->renameColumn('addDate', 'legacy_created_at');
             $table->renameColumn('userid', 'user_id');
             $table->timestamps();

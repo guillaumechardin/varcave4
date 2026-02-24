@@ -63,7 +63,7 @@
       </div>
       {{-- theme menu changer --}}
       <div class="navbar-item has-dropdown is-hoverable">
-        <a id="theme-changer" class="navbar-link" data-targeturl="{{ route('varcave.profile.setTheme',['theme'=>'#']) }}">
+        <a id="theme-changer" class="navbar-link" data-targeturl="{{ route('varcave.profile.theme.store',['theme'=>'#']) }}">
           <span class="icon">
             <i class="bi bi-moon-fill"></i>
           </span>
