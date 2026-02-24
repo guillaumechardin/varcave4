@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class Cave extends Model
 {
@@ -16,18 +16,11 @@ class Cave extends Model
 
     protected $dates = ['deleted_at'];
 
-    public const POLLUTION_LEVELS = [
-        0 => 'varcave.pollution.none',
-        1 => 'varcave.pollution.low',
-        2 => 'varcave.pollution.medium',
-        3 => 'varcave.pollution.high',
-        4 => 'varcave.pollution.dangerous',
-    ];
-
     //relation to cave_changelog table
     public function changelog(): HasMany
     {
-        return $this->hasMany(CaveChangelog::class);
+        return $this->hasMany(CaveChangelog::class)
+            ->orderByDesc('created_at');
     }
 
     //relation to cave_coordinates

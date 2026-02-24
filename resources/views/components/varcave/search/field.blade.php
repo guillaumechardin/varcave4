@@ -6,16 +6,6 @@
     $currentValue = request($valueName);
 @endphp
 
-{{-- 
-<div class="field">
-  <label class="label">Name</label>
-  <div class="control">
-    <input class="input" type="text" placeholder="Text input">
-  </div>
-</div>
-
---}}
-
 <div class="form-field box">
     <label class="label">
         {{ __('varcave.table_cave.'.$key) }}
@@ -24,20 +14,21 @@
         @endif
     </label>
     <div class="control">
+    {{-- LIST --}}
     @if($field['storage_type'] === 'list')
-            <select name="{{ $typeName }}">
-                <option value="=" @selected($currentType === '=' || !$currentType)>=</option>
-                <option value="NOTEQUAL">≠</option>
-            </select>
+        <select name="{{ $typeName }}">
+            <option value="=" @selected($currentType === '=' || !$currentType)>=</option>
+            <option value="NOTEQUAL">≠</option>
+        </select>
 
-            <select name="{{ $valueName }}">
-                <option value=""></option>
-                @foreach($field['list_values'] as $lv) 
-                <option value="{{$loop->index}}" @selected($currentValue === $loop->index)>
-                    {{ __($lv)}} 
-                </option>
-                @endforeach
-            </select>
+        <select name="{{ $valueName }}">
+            <option value=""></option>
+            @foreach($field['list_values'] as $lv) 
+            <option value="{{$loop->index}}" @selected($currentValue === $loop->index)>
+                {{ __($lv)}} 
+            </option>
+            @endforeach
+        </select>
     @else
     @switch($field['data_type'])
 

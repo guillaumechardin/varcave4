@@ -28,17 +28,12 @@ class CaveFile extends Model
      * @param string $fileType File type filter ('*' to retrieve all types)
      * @param int    $count    Maximum number of files to retrieve
      *
-     * @return \Illuminate\Database\Eloquent\Collection|null
+     * @return \Illuminate\Database\Eloquent\Collection
      *         Returns a collection of files on success, or null if the cave does not exist
      */
-    public static function get(string $caveUuid, string $fileType = '*', int $count = 100): ?Collection
+    public static function get(Cave $cave, string $fileType = '*', int $count = 100): Collection
     {
-        $cave = Cave::getByUuid($caveUuid);
-        if(!$cave)
-        {
-            return null;
-        }
-        
+        Log::debug(__METHOD__ . ' called');
         $files =  self::where('cave_id', $cave->id)
                     ->when($fileType !== '*', function ($q) use ($fileType) {
                             $q->where('file_type', $fileType);

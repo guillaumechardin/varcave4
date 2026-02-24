@@ -1,6 +1,7 @@
 @props([
-    'formFields',
+    'searchFormFields',
 ])
+
 <div id="search-form-wrapper" class="box">
     <form id="search-form">
         <div class="field">
@@ -8,7 +9,7 @@
         </div>
         <div class="fixed-grid has-1-cols-mobile has-4-cols-desktop">
             <div class="grid grid-vertical">
-                @foreach($formFields as $key => $field )
+                @foreach($searchFormFields as $key => $field )
                     <div class="cell">
                         <x-varcave.search.field :key="$key" :field="$field" />
                     </div>

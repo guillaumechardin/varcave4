@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -110,6 +111,9 @@ return new class extends Migration
             $table->renameColumn('configItemMtime', 'legacy_mtime'); //will be migrate to updated_at
             $table->timestamps();
         });
+
+        //change/shorten default site name
+        DB::unprepared('UPDATE settings SET value = \'Fichier des cavités du Var\' WHERE name=\'websiteFullName\'') ;
 
         /*** END USER FIELDS  ***/
         Schema::table('end_user_fields', function (Blueprint $table) {

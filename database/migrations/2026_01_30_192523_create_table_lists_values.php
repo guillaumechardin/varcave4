@@ -67,7 +67,9 @@ return new class extends Migration
     ]);
     
     //drop legacy table
+    DB::statement('ALTER TABLE `coordinate_system_handlers` DROP FOREIGN KEY fk_lists_coordsys');
     DB::statement('ALTER TABLE `coordinate_system_handlers` DROP INDEX `fk_lists_coordsys`');
+    
     Schema::dropIfExists('lists');
 
     }

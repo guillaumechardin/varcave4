@@ -36,7 +36,7 @@ class caveCoordinates extends Model
         return $this->belongsTo(Cave::class);
     }
 
-    public static function get(string $caveUuid): ?Collection
+    public static function get(string $caveUuid, User $user): ?Collection
     {
         $cave = Cave::getByUuid($caveUuid);
         if(!$cave)
@@ -44,7 +44,10 @@ class caveCoordinates extends Model
             return null;
         }
         
-        if($cave->is_location_protected){
+        if(
+            $cave->is_location_protected 
+            && !$user->hasRole('admin')
+        ){
             return collect([self::$emptyCoordsCollection]);
         }
         

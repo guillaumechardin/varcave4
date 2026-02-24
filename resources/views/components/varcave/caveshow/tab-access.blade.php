@@ -29,9 +29,10 @@
                 })
             </script>
             <script>
-                var cave = @json($caveData, JSON_PRETTY_PRINT);
+                var cave = @json($caveData['data'], JSON_PRETTY_PRINT);
+                
                 var nearCavesData = @json($caveCoords['near_caves'], JSON_PRETTY_PRINT);
-                var caveCoordinates = @json($caveCoords['cave_coords'], JSON_PRETTY_PRINT);
+                var caveCoordinates = @json($caveCoords['entrance'], JSON_PRETTY_PRINT);
                 const baseCaveRouteURL = "{{ route('varcave.caves.show', ['_uuid_']) }}";
 
                 // Reusable style
@@ -118,7 +119,7 @@
                         nearCavesLayer
                     ],
                     view: new ol.View({
-                        center: ol.proj.fromLonLat([{{ $caveCoords['cave_coords'][0]['lon'] . ',' . $caveCoords['cave_coords'][0]['lat'] }} ]),
+                        center: ol.proj.fromLonLat([{{ $caveCoords['entrance'][0]['lon'] . ',' . $caveCoords['entrance'][0]['lat'] }} ]),
                         zoom: 16
                     })
                 });
@@ -160,9 +161,9 @@
             </script>
         </div>
         <div class="column">
-            <p class="title is-5"> {{ Str::ucfirst($caveAccess['i18n_label']) }} : </p>
+            <p class="title is-5"> {{ Str::ucfirst($caveAccess['model']['access_text']['i18n_label']) }} : </p>
             <p class="content" style="white-space: pre-line;">
-                {{ Str::ucfirst($caveAccess['value']) }}
+                {{ Str::ucfirst($caveAccess['data']['access_text']) }}
             </p>
         </div>
     </div>

@@ -2,7 +2,7 @@
     'datatablesFields',
     'datatablesLang',
 ])
-
+var formData = null; 
 $(document).ready(function($){
     $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-search-form');
 
@@ -15,7 +15,7 @@ $(document).ready(function($){
     if (urlParams.has('quicksearch')) {
         if(urlParams.get('value_name') != ''){
             $('#cavesearch-tabs').bulmaVar('Tabs', 'goToTabById', 'tab-search-results');
-            var formData = urlParams.toString();
+            formData = urlParams.toString();
             doSearch(formData, "{{route('varcave.caves.search')}}" );
         }else{
             Logger.error('Unsupported cave search');
@@ -134,7 +134,7 @@ $(document).ready(function($){
                 ajax: {
                     url:url + '?' + formData,
                     method: 'get',
-                    dataSrc: '',
+                    //dataSrc: '',
                     error: function (xhr, textStatus, errorThrown) {
                         resultsTable.clear();
                         resultsTable.rows.add([]).draw();
@@ -143,7 +143,7 @@ $(document).ready(function($){
                     },
                 },
                 processing: true,
-                //serverSide: true,
+                serverSide: true,
                 language: {!!  $datatablesLang !!},
                 columns: [    
                     @foreach(array_keys($datatablesFields) as $key)
@@ -196,7 +196,7 @@ $(document).ready(function($){
     {{-- url search all caves --}}
     @if(url()->current() == route('varcave.caves.all') )
         $('#cavesearch-tabs').bulmaVar('Tabs', 'goToTabById', 'tab-search-results');
-        let formData = new URLSearchParams({caves: "all"}).toString();
+        formData = new URLSearchParams({caves: "all"}).toString();
         
         doSearch(formData, "{{ route('varcave.caves.search') }}")
     @endif

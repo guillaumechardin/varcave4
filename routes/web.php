@@ -15,7 +15,9 @@ Route::group([], function (){
     Route::get('/caves/{uuid}', [CaveController::class, 'show'])->whereUuid('uuid')->name('varcave.caves.show');
     Route::get('/caves', [CaveController::class, 'search'])->name('varcave.caves.all');
     Route::get('/vm', [CaveController::class, 'vm'])->name('varcave.vm');
-    Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');    
+    Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');
+    //Route::get('/test', [CaveController::class, 'test'])->name('varcave.caves.test');
+    
 });
 
 

@@ -17,7 +17,18 @@ class CavePolicy
         //
     }
 
-    public function showAllCaveDetails(User $user, Cave $cave): bool
+    public function showAllCaveDetails(User $user): bool
+    {
+        Log::debug(__METHOD__  . ' called.');
+        if($user->hasRole('user')) {
+            Log::debug('Has role succeed');
+            return true;
+        }
+        Log::debug('Has role failed');
+        return false;
+    }
+
+    public function downloadCoordinates(User $user, Cave $cave): bool
     {
         Log::debug(__METHOD__  . ' called.');
         if($user->hasRole('user')) {
@@ -25,14 +36,4 @@ class CavePolicy
         }
         return false;
     }
-
-    /*to be deleted 04/02/2026*/
-    /*public function useAdvancedSearch(User $user, Cave $cave): bool
-    {
-        Log::debug(__METHOD__  . ' called.');
-        if($user->hasRole('user')) {
-            return true;
-        }
-        return false;
-    }*/
 }

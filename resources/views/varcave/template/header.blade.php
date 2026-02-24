@@ -17,6 +17,8 @@
     <!--<link rel="stylesheet" href="/fontawesome-free-6.7.2-web/css/solid.css" /> -->
     <link rel="stylesheet" href="/lib/bootstrap-icons/1.13.1/bootstrap-icons.min.css" />
     
+
+    
     <script src="/lib/jquery/jquery-3.7.1.min.js"></script>
 
     <!-- Jquery UI libraries -->

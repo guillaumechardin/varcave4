@@ -13,7 +13,7 @@
               <label class="label" for="username">{{__('varcave.login.loginFormUser')}}</label>
                <div class="control has-icons-left has-icons-right">
                 <input class="input is-success" id="username" name="username" type="text" placeholder="{{ $settings->get('user_login_tip') }}" required>
-                <span class="icon is-small is-left">
+                <span class="icon is-small is-left has-text-black">
                     <i class="bi bi-person-fill"></i>
                 </span>
               </div>
@@ -24,7 +24,7 @@
               <label class="label" for="password">{{__("varcave.login.loginFormPwd")}}</label>
                <div class="control has-icons-left has-icons-right">
                 <input class="input is-success" id="password" name="password" type="password" placeholder="{{__('varcave.login.loginFormPwd')}}" required>
-                <span class="icon is-small is-left">
+                <span class="icon is-small is-left has-text-black">
                     <i class="bi bi-key-fill"></i>
                 </span>
               </div>

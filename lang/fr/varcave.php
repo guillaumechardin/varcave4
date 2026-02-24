@@ -134,7 +134,7 @@ return [
         'max_depth' => "Dénivelée",
         'area' => "Secteur géographique",
         'topographer' => "Topographe",
-        'random_coordinates' => "Coordonnées masquées",
+        'is_location_protected' => "Protection coordonnées cavité",
         'json_coords' => "Coordonnées",
         'coords_GPS_checked' => "Coordonnées vérifiées",
         'zone_natura_2000' => "Zone natura 2000",

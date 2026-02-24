@@ -38,8 +38,10 @@ return new class extends Migration
         ]);
 
         DB::table('role_user')->insert([
-            ['user_id' => '1', 'role_id' => '2', 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => '1', 'role_id' => '1', 'created_at' => $now, 'updated_at' => $now],
+            ['user_id' => '1', 'role_id' => '2', 'created_at' => $now, 'updated_at' => $now], //admin role admin
+            ['user_id' => '1', 'role_id' => '1', 'created_at' => $now, 'updated_at' => $now], //admin role user
+            ['user_id' => '2', 'role_id' => '1', 'created_at' => $now, 'updated_at' => $now], //user role user
+            
         ]);
 
     }

@@ -70,7 +70,7 @@ class User extends Authenticatable
      * @return bool
      */
     public function hasRole(string|array $roles, bool $requireAll = false): bool
-    {
+    {   
         $userRoles = $this->getRoles();
 
         Log::debug(__METHOD__ . ' called.', [

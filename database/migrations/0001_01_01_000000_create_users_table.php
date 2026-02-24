@@ -63,8 +63,19 @@ return new class extends Migration
                 NOW()
             )');
 
-        //change/shorten default site name
-        DB::unprepared('UPDATE settings SET value = \'Fichier des cavités du Var\' WHERE name=\'websiteFullName\'') ;
+        //inject simple user 'user'
+        DB::unprepared('INSERT INTO users (username, firstname, lastname, email, password, created_at, updated_at)
+            VALUES (
+                \'myuser\',
+                \'User\',
+                \'Name\',
+                \'email@host.com\',
+                \'$2y$12$ToCxlRNWAQJKR44hssHS5eC5trIHaZgwVk0qnkSzPC3Z1Ahkn.0Aa\', -- speleo2025
+                NOW(),
+                NOW()
+            )');
+
+        
 
     }
 
