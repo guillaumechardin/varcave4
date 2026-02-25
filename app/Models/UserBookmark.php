@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserFavorite extends Model
+class UserBookmark extends Model
 {
     protected $fillable = ['cave_uuid'];
 

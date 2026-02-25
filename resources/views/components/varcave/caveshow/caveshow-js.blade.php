@@ -4,7 +4,7 @@ $(document).ready(function(){
     $('#caveshow-action-setfav a').on('click', function(e){
         e.preventDefault();
         Logger.debug('Set fav click');
-        const url = '{{ route('varcave.profile.favorite.store') }}';
+        const url = '{{ route('varcave.profile.bookmark.store') }}';
         var postData = {
             uuid: caveUuid,
         };

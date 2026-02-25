@@ -108,22 +108,22 @@ class User extends Authenticatable
     }
 
     /**
-     * Eloquent relation to user_favorites
+     * Eloquent relation to user_bookmarks
      */
-    public function favorites()
+    public function bookmarks()
     {
-        return $this->hasMany(UserFavorite::class);
+        return $this->hasMany(UserBookmark::class);
     }
 
     /**
-     * Check if cave is in user favorites
+     * Check if cave is in user bookmarks
      * 
      *  @param string $caveUuid single uuid to check
      *  @return bool
      */
-    public function isFavorite($caveUuid): bool
+    public function isBookmark($caveUuid): bool
     {
-        return $this->favorites()->where('cave_uuid', $caveUuid)->exists();
+        return $this->bookmarks()->where('cave_uuid', $caveUuid)->exists();
     }
 
 }

@@ -3,7 +3,7 @@
         <div class="box">
             <form id="password-form" action="{{ route('password.confirm.store') }}" method="post">
                 @csrf
-                <h3 class="title is-3">{{__('varcave.profile.confirm-password')}}</h3>
+                <h3 class="title is-3">{{__('varcave.profile.current-password')}}</h3>
                 
                 <div class="field">
                     <p class="control has-icons-left has-icons-right">

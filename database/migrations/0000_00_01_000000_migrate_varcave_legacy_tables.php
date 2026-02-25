@@ -192,8 +192,8 @@ return new class extends Migration
         });
 
         /*** STATS ***/
-        Schema::rename('users_favorites', 'user_favorites');
-        Schema::table('user_favorites', function (Blueprint $table) {
+        Schema::rename('users_favorites', 'user_bookmarks');
+        Schema::table('user_bookmarks', function (Blueprint $table) {
             $table->renameColumn('indexid', 'id');
             $table->renameColumn('cave_guid', 'cave_uuid');
             $table->renameColumn('addDate', 'legacy_created_at');

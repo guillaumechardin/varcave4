@@ -34,7 +34,7 @@
                     <a href="{{ route('varcave.caves.gpx', ['uuid' => $caveData['attributes']['data']['uuid'] ]) }}" class="bi bi-geo-alt-fill"></a>
                 </span>
                 <span id="caveshow-action-setfav" class="icon is-icon-wrapper bi-xl"  >
-                    @if(auth()->user()->isFavorite($caveObj->uuid))
+                    @if(auth()->user()->isBookmark($caveObj->uuid))
                         <a class="bi bi-star-fill"></a>
                     @else
                         <a class="bi bi-star"></a>

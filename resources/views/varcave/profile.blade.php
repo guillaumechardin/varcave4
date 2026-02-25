@@ -1,12 +1,10 @@
 @include('varcave.template.header')
 @include('varcave.template.navbar')
 
-<script src="/varcave/profile.js"></script>
-<!-- to delete no more used ?
 <script>
-    const pwdConfirmationUrl = "{{ route('password.confirmation') }}";
+    <x-varcave.profile-js />
 </script>
--->
+
 <section class="section">
     <section class="hero">
         <div class="hero-body">
@@ -37,6 +35,14 @@
                 </a>
             </li>
             <li>
+                <a  data-tabs-target="tab-bookmarks">
+                    <span class="icon is-small">
+                        <i class="bi bi-bookmarks" aria-hidden="true"></i>
+                    </span>
+                    <span>{{ Str::ucfirst( __('varcave.profile.bookmarks')) }}</span>
+                </a>
+            </li>
+            <li>
                 <a  data-tabs-target="tab-security">
                     <span class="icon is-small">
                         <i class="bi bi-shield-lock" aria-hidden="true"></i>
@@ -59,17 +65,17 @@
         <ul>
             <li>
                 <div id="tab-settings" class="tab-content mx-2 mt-2">
-                    <div> 'asRoleAdmin' => {{ $asRoleAdmin ? 'true' : 'false' }},</div>
-                    <div>'isSearcher' => {{ $isSearcher ? 'true' : 'false' }},</div>
-                    <div>'asTwoRoles ['admin', 'user'] => {{ $asTwoRoles ? 'true' : 'false' }},</div>
-                    <div>'asMissingRoles ['admin','user', 'dodger']' => {{ $asMissingRoles ? 'true' : 'false' }},</div>                    
-                    
-                    <div>'roles' => <pre>{{ print_r($roles)}}</pre></div>
+                    <x-varcave.profile.tab-settings />
+                </div>
+            </li>
+            <li>
+                <div id="tab-bookmarks" class="tab-content mx-2 mt-2">
+                    <x-varcave.profile.tab-bookmarks :bookmarks="$bookmarks" />
                 </div>
             </li>
             <li>
                 <div id="tab-security" class="tab-content mx-2 mt-2">
-                    <x-varcave.profile-tab-security />
+                    <x-varcave.profile.tab-security />
                 </div>
             </li>
             <li>

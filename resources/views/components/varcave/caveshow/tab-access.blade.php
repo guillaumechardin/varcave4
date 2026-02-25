@@ -161,6 +161,15 @@
             </script>
         </div>
         <div class="column">
+            <p class="title is-5"> {{ Str::ucfirst('coordonnées') }} : </p>
+            <p class="content" style="white-space: pre-line;"></p>
+                <ul>
+                    @foreach($caveCoords['entrance'] as $coord)
+                        <li>{{ __('varcave.caveshow.cave-entrance') }} lat:{{ $coord['lat'] }} elev:{{ $coord['z'] }}</li>
+                    @endforeach
+                </ul>
+            <hr>
+            
             <p class="title is-5"> {{ Str::ucfirst($caveAccess['model']['access_text']['i18n_label']) }} : </p>
             <p class="content" style="white-space: pre-line;">
                 {{ Str::ucfirst($caveAccess['data']['access_text']) }}

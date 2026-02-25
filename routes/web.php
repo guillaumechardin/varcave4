@@ -26,7 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->name('varcave.caves.gpx');
     
     Route::post('/profile/theme', [ProfileController::class, 'storeTheme'])->name('varcave.profile.theme.store');
-    Route::post('/profile/favorites', [ProfileController::class, 'storeFavorite'])->name('varcave.profile.favorite.store');
+    Route::post('/profile/bookmark', [ProfileController::class, 'storeBookmark'])->name('varcave.profile.bookmark.store');
+    
+    
+    Route::delete('/profile/bookmark/{bookmark}', [ProfileController::class, 'deleteBookmark'])->name('varcave.profile.bookmark.delete');
     
 });
 

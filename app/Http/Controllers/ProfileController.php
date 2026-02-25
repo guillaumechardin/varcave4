@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\User;
+use App\Models\Cave;
+use App\Models\UserBookmark;
 use App\Helpers\VarcaveApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,27 +13,35 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use App\Actions\Fortify\UpdateUserPassword;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ProfileController extends Controller
 {
-    public function setTheme()
-    {
-
-
-    }
+    use AuthorizesRequests;
 
     public function show(Request $request) {
         $asRoleAdmin = $request->user()->hasRole('admin');
         $isSearcher = $request->user()->hasRole('searcher');
         $asTwoRoles = $request->user()->hasRole(['admin', 'user']);
         $asMissingRoles = $request->user()->hasRole(['admin','user', 'dodger']);
+
+        $userBookmarks = $request->user()->bookmarks;
+        $bookmarks = array();
+        //dd($request->user()->bookmarks);
+        foreach($userBookmarks as $bookmark)
+        {
+            $cave = Cave::getByUuid($bookmark->cave_uuid);
+            $bookmarks[] = [
+                'id' => $bookmark->id,
+                'caveName' => $cave->name,
+                'caveUuid' => $cave->uuid,
+                'created_at' => $bookmark->created_at,
+            ];
+        }
+
         return view('varcave.profile', [
                 'user' => $request->user(),
-                'fillable' => $request->user()->getFillable(),
-                'asRoleAdmin' => $asRoleAdmin,
-                'asTwoRoles' => $asTwoRoles,
-                'asMissingRoles' => $asMissingRoles,
-                'isSearcher' => $isSearcher,
+                'bookmarks' => $bookmarks,
                 'roles' => $request->user()->getRoles(),
             ]);
     }
@@ -59,7 +69,7 @@ class ProfileController extends Controller
         }
     }
 
-    public function storeFavorite(Request $request)
+    public function storeBookmark(Request $request)
     {
         Log::debug(__METHOD__ . ' called.');
 
@@ -71,20 +81,20 @@ class ProfileController extends Controller
         $user =  $request->user();
 
 
-        $favorite = $user->favorites()
+        $bookmark = $user->bookmarks()
             ->where('cave_uuid', $uuid)
             ->first();
 
-        if ($favorite)
+        if ($bookmark)
         {
-            $favorite->delete();
+            $bookmark->delete();
             $msg = __('varcave.caveshow.caveDelFav');
             $style = 'bi bi-star';
 
         } 
         else
         {
-            $user->favorites()->create(['cave_uuid' => $uuid]);
+            $user->bookmarks()->create(['cave_uuid' => $uuid]);
             $msg = __('varcave.caveshow.caveAddToFav');
             $style = 'bi bi-star-fill';
         }
@@ -98,6 +108,9 @@ class ProfileController extends Controller
 
     }
 
+    /**
+     * Save theme to user 
+     */
     public function storeTheme(Request $request)
     {
         Log::debug(__METHOD__ . ' called.');
@@ -105,9 +118,34 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'theme' => ['required', 'string', 'in:dark,light,system'],
         ]);
-
-        $request->user()->theme = $validated['theme'];
+        if($validated['theme'] == "system")
+        {
+            $request->user()->theme = null;
+        }
+        else {
+            $request->user()->theme = $validated['theme'];
+        }
+        
         $request->user()->save();
+    }
+
+    public function deleteBookmark(UserBookmark $bookmark, Request $request)
+    {
+        Log::info('User delete bookmark', ['id' => $bookmark->id]);
+        $user =  $request->user();
+        $bookmarkID = $bookmark->id;
+
+        //check id ownership
+        $this->authorize('deleteBookmark', $bookmark); //from UserBookmarkPolicy
+
+        $bookmark->delete();
+
+        return VarcaveApiResponse::ajaxResponse(
+                'success',
+                Str::ucfirst(__('varcave.general.opSuccess')),
+                Str::ucfirst(__('varcave.profile.bookmark-deleted')),
+                ['deletedBookmarkId' => $bookmarkID],
+        );
     }
 
 }

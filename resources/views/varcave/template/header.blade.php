@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html data-theme=
-  @if (session('theme') === 'dark')
+  @if (session('theme') === 'dark' || \Illuminate\Support\Facades\Request::user()?->theme == 'dark')
     "dark">
-  @elseif (session('theme') === 'light')
+  @elseif (session('theme') === 'light' || \Illuminate\Support\Facades\Request::user()?->theme == 'light')
     "light">
   @else
   "">
@@ -11,6 +11,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{--  CSRF-TOKEN meta is used by varcave-js blade component in `sendAjaxRequest` --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title> 
       @isset($pageTitle) 

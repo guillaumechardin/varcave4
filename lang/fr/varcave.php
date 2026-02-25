@@ -101,11 +101,15 @@ return [
         'current-password' => 'Mot de passe actuel',
         'new-password' => 'Nouveau mot de passe',
         'confirm-password' => 'Confirmez le mot de passe',
+        'confirm-password2' => 'Confirmation de votre mot de passe',
         'changepassword' => 'Modification du mot de passe',
         'password-updated' => 'Mot de passe modifié avec succès',
         'settings' => 'paramètres',
+        'bookmarks' => 'cavités enregistrées',
         'security' => 'sécurité',
         'others' => 'autres',
+        'bookmark-deleted' => 'Cavité favorite supprimée',
+        'not-bookmark-owner' => 'vous n\'etes pas propriétaire de ce signet',
     ],
 
     'table_cave' => [

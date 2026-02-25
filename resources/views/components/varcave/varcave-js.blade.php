@@ -99,8 +99,9 @@ $(document).ready(function() {
 
 });
 
-/*
-  Handle ajax request to server
+/**
+ * Handle ajax request to server
+ * This custom ajax requester use `meta name="viewport" ` from <header> tag
 */
 function sendAjaxRequest(url, method, data, onSuccess, onError) {
   $.ajax({
@@ -148,9 +149,8 @@ function sendAjaxRequest(url, method, data, onSuccess, onError) {
               return false;
             }
             else {
-              showGenericErrorMsg(onError);
+                showGenericErrorMsg(onError);
             }
-            
         } 
         else {
           showGenericErrorMsg("Generic AJAX error");
