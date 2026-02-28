@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cave;
+use App\Models\CoordinateSystemHandler;
 use App\Models\Page;
 
 use App\Models\User;
@@ -51,6 +52,8 @@ class CaveController extends Controller
         $pageAccess = new Page()->setPageModelFor('display', 'access');
         $caveAccess = $cs->renderForPage($pageAccess);
 
+        $crs = CoordinateSystemHandler::getAllCrs();
+
         return view('varcave.caveshowv4',
             [
                 'pageTitle' => $caveData['attributes']['data']['name'],
@@ -59,6 +62,7 @@ class CaveController extends Controller
                 'caveBibliography' => $caveBibliography ?? null,
                 'caveDescription' => $caveDescription ?? null,
                 'caveAccess' => $caveAccess ?? null,
+                'crs' => $crs,
             ]
         );  
     }

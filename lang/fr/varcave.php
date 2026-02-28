@@ -63,6 +63,7 @@ return [
         'informChange' => 'Informer d\'une modification',
         'caveAddToFav' => 'cavité ajoutée aux favoris',
         'caveDelFav' => 'cavité supprimée des favoris',
+        'cave-entrance' => 'entrée n°:nbr',
 
 
     ],
@@ -204,6 +205,14 @@ return [
                 ],
             
         ],
+    ],
+
+    'coordinateSystems' => [
+        'wgs84' => 'wgs84',
+        'lambert3' => 'lambert 3',
+        'lambert93' => 'lambert 93',
+        'utm' =>   'utm',
+
     ],
 
 ];

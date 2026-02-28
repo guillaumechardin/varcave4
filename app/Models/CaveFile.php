@@ -51,8 +51,6 @@ class CaveFile extends Model
 
     public static function hasFilesType():bool
     {
-
         return true;
-
     }
 }

@@ -125,7 +125,7 @@
                 </li>
                 <li>
                     <div id="tab-cave-access" class="tab-content mx-2 mt-2">
-                            <x-varcave.caveshow.tab-access :caveAccess="$caveAccess['attributes']" :caveCoords="$caveData['coordinates']" :caveData="$caveData['attributes']" />
+                            <x-varcave.caveshow.tab-access :caveAccess="$caveAccess['attributes']" :caveCoords="$caveData['coordinates']" :caveData="$caveData['attributes']" :crs="$crs" />
                     </div>
                 </li>
                 <li>
