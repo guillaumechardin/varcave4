@@ -2,8 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -51,31 +52,58 @@ return new class extends Migration
         });
 
 
-        //inject default user admin
-        DB::unprepared('INSERT INTO users (username, firstname, lastname, email, password, created_at, updated_at)
-            VALUES (
-                \'admin\',
-                \'Admin\',
-                \'Admin\',
-                \'email@host.com\',
-                \'$2y$12$ToCxlRNWAQJKR44hssHS5eC5trIHaZgwVk0qnkSzPC3Z1Ahkn.0Aa\', -- speleo2025
-                NOW(),
-                NOW()
-            )');
+        //inject simple users
+        $users = [
+            [
+                'username' => 'admin',
+                'firstname' => 'Admin',
+                'lastname' => 'ADMIN',
+                'email' => 'admin@myhost.local',
+                'password' => Hash::make('speleo2025'),// -- speleo2025
+                'created_at' => now(),
+                'updated_at' => NULL,
+            ],
 
-        //inject simple user 'user'
-        DB::unprepared('INSERT INTO users (username, firstname, lastname, email, password, created_at, updated_at)
-            VALUES (
-                \'myuser\',
-                \'User\',
-                \'Name\',
-                \'email@host.com\',
-                \'$2y$12$ToCxlRNWAQJKR44hssHS5eC5trIHaZgwVk0qnkSzPC3Z1Ahkn.0Aa\', -- speleo2025
-                NOW(),
-                NOW()
-            )');
-
-        
+            [
+                'username' => 'test',
+                'firstname' => 'Tes',
+                'lastname' => 'TEUR',
+                'email' => 'user@domain.com',
+                'password' => Hash::make('testeur25'),
+                'created_at' => now(),
+                'updated_at' => NULL,
+            ],
+            [
+                'username' => 'fprevost',
+                'firstname' => 'Franck',
+                'lastname' => 'PREVOST',
+                'email' => 'franckprevo@gmail.C-omme',
+                'password' => 'NO_PASS',
+                'created_at' => now(),
+                'updated_at' => NULL,
+            ],
+            [
+                'username' => 'rfreminet',
+                'firstname' => 'Robert',
+                'lastname' => 'FREMINET',
+                'email' => 'robertisa83@yahoo.F-aire',
+                'password' => 'NO_PASS',
+                'created_at' => now(),
+                'updated_at' => NULL,
+            ],
+            [
+                'username' => 'hfessard',
+                'firstname' => 'Herrick',
+                'lastname' => 'FESSARD',
+                'email' => 'fessardherrick@free.F-aire',
+                'password' => 'NO_PASS',
+                'created_at' => now(),
+                'updated_at' => NULL,
+            ]
+        ];
+         foreach ($users as $user) {            
+            DB::table('users')->insert($user);
+        }
 
     }
 

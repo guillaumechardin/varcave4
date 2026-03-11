@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\Cave;
 use App\Models\CoordinateSystemHandler;
 use App\Models\Page;
-
 use App\Models\User;
+use App\Services\CavePdfService;
 use App\Services\CaveService;
 use App\Services\GpxService;
 use App\ViewModels\CaveViewModel;
@@ -54,6 +54,8 @@ class CaveController extends Controller
 
         $crs = CoordinateSystemHandler::getAllCrs();
 
+        $cave->refresh()->load('changelog');
+
         return view('varcave.caveshowv4',
             [
                 'pageTitle' => $caveData['attributes']['data']['name'],
@@ -63,6 +65,7 @@ class CaveController extends Controller
                 'caveDescription' => $caveDescription ?? null,
                 'caveAccess' => $caveAccess ?? null,
                 'crs' => $crs,
+                'changeHistory' => $cave->changelog,
             ]
         );  
     }
@@ -203,6 +206,34 @@ class CaveController extends Controller
         return response($gpxFile, 200)
             ->header('Content-Type', 'application/xml')
             ->header('Content-Disposition', 'attachment; filename="' . Str::limit( Str::slug($cave->name), 40, '') . '.gpx"');
+    }
+
+    public function getPdf(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+
+        $cave = Cave::getByUuid($uuid);
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        $user = $request->user();
+        if(! $user->can('downloadPdf', $cave)){
+            abort(403, 'Unauthorized');
+        }
+
+        $csOptions = CaveService::ADD_ALL;
+        $cs = new CaveService($cave, $request->user(), $csOptions); 
+        $pagePdf = new Page()->setPageModelFor('pdf', 'main', true);
+        $caveData = $cs->renderForPage($pagePdf);
+
+        $pdf = new CavePdfService($caveData);
+
+        $pdf->render();
+
+
+        
     }
 
 }

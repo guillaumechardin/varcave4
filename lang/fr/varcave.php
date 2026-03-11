@@ -51,6 +51,7 @@ return [
         'caveFound' => 'cavité trouvée',
         'caveNotFound' => 'cavité non trouvée',
         'informations' => 'informations',
+        'change_history'    => 'historique des modifications',
         'description' => 'description',
         'access' => 'accès',
         'caveMaps' => 'topographies',
@@ -64,6 +65,8 @@ return [
         'caveAddToFav' => 'cavité ajoutée aux favoris',
         'caveDelFav' => 'cavité supprimée des favoris',
         'cave-entrance' => 'entrée n°:nbr',
+        'coord_copied' => 'copié ds le presse papier',
+        'edited_by' => 'modifié par:'
 
 
     ],

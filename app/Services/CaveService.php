@@ -73,11 +73,12 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class CaveService
 {
-    public const ADD_COORDS       = 0x1;
-    public const ADD_NEAR_CAVES   = 0x2;
-    public const ADD_FILES        = 0x4;
-    public const ADD_CHANGELOG    = 0x6;
-    public const ADD_ALL          = self::ADD_COORDS
+    public const ADD_COORDS             = 0x1;
+    public const ADD_NEAR_CAVES         = 0x2;
+    public const ADD_FILES              = 0x4;
+    public const ADD_CHANGELOG          = 0x6;
+    //public const ADD_CAVEMAPS_ONLY      = 0x7; // to be implemented
+    public const ADD_ALL        =     self::ADD_COORDS
                                     | self::ADD_NEAR_CAVES
                                     | self::ADD_FILES
                                     | self::ADD_CHANGELOG;

@@ -25,7 +25,8 @@ class CoordinateSystemHandler extends Model
             'list_value_id',
             'epsg_code',
             'epsg_name',
-            'js_handler',
+            'js_handler_path',
+            'js_handler_fn',
             'php_handler',
             'proj4_string',
         ])

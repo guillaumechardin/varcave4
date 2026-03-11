@@ -20,7 +20,8 @@ return new class extends Migration
             $table->foreignId('list_value_id')->constrained('list_values')->restrictOnDelete();
             $table->unsignedInteger('epsg_code')->unique();
             $table->string('epsg_name', 100);
-            $table->text('js_handler')->nullable();
+            $table->text('js_handler_path')->nullable();
+            $table->text('js_handler_fn')->nullable();
             $table->text('php_handler')->nullable();
             $table->text('proj4_string')->nullable();
             $table->boolean('enabled');
@@ -79,33 +80,37 @@ return new class extends Migration
             [
                 'epsg_code' => 4326,
                 'epsg_name' => 'WGS84',
-                'js_handler'   => NULL,
+                'js_handler_path'   => NULL,
+                'js_handler_fn'   => NULL,
                 'proj4_string' => '+proj=longlat +datum=WGS84 +no_defs +type=crs',
-                'list_value_id' => $crsIds['varcave.list.crs.wgs84'],
+                'list_value_id' => $crsIds['varcave.coordinateSystems.wgs84'],
                 'enabled' => 1,
             ],
             [
                 'epsg_code'    => 27563,
                 'epsg_name'    => 'Lambert Zone III étendu',
-                'js_handler'   => NULL,
+                'js_handler_path'   => NULL,
+                'js_handler_fn'   => NULL,
                 'proj4_string'  => '+proj=lcc +lat_1=44.1 +lat_0=44.1 +lon_0=0 +k_0=0.999877499 +x_0=600000 +y_0=200000 +ellps=clrk80ign +pm=paris +towgs84=-168,-60,320,0,0,0,0 +units=m +no_defs +type=crs',
-                'list_value_id'=> $crsIds['varcave.list.crs.lambert3'],
+                'list_value_id'=> $crsIds['varcave.coordinateSystems.lambert3'],
                 'enabled' => 1,
             ],
             [
                 'epsg_code' => 2154,
                 'epsg_name' => 'Lambert93',
-                'js_handler'   => NULL,
+                'js_handler_path'   => NULL,
+                'js_handler_fn'   => NULL,
                 'proj4_string' => '+proj=lcc +lat_0=46.5 +lon_0=3 +lat_1=49 +lat_2=44 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs',
-                'list_value_id' => $crsIds['varcave.list.crs.lambert93'],
+                'list_value_id' => $crsIds['varcave.coordinateSystems.lambert93'],
                 'enabled' => 1,
             ],
             [
                 'epsg_code'    => 326,
                 'epsg_name'    => 'UTM/WGS84',
-                'js_handler'   => '/lib/varcave/proj4-crs-handler/326xx.js',
+                'js_handler_path'   => '/lib/varcave/proj4-crs-handler/326xx.js',
+                'js_handler_fn'   => 'utmTransform',
                 'proj4_string'  => null,
-                'list_value_id'=> $crsIds['varcave.list.crs.utm'],
+                'list_value_id'=> $crsIds['varcave.coordinateSystems.utm'],
                 'enabled' => 1,
             ],
 

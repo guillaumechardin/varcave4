@@ -21,8 +21,8 @@
             <div id="map-wrapper" class="is-skeleton">
                 <div id="map" ></div>
             </div>
+            
             <script>
-                const crsSettings2 = @json($crs, JSON_PRETTY_PRINT); //to be removed
                 $(document).ready(function (){
                     map.on('rendercomplete', function(evt) {
                         Logger.debug('Map rendering complete');
@@ -31,28 +31,33 @@
                     
                     const crsSettings = @json($crs, JSON_PRETTY_PRINT);
                     
-                    var coordsFrame = null;
+                    //change coordinates display 
+                    const coordsFrame = $('#coord-list').html(); //backup origin div/
                     var forceClear = false;
                     $('#display-crs').on('change', function(e){
-                        if(coordsFrame === null){
-                           coordsFrame = $('#coord-list').html();
-                        }
                         Logger.debug('Change CRS');
+                        
                         var crsValue = $(this).val();
                         const epsgCode = $(this).find('option:selected').data('epsg-code');
                         Logger.debug('epsg code found: ' + epsgCode);
-                        const selectedEPSG = crsSettings.find(el => el.epsg_code == epsgCode);
-                        if(forceClear || epsgCode == 4326){
+                        
+                        if(epsgCode == 4326){
                             Logger.debug('Restore CRS');
                             forceClear = false;
                             $('#coord-list').html(coordsFrame);
                             return true;
                         }
 
+                        const selectedEPSG = crsSettings.find(el => el.epsg_code == epsgCode);
                         if(selectedEPSG.proj4_string != null){
+                             if(forceClear){
+                                Logger.debug('Restore CRS');
+                                forceClear = false;
+                                $('#coord-list').html(coordsFrame);
+                                ;
+                            }
                             const epsgCodeStr = 'EPSG:'+selectedEPSG.epsg_code;
                             proj4.defs(epsgCodeStr, selectedEPSG.proj4_string);
-                            
                             
                             caveCoordinates.forEach(function(coord, index) {
                                 Logger.info('Transform:' + selectedEPSG.epsg_name+'('+ epsgCodeStr +')');
@@ -62,72 +67,68 @@
                                 Logger.debug(epsgCodeStr);
                                 var newCoords = proj4('EPSG:4326', epsgCodeStr, [X, Y]);
                                 Logger.info(newCoords);
-                                //replace by new coords
                                 
-                                const $xWrapper = $('#coord-wrapper-' + index + '-x');
-                                const $yWrapper = $('#coord-wrapper-' + index + '-y');
-
-                                $xWrapper.find('.x-name').text("X");
-                                $xWrapper.find('.x-value').text(Math.floor(newCoords[0]));
-
-                                $yWrapper.find('.y-name').text("Y");
-                                $yWrapper.find('.y-value').text(Math.floor(newCoords[1]));
-
+                                //replace by new coords
+                                setXYTags(index, newCoords[0], newCoords[1]);
                             });
                         }
-                        else if(selectedEPSG.js_handler != null){   
+                        else if(selectedEPSG.js_handler_path != null){   
                             Logger.debug('transform module start');
                             forceClear = true;
+                            // well know fn name
+                            const fnName = selectedEPSG.js_handler_fn;
+                      
+                            // check fn present/js file loaded
+                            if(typeof window[fnName] === 'function') {
+                                caveCoordinates.forEach(function(coord, index) {
+                                    const lon = caveCoordinates[index].lon; 
+                                    const lat = caveCoordinates[index].lat;
+                                    var result = window[fnName](lat, lon); //callback function from js transform handler
 
-                            // Create a dynamic <script> for .js load
-                            var script = document.createElement('script');
-                            script.src = selectedEPSG.js_handler;
+                                    setXYTags(index, result.x, result.y, result.prefix, result.suffix);
+                                });                      
 
-                            script.onload = function() {
-                                Logger.debug('Handler script loaded: ' + selectedEPSG.js_handler);
-
-                                // well know fn name
-                                var fnName = selectedEPSG.epsg_code + '_transform';
-
-                                // check fn present/js file loaded
-                                if(typeof window[fnName] === 'function') {
-                                    var result = window[fnName](coords);
-                                    for(var key in result) {
-                                        $('#coord-wrapper-' + index + '-' + key + ' .' + key + '-value').text(result[key]);
-                                    }
-                                } else {
-                                    Logger.error('Transform function not found: ' + fnName);
-                                }
-                            };
-
-                            script.onerror = function() {
-                                Logger.error('Failed to load JS handler: ' + selectedEPSG.js_handler);
-                            };
-
-                            document.head.appendChild(script);
+                            } else {
+                                Logger.error('Transform function not found: ' + fnName);
+                                return false;
+                            }
                         }
                         else{
                             Logger.error('bad crs handler');
                             return false;
                         }
-
-                        return true;
-                        $('#coord-wrapper-0').empty();
-                        $('#coord-wrapper-1').empty();
-                        proj4.defs("EPSG:9794","+proj=lcc +lat_0=46.5 +lon_0=3 +lat_1=49 +lat_2=44 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
-                        proj4.defs("EPSG:27563","+proj=lcc +lat_1=44.1 +lat_0=44.1 +lon_0=0 +k_0=0.999877499 +x_0=600000 +y_0=200000 +ellps=clrk80ign +pm=paris +towgs84=-168,-60,320,0,0,0,0 +units=m +no_defs +type=crs");
-                        //var newvar = proj4(firstProjection,secondProjection,[-122.305887, 58.9465872]);
-                        //OK UTM 31 var newvar = proj4('EPSG:4326','EPSG:32631',[5.9677369, 43.2015802]);
-                        var newvar = proj4('EPSG:4326','EPSG:27563',[5.9677369, 43.2015802]);
-                        // [-2690575.447893817, 36622916.8071244564]
-                        Logger.debug('new coord1:');
-                        Logger.debug(newvar);
-                        //Logger.debug('new coord2:');
-                        //Logger.debug(newvar2);
-                        //Logger.debug(caveCoordinates);
-
                     });
                 })
+
+                //define X Y tags from given data
+                function setXYTags(index, X, Y, prefix = null, suffix = null){
+                    const $xWrapper = $('#coord-wrapper-' + index + '-x');
+                    const $yWrapper = $('#coord-wrapper-' + index + '-y');
+
+                    $xWrapper.find('.x-name').text("X");
+                    $xWrapper.find('.x-value').text(Math.floor(X));
+
+                    $yWrapper.find('.y-name').text("Y");
+                    $yWrapper.find('.y-value').text(Math.floor(Y)); 
+
+                    if(prefix != null && prefix.name){
+                        const wrapper = $('#coord-wrapper-'+index+'-prefix');
+                        wrapper.find('.prefix-name').text(prefix.name);
+                        wrapper.find('.prefix-value').text(prefix.value);
+
+                        const control = wrapper.closest('.control').removeClass('is-hidden');
+                    }
+
+                    if(suffix != null && suffix.name){
+                        const wrapper = $('#coord-wrapper-'+index+'-suffix');
+                        wrapper.find('.suffix-name').text(suffix.name);
+                        wrapper.find('.suffix-value').text(suffix.value);
+
+                        const control = wrapper.closest('.control').removeClass('is-hidden');
+                    }
+                }
+                                
+
             </script>
             <script>
                 var cave = @json($caveData['data'], JSON_PRETTY_PRINT);
@@ -254,16 +255,53 @@
                         this.getTargetElement().style.cursor = "";
                     }
                 });
+                
+                //copy correspondant coords to clipboard
+                preventDuplicate = false;
+                $(document).on('click', '.copy-coord-clipboard', function(e){
+                    e.preventDefault();
+                    Logger.debug('copy start');
 
+                    let lat = $(this).closest('.field').find(' .x-value').text().trim();
+                    let lon = $(this).closest('.field').find(' .y-value').text().trim();
 
+                    navigator.clipboard.writeText(lat + ', ' + lon)
+                    .then(() => {
+                        const icon = $(this);
+                        icon
+                        .removeClass('bi-clipboard')
+                        .addClass('bi-clipboard-check has-text-success');
+                        
+                        if(!icon.data('locked')){
+                            $(this).parent().after('<span class="copied-label  has-text-success">{{ Str::ucfirst( __('varcave.caveshow.coord_copied')) }}</span>');
+                            icon.data('locked', true);
+                        }
+                        
+                        setTimeout(function () {
+                            icon
+                            .removeClass('bi-clipboard-check has-text-success')
+                            .addClass('bi-clipboard');
+                            $('.copied-label').remove();
+                            icon.data('locked', false);
+                        }, 2500);
 
-
+                    })
+                    .catch(err => {
+                        Logger.error('clipbaord send failed');
+                    });
+                });
 
             </script>
         </div>
         <div class="column">
             <p class="title is-5"> {{ Str::ucfirst('coordonnées') }} : </p>
+            {{-- Load crs custom functions --}}
             <script src="/lib/proj4js/2.20.2/proj4.js"></script>
+            @foreach($crs as $script)
+                @if(!empty($script['js_handler_path']))
+                    <script src="{{ $script['js_handler_path'] }}"></script>
+                @endif
+            @endforeach
             <div class="select is-primary">
                 <form>
                     <select name="display-crs" id="display-crs">
@@ -283,31 +321,48 @@
             </div>
                 <ul id="coord-list">
                     @foreach($caveCoords['entrance'] as $coord)
-                            <span>{{ __('varcave.caveshow.cave-entrance', ["nbr"=> $loop->index+1]) }}:</span>
-                            <div id="coord-wrapper-{{ $loop->index }}">
-                                <div class="field is-grouped is-grouped-multiline">
-                                    <div  class="control">
-                                        <div id="coord-wrapper-{{ $loop->index }}-x" class="tags has-addons">
-                                            <span class="tag is-dark x-name">Lon</span>
-                                            <span  class="tag is-info x-value">{{ $coord['lon'] }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="control">
-                                        <div id="coord-wrapper-{{ $loop->index }}-y" class="tags has-addons">
-                                            <span class="tag is-dark y-name">Lat</span>
-                                            <span  class="tag is-info y-value">{{ $coord['lat'] }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="control">
-                                        <div id="coord-wrapper-{{ $loop->index }}-z" class="tags has-addons">
-                                            <span class="tag is-dark z-name">Elev</span>
-                                            <span class="tag is-info z-value">{{ $coord['z'] }}</span>
-                                        </div>
+                        <span>{{ __('varcave.caveshow.cave-entrance', ["nbr"=> $loop->index+1]) }}:</span>
+                        <div id="coord-wrapper-{{ $loop->index }}">
+                            <div class="field is-grouped is-grouped-multiline">
+                                <div  class="control is-hidden">
+                                    <div id="coord-wrapper-{{ $loop->index }}-prefix" class="tags has-addons">
+                                        <span class="tag is-dark prefix-name"></span>
+                                        <span  class="tag is-info prefix-value"></span>
                                     </div>
                                 </div>
-                            </div>                        
+
+                                <div  class="control">
+                                    <div id="coord-wrapper-{{ $loop->index }}-x" class="tags has-addons">
+                                        <span class="tag is-dark x-name">Lon</span>
+                                        <span  class="tag is-info x-value">{{ $coord['lon'] }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="control">
+                                    <div id="coord-wrapper-{{ $loop->index }}-y" class="tags has-addons">
+                                        <span class="tag is-dark y-name">Lat</span>
+                                        <span  class="tag is-info y-value">{{ $coord['lat'] }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="control">
+                                    <div id="coord-wrapper-{{ $loop->index }}-z" class="tags has-addons">
+                                        <span class="tag is-dark z-name">Elev</span>
+                                        <span class="tag is-info z-value">{{ $coord['z'] }}</span>
+                                    </div>
+                                </div>
+
+                                <div  class="control is-hidden">
+                                    <div id="coord-wrapper-{{ $loop->index }}-suffix" class="tags has-addons">
+                                        <span class="tag is-dark suffix-name"></span>
+                                        <span  class="tag is-info suffix-value"></span>
+                                    </div>
+                                </div>
+                                <div class="icon is-icon-wrapper bi-sm mr-0" >
+                                    <a class="bi bi-clipboard copy-coord-clipboard" data-locked="false"></a>
+                                </div>
+                            </div>
+                        </div>                      
                     @endforeach
                 </ul>
             <hr>

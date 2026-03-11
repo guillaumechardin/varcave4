@@ -31,7 +31,7 @@
         <div class="column is-background-info is-flex is-justify-content-flex-end ">
             @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}}
                 <span id="caveshow-action-gpxdownload" class="icon is-icon-wrapper bi-xl">
-                    <a href="{{ route('varcave.caves.gpx', ['uuid' => $caveData['attributes']['data']['uuid'] ]) }}" class="bi bi-geo-alt-fill"></a>
+                    <a href="{{ route('varcave.caves.gpx', ['uuid' => $caveObj->uuid ]) }}" class="bi bi-geo-alt-fill"></a>
                 </span>
                 <span id="caveshow-action-setfav" class="icon is-icon-wrapper bi-xl"  >
                     @if(auth()->user()->isBookmark($caveObj->uuid))
@@ -55,6 +55,14 @@
                         <i class="bi bi-info-square" aria-hidden="true"></i>
                     </span>
                     <span>{{ Str::ucfirst(__('varcave.caveshow.informations')) }}</span>
+                </a>
+            </li>
+            <li>
+                <a  data-tabs-target="tab-cave-changehistory">
+                    <span class="icon is-small">
+                        <i class="bi bi-clock-history" aria-hidden="true"></i>
+                    </span>
+                    <span>{{ Str::ucfirst(__('varcave.caveshow.change_history')) }}</span>
                 </a>
             </li>
             @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}} 
@@ -115,6 +123,11 @@
             <li>
                 <div id="tab-cave-info" class="tab-content mx-2 mt-2">
                         <x-varcave.caveshow.tab-cave-info :caveData="$caveData"/>
+                </div>
+            </li>
+            <li>
+                <div id="tab-cave-changehistory" class="tab-content mx-2 mt-2">
+                        <x-varcave.caveshow.tab-changehistory :changeHistory="$changeHistory" />
                 </div>
             </li>
             @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}} 
