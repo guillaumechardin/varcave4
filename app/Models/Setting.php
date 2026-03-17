@@ -16,6 +16,8 @@ class Setting extends Model
         'is_advanced_option',
     ];
 
+
+
     /**
      * Get settings by it key
      */
@@ -46,7 +48,7 @@ class Setting extends Model
     public function setValueAttribute($val)
     {
         $this->attributes['value'] = match($this->type) {
-            'json'   => json_encode($val),
+            //'json'   => json_encode($val),
             'bool'   => $val ? '1' : '0',
             'int', 'float', 'string', 'datetime' => (string)$val,
             default  => (string)$val,

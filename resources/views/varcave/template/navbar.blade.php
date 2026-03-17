@@ -16,7 +16,7 @@
 
   <div id="navbarBasic" class="navbar-menu">
     <div class="navbar-start">
-      <!-- UNauthenticated navbar content -->
+       {{-- Unauthenticated navbar content --}}
       <a class="navbar-item" href="{{route('varcave.homepage')}}">
         {{__('varcave.navbar.home')}}
       </a>
@@ -38,14 +38,30 @@
           </a>
         </div>
       </div>
-      <!-- END UNauthenticated navbar content -->
+      {{-- END UNauthenticated navbar content --}}
 
-      
-      @auth
-      <!-- default authenticated navbar content -->
-      
-      <!-- END authenticated navbar content -->
-      @endauth
+      {{-- admin navbar content --}}
+      @can('admin-access')
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            {{ Str::ucfirst( __('varcave.navbar.administration')) }}
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="{{ route('varcave.admin-settings') }}">
+              {{ Str::ucfirst( __('varcave.navbar.site_settings')) }}
+            </a>
+
+            <a class="navbar-item" href="{{ route('varcave.support-info') }}">
+              {{ Str::ucfirst( __('varcave.navbar.support_info')) }}
+            </a>
+
+            <a class="navbar-item" href="{{ route('varcave.users.index') }}">
+              {{ Str::ucfirst( __('varcave.navbar.users_mgmt')) }}
+            </a>
+          </div>
+        </div>
+      @endcan
+      {{-- END admin navbar content --}}
       
     </div>
     

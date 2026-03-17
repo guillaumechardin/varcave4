@@ -96,6 +96,10 @@ return [
         'modeDark' => 'Sombre',
         'modeSystem' => 'Système',
         'findCave' => 'chercher une cavité',
+        'administration' => 'administration',
+        'site_settings' => 'paramètres du site',
+        'support_info' => 'informations technique',
+        'users_mgmt' => 'gestion des utilisateurs',
     ],
 
     /**
@@ -217,5 +221,117 @@ return [
         'utm' =>   'utm',
 
     ],
+
+    'settings' => [
+        'title' => 'configuration du site',
+        'settings_saved' => 'paramètre enregistré',
+        'site_settings' => 'paramètres du site',
+        'show_adv_opt' => 'afficher les options avancées',
+
+        'loglevel_dsp' => 'Journalisation',
+        'websiteFullName_dsp' => "Entête du site",
+        'websiteFullName_hlp' => "Entête affichée en haut de chaque page",
+        'disclaimer_dsp' => "Clause de nom responsabilité",
+        'disclaimer_hlp' => "Disclaimer affiché en bas de chaque topo",
+        'maxSearchResults_default_dsp' => "Nombre de résultat de recherche",
+        'maxSearchResults_default_hlp' => "Nombre d'enregistrements maximum retournés dans la recherche",
+        'stats_dsp' => "Statistiques",
+        'stats_hlp' => "Activer ou non les statistique d'affichage de cavités",
+        'displayedStats_dsp' => "Nombre de stat affichées",
+        'displayedStats_hlp' => "Nombre de lignes affichées dans la page de statistiques",
+        'welcomePageShowLastUpdate_dsp' => "Nombre de nouveautées (cavité) page accueil",
+        'welcomePageShowLastUpdate_hlp' => "Le nombre de ligne de modification affiché en page d'accueil concernant les cavités",
+        'adminIP_dsp' => "Adresses ip d'administrations",
+        'adminIP_hlp' => "Liste des adresses IP utilisées par les administrateurs du site pour exclure des stats",
+        'noAccessDisclaimer_dsp' => "Avertissement `inaccessible`",
+        'noAccessDisclaimer_hlp' => "Avertissement affiché lorsque la cavité est inaccessible",
+        
+        'footerMsg_dsp' => "Message bas de page",
+        'footerMsg_hlp' => "Message situé en bas de chaque page web",
+        
+        'excludedcopyfields_dsp' => "Champs exclus",
+        'excludedcopyfields_hlp' => "Champs exclus lors d'une copie de cavité",
+        
+        'ol_zoom_map_lvl_dsp' => "Niveau de zoom carte openLayers",
+        'ol_zoom_map_lvl_hlp' => "Défini le niveau de zoom par défaut lors de l'utilisation des API openlayers",
+        'use_geoapi_dyn_map_img_pdf_dsp' => "Utiliser les geo API pour les PDF",
+        'use_geoapi_dyn_map_img_pdf_hlp' => "Utilise les geo API API pour afficher les croquis de repérage dans les PDF",
+        'select_geoapi_src_img_pdf_dsp' => "Choix source image accès PDF",
+        'select_geoapi_src_img_pdf_hlp' => "Sélection de la source pour les croquis d'accès affiché dans les PDF",
+        'static_map_service_url_dsp' => "Url static map",
+        'static_map_service_url_hlp' => "Url à utiliser pour la génération des static map",
+        
+        
+        'max_news_homepage_dsp' => "News affichées page accueil",
+        'max_news_homepage_hlp' => "Détermine le nombre de news affichée sur la page d'accueil",
+        'timezone_dsp' => "Fuseau horaire",
+        'timezone_hlp' => "Identifiant de fuseau horaire voir (https://www.php.net/manual/fr/timezones.php)",
+        'smtp_server_dsp' => "Serveur SMTP",
+        'smtp_server_hlp' => "FQDN ou adresse IP du serveur SMTP à utiliser",
+        'smtp_port_dsp' => "Port SMTP",
+        'smtp_port_hlp' => "Port à utiliser pour la communication avec le serveur SMTP",
+        'smtp_user_dsp' => "Utilisateur",
+        'smtp_user_hlp' => "Compte utilisateur pour l'authentification",
+        'smtp_userpwd_dsp' => "Mot de passe",
+        'smtp_userpwd_hlp' => "Mot de passe du compte",
+        'smtp_useauth_dsp' => "Authentification",
+        'smtp_useauth_hlp' => "Spécifie si une authentification auprès du serveur doit être utilisée pour l'envoi des email",
+        'smtp_sender_dsp' => "Adresse de l'expéditeur",
+        'smtp_sender_hlp' => "Adresse d'expéditeur à utiliser pour l'envoi des messages",
+        'smtp_max_attach_size_dsp' => "Taille max PJ",
+        'smtp_max_attach_size_hlp' => "Taille max d'une PJ (en Ko)",
+        'smtp_max_attach_global_size_dsp' => "Taille max globale PJ",
+        'smtp_max_attach_global_size_hlp' => "Taille max globale des PJ dans un email",
+        'smtp_cave_edit_recipients_dsp' => "Destinataire erreurs cavités",
+        'smtp_cave_edit_recipients_hlp' => "Liste d'adresse email vers lequelles seront envoyés les emails du contact d'erreur cavité",
+        'smtp_general_inquiry_recipient_dsp' => "Destinataires formulaire de contact",
+        'smtp_general_inquiry_recipient_hlp' => "Liste d'adresse email vers lequelles seront envoyés les demandes issues du formulaire de contact",
+        'smtp_server_debuglbvl_dsp' => "Niveau de journalisation",
+        'smtp_server_debuglbvl_hlp' => "Niveau de journalisation SMTP (0 => désactivé, 4=maximum). Laisser à 0 en utilisation de production",
+        'mail_use_captcha_dsp' => "Utilisation de captcha",
+        'mail_use_captcha_hlp' => "Utilise captcha pour eviter les envois de mail non sollicités",
+        'captcha_secret_key_dsp' => "Clef API captcha (secrete)",
+        'captcha_secret_key_hlp' => "Clef API captcha personnelle",
+        'captcha_public_key_dsp' => "Clef API captcha (publique)",
+        'captcha_public_key_hlp' => "Clef API captcha publique (doit être enregistrée sur le domaine de ce site pour fonctionner correctement)",
+        
+        'pdf_coords_system_dsp' => "Système de coordonnées dans les PDF",
+        'pdf_coords_system_hlp' => "Système de coordonnées utilisé pour l'affichage des coordonnées dans les fichiers PDF",
+        
+        
+        'legal_notice_dsp' => "Informations légales",
+        'legal_notice_hlp' => "Affiche des informations dans le bloc d'informations légales en page d'accueil",
+        'near_caves_max_radius_dsp' => "Rayon de recherche cavité proche",
+        'near_caves_max_radius_hlp' => "Rayon de recherche des cavités proche d'une cavité affichée (en m)",
+        'near_caves_max_number_dsp' => "Nombre max cavités proches",
+        'near_caves_max_number_hlp' => "Nombre de cavités affiché lors de la recherches des cavités alentour",
+        
+        
+        'user_must_accept_EULA_dsp' => "Acceptation EULA obligatoire",
+        'user_must_accept_EULA_hlp' => "Indique si les utilisateurs doivent valider le contrat de licence avant accès au site.",
+        'user_login_tip_dsp' => "Exemple nom d'utilisateur connexion",
+        'user_login_tip_hlp' => "Nom d'utilisateur indiqué en exemple lors d'une connexion au site",
+        'authorized_file_types_dsp' => "Types de fichiers autorisés",
+        'authorized_file_types_hlp' => "Liste des fichiers autorisés pour les téléversements",
+        'include_GPX_details_dsp' => "Inclure des détails au GPX",
+        'include_GPX_details_hlp' => "Permet d'ajouter des informations complémetaires au fichier GPX (présence photos, profondeur, devellopement, etc)",
+        
+        'category_name' => [
+            'captcha' => 'google CAPTCHA',
+            'general' => 'configuration générale',
+            'config_email' => 'configuration messagerie',
+            'pdf' => 'paramètres génération PDF',
+            'geo_api' => 'Configuration GEOAPI',
+            'config_site_stats' => 'Configuration statistique cavités'
+
+        ],
+    ],
+
+    /**
+     * Users administration page
+     */
+    'users' => [
+        '' => '',
+    ]
 
 ];

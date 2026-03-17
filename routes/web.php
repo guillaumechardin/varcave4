@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\CaveController;
-use App\Http\Controllers\homepageController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
  **  Varcave public  routes **
@@ -32,6 +34,13 @@ Route::middleware('auth')->group(function () {
     
     Route::delete('/profile/bookmark/{bookmark}', [ProfileController::class, 'deleteBookmark'])->name('varcave.profile.bookmark.delete');
     
+});
+
+Route::middleware(['auth', 'can:admin-access'])->group(function () {
+    Route::get('/admin/settings', [SettingController::class, 'show'])->name('varcave.admin-settings');
+    Route::get('/admin/supportinfo', [SettingController::class, 'supportinfo'])->name('varcave.support-info');
+    Route::get('/admin/users', [UserController::class, 'index'])->name('varcave.users.index');
+    Route::patch('/admin/settings/{setting}', [SettingController::class, 'update'])->name('varcave.admin-settings-update');
 });
 
 

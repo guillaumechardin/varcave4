@@ -25,10 +25,7 @@ return new class extends Migration
             $table->text('php_handler')->nullable();
             $table->text('proj4_string')->nullable();
             $table->boolean('enabled');
-            $table->timestamps();
-            
-
-            
+            $table->timestamps();            
         });
 
         

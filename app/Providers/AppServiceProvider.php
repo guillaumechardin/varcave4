@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Cave;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        //simple gate that's check user admin membership
+        Gate::define('admin-access', function ($user) {
+            return $user->hasRole('admin');
+        });
     }
 }
