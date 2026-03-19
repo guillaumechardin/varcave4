@@ -16,7 +16,7 @@ $(document).ready(function($){
         if(urlParams.get('value_name') != ''){
             $('#cavesearch-tabs').bulmaVar('Tabs', 'goToTabById', 'tab-search-results');
             formData = urlParams.toString();
-            doSearch(formData, "{{route('varcave.caves.search')}}" );
+            doSearch(formData, "{{ route('varcave.caves.search') }}" );
         }else{
             Logger.error('Unsupported cave search');
         }
@@ -44,7 +44,7 @@ $(document).ready(function($){
             'tab-search-results'
         );
         
-        doSearch(formData, "{{route('varcave.caves.search')}}" );
+        doSearch(formData, "{{ route('varcave.caves.search') }}" );
     });
 
     /**

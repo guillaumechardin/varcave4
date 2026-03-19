@@ -10,6 +10,7 @@ $(document).ready(function() {
 
   });  
 
+  //close modal windows
   $("#modal-message-button-cancel, .modal-message-close").on('click', function(){
     Logger.debug("close modal");
     closeModal( $(this).closest('.modal'), true );

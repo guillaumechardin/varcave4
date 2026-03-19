@@ -7,7 +7,7 @@
             <p class="title">{{ Str::ucfirst(__('varcave.settings.site_settings')) }}</p>
         </div>
         <span class="show-adv-options">
-            Afficher les options avancées <input class="toggle-adv-opt" type="checkbox" disabled>
+            {{ Str::ucfirst(__('varcave.settings.show_adv_opt')) }}<input class="toggle-adv-opt" type="checkbox" disabled>
         </span>
     </section>
     

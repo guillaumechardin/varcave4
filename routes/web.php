@@ -27,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('varcave.profile');
     Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->name('varcave.caves.gpx');
     Route::get('/caves/{uuid}/pdf', [CaveController::class, 'getPdf'])->whereUuid('uuid')->name('varcave.caves.pdf');
+
+    //Route::get('/users/{user}', [UserController::class, 'show'])->name('varcave.users.show');
     
     Route::post('/profile/theme', [ProfileController::class, 'storeTheme'])->name('varcave.profile.theme.store');
     Route::post('/profile/bookmark', [ProfileController::class, 'storeBookmark'])->name('varcave.profile.bookmark.store');
@@ -40,6 +42,8 @@ Route::middleware(['auth', 'can:admin-access'])->group(function () {
     Route::get('/admin/settings', [SettingController::class, 'show'])->name('varcave.admin-settings');
     Route::get('/admin/supportinfo', [SettingController::class, 'supportinfo'])->name('varcave.support-info');
     Route::get('/admin/users', [UserController::class, 'index'])->name('varcave.users.index');
+    Route::get('/admin/users/{user}', [UserController::class, 'getUserModalForm'])->name('varcave.users.user-modal-form');
+    
     Route::patch('/admin/settings/{setting}', [SettingController::class, 'update'])->name('varcave.admin-settings-update');
 });
 

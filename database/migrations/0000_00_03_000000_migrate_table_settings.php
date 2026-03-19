@@ -57,7 +57,24 @@ EOF;
             'category' => 'general',
             'is_advanced_option' => 1,
             'legacy_mtime' => 0,
+        ]);
 
+        DB::table('settings')->insert([
+            'name' =>'datatables_max_items',
+            'value' => 10,
+            'type'  => 'numeric',
+            'category' => 'general',
+            'is_advanced_option' => 0,
+            'legacy_mtime' => 0,
+        ]);
+
+        DB::table('settings')->insert([
+            'name' =>'datatables_items_selector',
+            'value' => "[5, 10, 20, 50, 100]",
+            'type'  => 'json',
+            'category' => 'general',
+            'is_advanced_option' => 1,
+            'legacy_mtime' => 0,
         ]);
 
         

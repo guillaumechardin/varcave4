@@ -13,6 +13,7 @@ return [
         'opSuccess' => 'opération réussie',
         'opFailed' => 'operation échouée',
         'cancel' => 'annuler',
+        'close' => 'fermer',
         'error' => 'erreur',
         'warning' => 'avertissement',
         'delete' => 'supprimer',
@@ -331,7 +332,18 @@ return [
      * Users administration page
      */
     'users' => [
-        '' => '',
-    ]
+        'users' => 'utilisateurs',
+        'roles' => 'rôles',
+        'import_data' => 'importation de données',
+        'user_fetched' => 'Utilisateur récupéré',
+        'edit_user' => 'Modification d\'un utilisateur',
+        
+        'table_users' => [
+            'username' => 'nom d\'utilisateur',
+            'firstname' => 'prénom',
+            'lastname' => 'nom',
+        ],
+    ],
 
 ];
+

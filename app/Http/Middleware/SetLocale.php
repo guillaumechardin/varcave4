@@ -20,8 +20,8 @@ class SetLocale
         */
 
         //  Check if user variable is present
-        if (Session::has('user_lang')) {
-            $locale = Session::get('user_lang');
+        if (Session::has('user_lang')) { 
+            $locale = Session::get('user_lang'); // ****  not implemented now **** use/check UserPreferenceService  
             Log::info('User force language from account settings');
         }
         //  Detect from browser
@@ -39,9 +39,16 @@ class SetLocale
         App::setLocale($locale);
 
         //process request on  next middleware 
+        
         $response = $next($request);
+        return $response;
 
         // --- Inject i18n script only if response is HTML and file present ---
+        /**
+         * JS file is no more used
+         */
+
+        /*
         $jsFile = public_path('varcave/langcache/lang.' . $locale . '.js');
         if (file_exists($jsFile) && 
             $response instanceof \Illuminate\Http\Response && 
@@ -64,7 +71,7 @@ class SetLocale
             $content = str_replace('</head>', $injection . "\n</head>", $content);
             $response->setContent($content);
         }
-
         return $response;
+        */
     }
 }

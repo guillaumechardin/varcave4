@@ -9,27 +9,27 @@
     <div class="tabs is-centered" data-bulma="tabs">
         <ul>
             <li>
-                <a  data-tabs-target="tab-users">
+                <a data-tabs-target="tab-users">
                     <span class="icon is-small">
-                        <i class="bi bi-gear-wide-connected" aria-hidden="true"></i>
+                        <i class="bi bi-people" aria-hidden="true"></i>
                     </span>
                     <span>{{ Str::ucfirst( __('varcave.users.users')) }}</span>
                 </a>
             </li>
             <li>
-                <a  data-tabs-target="tab-roles">
+                <a data-tabs-target="tab-roles">
                     <span class="icon is-small">
-                        <i class="bi bi-bookmarks" aria-hidden="true"></i>
+                        <i class="bi bi-person-gear" aria-hidden="true"></i>
                     </span>
-                    <span>{{ Str::ucfirst( __('varcave.profile.groups')) }}</span>
+                    <span>{{ Str::ucfirst( __('varcave.users.roles')) }}</span>
                 </a>
             </li>
             <li>
-                <a  data-tabs-target="tab-import">
+                <a data-tabs-target="tab-import">
                     <span class="icon is-small">
-                        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                        <i class="bi bi-cloud-upload" aria-hidden="true"></i>
                     </span>
-                    <span>{{ Str::ucfirst( __('varcave.profile.import_data')) }}</span>
+                    <span>{{ Str::ucfirst( __('varcave.users.import_data')) }}</span>
                 </a>
             </li>
         </ul>
@@ -39,20 +39,26 @@
         <ul>
             <li>
                 <div id="tab-users" class="tab-content mx-2 mt-2">
-                    <x-varcave.users.users />
+                    <script src="/lib/DataTables/datatables.min.js"></script>
+                    <link   href="/lib/DataTables/datatables.min.css" rel="stylesheet">
+                    <script>
+                        <x-varcave.users.users-js :users="$users" :datatablesLang="$datatablesLang" :user_cols="$user_cols" />
+                    </script>
+                    <x-varcave.users.tab-users :user_cols="$user_cols"/>
                 </div>
             </li>
             <li>
                 <div id="tab-roles" class="tab-content mx-2 mt-2">
-                    <x-varcave.users.roles />
+                    <x-varcave.users.tab-roles />
                 </div>
             </li>
             <li>
                 <div id="tab-import" class="tab-content mx-2 mt-2">
-                    <x-varcave.users.import />
+                    <x-varcave.users.tab-import />
                 </div>
             </li> 
         </ul>
     </div>
 </section>
+
 @include('varcave.template.footer')
