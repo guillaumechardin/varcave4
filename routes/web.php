@@ -43,8 +43,16 @@ Route::middleware(['auth', 'can:admin-access'])->group(function () {
     Route::get('/admin/supportinfo', [SettingController::class, 'supportinfo'])->name('varcave.support-info');
     Route::get('/admin/users', [UserController::class, 'index'])->name('varcave.users.index');
     Route::get('/admin/users/{user}', [UserController::class, 'getUserModalForm'])->name('varcave.users.user-modal-form');
+    Route::get('/admin/users/roles/{user}', [UserController::class, 'getRoleModalForm'])->name('varcave.users.role');
+
+    Route::post('/admin/users/import', [UserController::class, 'import'])->name('varcave.users.import');
     
     Route::patch('/admin/settings/{setting}', [SettingController::class, 'update'])->name('varcave.admin-settings-update');
+    
+    Route::put('/admin/users/{user}', [UserController::class, 'save'])->name('varcave.users.save');
+    Route::put('/admin/users/roles/{user}', [UserController::class, 'roleSave'])->name('varcave.users.role-save');
+
+    Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('varcave.users.delete');
 });
 
 

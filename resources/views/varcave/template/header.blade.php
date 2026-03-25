@@ -31,6 +31,7 @@
 
     <!-- Jquery UI libraries -->
     <script src="/lib/jquery-ui/1.14.1/jquery-ui.min.js"></script>
+    <script src="/lib/jquery-ui/i18n/datepicker-{{ App::getLocale() }}.js"></script>
     <link rel="stylesheet" href="/lib/jquery-ui/1.14.1/jquery-ui.min.css">
 
     <!-- GLOBAL VARCAVE AVAILABLE JS  -->

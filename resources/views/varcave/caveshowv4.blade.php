@@ -58,7 +58,7 @@
                 </a>
             </li>
             <li>
-                <a  data-tabs-target="tab-cave-changehistory">
+                <a data-tabs-target="tab-cave-changehistory">
                     <span class="icon is-small">
                         <i class="bi bi-clock-history" aria-hidden="true"></i>
                     </span>

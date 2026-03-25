@@ -102,8 +102,8 @@ class User extends Authenticatable
     {
         Log::debug(__METHOD__ . ' called.');
         $roles = $this->roles->pluck('name')->toArray();
-        Log::debug('User roles:', $roles);
         
+        Log::debug('User roles:', $roles);
         return $roles;
     }
 
@@ -124,6 +124,23 @@ class User extends Authenticatable
     public function isBookmark($caveUuid): bool
     {
         return $this->bookmarks()->where('cave_uuid', $caveUuid)->exists();
+    }
+
+    public function addRole(int|string|Role $role)
+    {
+        if ($role instanceof Role) {
+            $roleId = $role->id;
+        } elseif (is_int($role)) {
+            $roleId = $role;
+        } else {
+            $roleId = Role::where('name', $role)->value('id');
+
+            if (!$roleId) {
+                throw new \InvalidArgumentException("Role '{$role}' not found");
+            }
+        }
+
+        $this->roles()->syncWithoutDetaching([$roleId]);
     }
 
 }

@@ -75,7 +75,7 @@
             </li>
             <li>
                 <div id="tab-security" class="tab-content mx-2 mt-2">
-                    <x-varcave.profile.tab-security />
+                    <x-varcave.profile.tab-security :roles="$roles"/>
                 </div>
             </li>
             <li>

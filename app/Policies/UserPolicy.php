@@ -24,7 +24,7 @@ class UserPolicy
         }
         elseif($fetchedUser->id === $user->id)
         {
-            //admin role user can fetch any user
+            //user can fetch his data
             return true;
         }
         else{

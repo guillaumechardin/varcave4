@@ -33,7 +33,8 @@ return [
         'change' => 'changer',
         'caveNotFound' => 'cavité non trouvée',
         'send' => 'envoyer',
-        
+        'never' => 'jamais',
+        'unlock' => 'déverrouiller',
     ],
 
     'homepage' => [
@@ -119,6 +120,8 @@ return [
         'others' => 'autres',
         'bookmark-deleted' => 'Cavité favorite supprimée',
         'not-bookmark-owner' => 'vous n\'etes pas propriétaire de ce signet',
+        'roles' => 'roles',
+        'your_roles' => 'vous disposez des roles suivants:',
     ],
 
     'table_cave' => [
@@ -337,11 +340,30 @@ return [
         'import_data' => 'importation de données',
         'user_fetched' => 'Utilisateur récupéré',
         'edit_user' => 'Modification d\'un utilisateur',
+        'deleted_title' => 'Utilisateur supprimé',
+        'deleted_msg' => 'l\'utilisateur :username à été supprimé avec succès',
+        'save_title' => 'Utilisateur enregistré',
+        'save_msg' => 'l\'utilisateur :username à été enregistré avec succès',
+        'unlock_delete' => 'déverrouiller la suppression',
+        'no_expiry' => 'pas d\'expiration',
+        'change_pwd' => 'modification du mot de passe',
+        'role_saved' => ':username : les rôle sont enregistrés',
+        'choose_role_add' => 'Choisir les rôles à ajouter',
+        'choose_role_del' => 'Choisir des rôles à retirer',
+        'role_add' => 'ajouter le rôle',
+        'role_del' => 'retirer le rôle',
+        'users_mgmt' => 'Gestion des utilisateurs',
+        'import_results' => "Utilisateurs  importés avec succès.\n Resultats:\n  Lignes traité: :total\n  Ajouts: :added\n  mis à jour: :updated\n  Non traités: :failed",
         
         'table_users' => [
             'username' => 'nom d\'utilisateur',
             'firstname' => 'prénom',
             'lastname' => 'nom',
+            'email' => 'adresse email',
+            'caving_group' => 'club',
+            'password' => 'mot de passe',
+            'expires_at' => 'date d\'expiration',
+            'eula_accepted' => 'Charte d\'utilisation acceptée',
         ],
     ],
 

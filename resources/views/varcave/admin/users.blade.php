@@ -1,9 +1,14 @@
 @include('varcave.template.header')
 @include('varcave.template.navbar')
+<script>
+$(document).ready(function(){
+    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-import');
+});
+</script>
 <section class="section">
     <section class="hero">
         <div class="hero-body">
-            <p class="title">Gestion des utilisateurs !!!!!</p>
+            <p class="title">{{ __('varcave.users.users_mgmt')}}</p>
         </div>
     </section>
     <div class="tabs is-centered" data-bulma="tabs">
@@ -14,14 +19,6 @@
                         <i class="bi bi-people" aria-hidden="true"></i>
                     </span>
                     <span>{{ Str::ucfirst( __('varcave.users.users')) }}</span>
-                </a>
-            </li>
-            <li>
-                <a data-tabs-target="tab-roles">
-                    <span class="icon is-small">
-                        <i class="bi bi-person-gear" aria-hidden="true"></i>
-                    </span>
-                    <span>{{ Str::ucfirst( __('varcave.users.roles')) }}</span>
                 </a>
             </li>
             <li>
@@ -48,13 +45,8 @@
                 </div>
             </li>
             <li>
-                <div id="tab-roles" class="tab-content mx-2 mt-2">
-                    <x-varcave.users.tab-roles />
-                </div>
-            </li>
-            <li>
                 <div id="tab-import" class="tab-content mx-2 mt-2">
-                    <x-varcave.users.tab-import />
+                    <x-varcave.users.tab-import :expirationDate="$expirationDate"/>
                 </div>
             </li> 
         </ul>
