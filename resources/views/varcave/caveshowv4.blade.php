@@ -35,10 +35,14 @@
                 </span>
                 <span id="caveshow-action-setfav" class="icon is-icon-wrapper bi-xl"  >
                     @if(auth()->user()->isBookmark($caveObj->uuid))
-                        <a class="bi bi-star-fill"></a>
+                        <a class="bi bi-star-fill">
+                            <progress id="progress" class="progress is-small is-primary" max="100" style="display:none">15%</progress>
+                        </a>
                     @else
                         <a class="bi bi-star"></a>
+                        <progress id="progress" class="progress is-small is-primary" max="100" style="display:none">15%</progress>
                     @endif
+                    
                 </span>
                 <span id="caveshow-action-pdfdownload" class="icon is-icon-wrapper bi-xl">
                     <i class="bi bi-file-pdf-fill"></i>
