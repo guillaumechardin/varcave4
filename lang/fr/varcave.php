@@ -68,7 +68,9 @@ return [
         'caveDelFav' => 'cavité supprimée des favoris',
         'cave-entrance' => 'entrée n°:nbr',
         'coord_copied' => 'copié ds le presse papier',
-        'edited_by' => 'modifié par:'
+        'edited_by' => 'modifié par:',
+        'rescue_info' => 'informations secours',
+        'rescue_documents' => 'Documents info secours',
 
 
     ],

@@ -17,7 +17,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('expires_at')
+            $table->datetime('expires_at')
                 ->nullable()
                 ->after('eula_accepted_at');
         });

@@ -118,6 +118,16 @@
                         <span>{{ Str::ucfirst(__('varcave.caveshow.documents')) }}</span>
                     </a>
                 </li>
+                @can('showRescueInfo', $caveObj)
+                <li>
+                    <a data-tabs-target="tab-rescue-info">
+                        <span class="icon is-small">
+                            <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i>
+                        </span>
+                        <span>{{ Str::ucfirst(__('varcave.caveshow.rescue_info')) }}</span>
+                    </a>
+                </li>
+                @endcan
             @endcan    {{-- END OF `CAN' FEATURES --}}
         </ul>
     </div>
@@ -142,7 +152,7 @@
                 </li>
                 <li>
                     <div id="tab-cave-access" class="tab-content mx-2 mt-2">
-                            <x-varcave.caveshow.tab-access :caveAccess="$caveAccess['attributes']" :caveCoords="$caveData['coordinates']" :caveData="$caveData['attributes']" :crs="$crs" />
+                            <x-varcave.caveshow.tab-access :caveAccess="$caveAccess['attributes']" :caveCoords="$caveData['coordinates']" :caveData="$caveData['attributes']" :crs="$crs"/>
                     </div>
                 </li>
                 <li>
@@ -152,7 +162,6 @@
                 </li> 
                 <li>
                     <div id="tab-photos" class="tab-content mx-2 mt-2">
-                        <h1>photos</h1>
                             <x-varcave.caveshow.tab-photos :photos="$caveDescription['caveFiles']['photos'] ?? []"/>
                     </div>
                 </li>
@@ -163,29 +172,16 @@
                 </li>
                 <li>
                     <div id="tab-documents" class="tab-content mx-2 mt-2">
-                            <div class="gallery grid">
-                                @foreach ($caveData['caveFiles'] as $key => $docs)
-                                    @continue(in_array($key, ['cave_maps','photos']) )
-                                    @foreach($docs as $doc)
-                                        <div class="cell">
-                                            <a href="{{ asset('storage/'. $doc['file_path']) }}" class="glightbox" data-glightbox="gallery2">
-                                                <img src="{{ asset('storage/'.$doc['file_path']) }}" />
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                    
-                                @endforeach
-                            </div>
-                        <script>
-                            const lightbox_docs = GLightbox({
-                                selector: '.glightbox',
-                                touchNavigation: true,
-                                loop: true,
-                                zoomable: true
-                            });
-                        </script>
+                        <x-varcave.caveshow.tab-documents :caveDocsFiles="$caveDocsFiles" :caveDocsPhotos="$caveDocsPhotos"/>
                     </div>
                 </li>
+                @can('showRescueInfo', $caveObj)
+                <li>
+                    <div id="tab-rescue-info" class="tab-content mx-2 mt-2">
+                        <x-varcave.caveshow.tab-rescue :rescueFiles="$rescueFiles"/>
+                    </div>
+                </li>
+                @endcan
             @endcan  {{-- END OF CAN FEATURES --}} 
         </ul>
     </div>

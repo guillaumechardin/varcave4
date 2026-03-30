@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-cave-changehistory');
+    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-documents');
 
     let bookmarkProcessing = false;
     $('#caveshow-action-setfav a').on('click', function(e){

@@ -1,7 +1,7 @@
 @props([
     'photos',
 ])
-
+<h1>photos</h1>
 <div class="fixed-grid has-4-cols has-2-cols-mobile">
     <div class="grid">
         @foreach ($photos as  $photo)

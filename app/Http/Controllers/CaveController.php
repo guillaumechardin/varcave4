@@ -56,11 +56,41 @@ class CaveController extends Controller
 
         $cave->refresh()->load('changelog');
 
+        /**
+         * Isolate cave docs, resulting in 2 array
+         *   documents "photos"
+         *   documents that are not photos (pdf, docx, pdf,)
+         */
+
+        $caveDocsPhotos = array();
+        $caveDocsFiles = array();
+        foreach($caveData['caveFiles']  as $key => $docTypes){
+            if( in_array($key, ['cave_maps','photos']) ) continue; //skip specific documents type
+            
+            foreach($docTypes as $doc){
+                //$filename = storage_path('app/public/'.$doc['file_path']);
+                $photosFilesExt = ['jpg','jpeg','png','webp'];
+                $doc['extension'] = pathinfo($doc['file_path'], PATHINFO_EXTENSION);
+                if(in_array($doc['extension'], $photosFilesExt))
+                {
+                    $doc['is_img'] = true;
+                    $caveDocsFiles[] = $doc;
+                    
+                }else{
+                    $doc['is_img'] = false;
+                    $caveDocsFiles[] = $doc;
+                }
+            }
+        }
+
         return view('varcave.caveshowv4',
             [
                 'pageTitle' => $caveData['attributes']['data']['name'],
                 'caveObj' => $cave,
                 'caveData' => $caveData,
+                'caveDocsPhotos' => $caveDocsPhotos,
+                'caveDocsFiles' => $caveDocsFiles,
+                'rescueFiles' => $caveData['caveFiles']['rescue_files'] ?? [],
                 'caveBibliography' => $caveBibliography ?? null,
                 'caveDescription' => $caveDescription ?? null,
                 'caveAccess' => $caveAccess ?? null,
