@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('sort_order', 'category');
             
         });*/
-
+//change/shorten default site name
         DB::unprepared('
             UPDATE `settings` SET `category` = "config_email" where category = "configemail";
             UPDATE `settings` SET `category` = "google_captcha" where category = "Captcha";
@@ -28,6 +28,9 @@ return new class extends Migration
             UPDATE `settings` SET `type` = "boolean" where `type` = "bool";
             UPDATE `settings` SET `type` = "string" where `type` = "text";
             UPDATE `settings` SET `type` = "numeric" where `type` = "dec";
+            UPDATE `settings` SET `name` = "collect_cave_stats" where `name` = "stats";
+            UPDATE `settings` SET `name` = "displayed_stats" where `name` = "displayedStats";
+            UPDATE `settings` SET value = "Fichier des cavités du Var" WHERE name="websiteFullName";
         ');
 
         $queries = <<<EOF

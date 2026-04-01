@@ -14,4 +14,7 @@
             <div class="is-size-7 has-text-centered">{{ basename($doc['file_path']) }}</div> 
         </div> 
     @endforeach
+    @if(empty($rescueFiles))
+        <div class="has-background-info">{{ __('varcave.caveshow.no_rescue_data')}}</div>
+    @endif
 </div>

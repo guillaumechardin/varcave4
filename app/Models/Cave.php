@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\CaveStat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -33,6 +35,24 @@ class Cave extends Model
     public function caveFiles(): HasMany
     {
         return $this->hasMany(CaveFile::class);
+    }
+
+    //cave_stats relation
+    public function caveStat(): HasOne
+    {
+        return $this->hasOne(CaveStat::class);
+    }
+
+    public function getViewCount()
+    {   
+        Log::debug(__METHOD__ . ' called.');
+        $this->authenticatedViews = $this->caveStat()
+            ->sum('auth_views');
+
+        $this->anonymousViews = $this->caveStat()
+            ->sum('anon_views');
+        
+        $this->totalViews = $this->authenticatedViews + $this->anonymousViews;   
     }
 
     public static function getByUuid(string $uuid): ?Cave

@@ -71,6 +71,7 @@ return [
         'edited_by' => 'modifié par:',
         'rescue_info' => 'informations secours',
         'rescue_documents' => 'Documents info secours',
+        'no_rescue_data' => 'pas de données secours'
 
 
     ],
@@ -104,6 +105,7 @@ return [
         'site_settings' => 'paramètres du site',
         'support_info' => 'informations technique',
         'users_mgmt' => 'gestion des utilisateurs',
+        'statistics' => 'Statistiques cavités',
     ],
 
     /**
@@ -367,6 +369,14 @@ return [
             'expires_at' => 'date d\'expiration',
             'eula_accepted' => 'Charte d\'utilisation acceptée',
         ],
+    ],
+
+    'statistics' => [
+        'pageTitle' => 'Cavités les plus consultées',
+        'position' => 'Position',
+        'name' => 'Nom cavité',
+        'views' => 'Nombre de vues'
+
     ],
 
 ];

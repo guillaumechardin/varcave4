@@ -14,9 +14,19 @@ return new class extends Migration
     {
 		Schema::rename('users', 'varcave4_users');
         
+        DB::statement('ALTER TABLE caves_coordinates         DROP FOREIGN KEY fk_caves_coordinates_idCaves');
+        DB::statement('ALTER TABLE caves_files               DROP FOREIGN KEY fk_caves_files_idCaves');
+        DB::statement('ALTER TABLE list_coordinates_systems  DROP FOREIGN KEY fk_lists_coordsys');
+        DB::statement('ALTER TABLE list_coordinates_systems  DROP INDEX `fk_lists_coordsys`');
+        DB::statement('ALTER TABLE changelog                 DROP FOREIGN KEY indexidCaves');
+        
+
         Schema::table('caves', function (Blueprint $table) {
+            $table->unsignedBigInteger('indexid')->change();
             $table->renameColumn('indexid', 'id');
-             $table->renameColumn('guidv4', 'uuid');
+            $table->renameColumn('guidv4', 'uuid');
+            $table->uuid('uuid')->change();
+            $table->unique('uuid');
             //$table->tinyText('name');
             //$table->tinyText('addendum');
             $table->renameColumn('editDate', 'edit_date');
@@ -70,16 +80,26 @@ return new class extends Migration
         /*** CAVE COORDINATES  ***/
         Schema::rename('caves_coordinates', 'cave_coordinates');
         Schema::table('cave_coordinates', function (Blueprint $table) {
-             $table->renameColumn('caveid', 'cave_id');
-             $table->timestamps();
+            $table->renameColumn('caveid', 'cave_id')
+                ->constrained()
+                ->restrictOnDelete();;
+
+            $table->unsignedBigInteger('cave_id')->change();
+            $table->unsignedBigInteger('id')->change();
+            $table->timestamps();
         });
 
         /*** CAVE FILES  ***/
         Schema::rename('caves_files', 'cave_files');
         Schema::table('cave_files', function (Blueprint $table) {
-            //$table->renameColumn('indexid', 'id');
-             $table->renameColumn('caveid', 'cave_id');
-             $table->timestamps();
+            $table->renameColumn('caveid', 'cave_id')
+                ->constrained()
+                ->restrictOnDelete();
+
+            $table->unsignedBigInteger('cave_id')->change();
+            $table->unsignedBigInteger('id')->change();
+
+            $table->timestamps();
         });
 
         /*** ABOUT PAGE  ***/
@@ -93,7 +113,10 @@ return new class extends Migration
         Schema::rename('changelog', 'cave_changelogs');
         Schema::table('cave_changelogs', function (Blueprint $table) {
             $table->renameColumn('indexid', 'id');
-            $table->renameColumn('indexid_caves', 'cave_id');
+            $table->renameColumn('indexid_caves', 'cave_id')
+                ->constrained()
+                ->restrictOnDelete();
+
             $table->renameColumn('chgLogTxt', 'modification_note');
             $table->renameColumn('isVisible', 'is_visible');
             $table->timestamps();
@@ -111,9 +134,6 @@ return new class extends Migration
             $table->renameColumn('configItemMtime', 'legacy_mtime'); //will be migrate to updated_at
             $table->timestamps();
         });
-
-        //change/shorten default site name
-        DB::unprepared('UPDATE settings SET value = \'Fichier des cavités du Var\' WHERE name=\'websiteFullName\'') ;
 
         /*** END USER FIELDS  ***/
         Schema::table('end_user_fields', function (Blueprint $table) {
@@ -159,12 +179,15 @@ return new class extends Migration
 
 
         /*** LISTS  ***/
+        Schema::dropIfExists('cave_stats');
+        /*
         Schema::table('lists', function (Blueprint $table) {
             $table->renameColumn('indexid', 'id');
             $table->renameColumn('list_item', 'value');
             $table->renameColumn('list_name', 'list_key');
             $table->timestamps();
         });
+        */
 
         /*** LISTS  COORDINATES SYSTEMS***/
         Schema::rename('list_coordinates_systems', 'coordinate_system_handlers');

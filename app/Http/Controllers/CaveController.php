@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\Cave;
 use App\Models\CoordinateSystemHandler;
 use App\Models\Page;
+use App\Models\Setting;
+use App\Models\CaveStat;
 use App\Models\User;
 use App\Services\CavePdfService;
 use App\Services\CaveService;
@@ -37,7 +39,12 @@ class CaveController extends Controller
         {
             $csOptions = CaveService::ADD_ALL;
         }
-        $cs = new CaveService($cave, $request->user(), $csOptions);  
+        $cs = new CaveService($cave, $request->user(), $csOptions);
+
+        if(Setting::get('collect_cave_stats'))
+        {
+            CaveStat::updateStat($cave, $request->user());
+        }
 
 
         $pageMain = new Page()->setPageModelFor('display', 'main', true);
@@ -55,6 +62,7 @@ class CaveController extends Controller
         $crs = CoordinateSystemHandler::getAllCrs();
 
         $cave->refresh()->load('changelog');
+        $cave->getViewCount();
 
         /**
          * Isolate cave docs, resulting in 2 array
@@ -64,6 +72,10 @@ class CaveController extends Controller
 
         $caveDocsPhotos = array();
         $caveDocsFiles = array();
+        
+        //or unauthenticated user
+        if($caveData['caveFiles'] === null) $caveData['caveFiles'] = array();
+
         foreach($caveData['caveFiles']  as $key => $docTypes){
             if( in_array($key, ['cave_maps','photos']) ) continue; //skip specific documents type
             
@@ -261,9 +273,18 @@ class CaveController extends Controller
         $pdf = new CavePdfService($caveData);
 
         $pdf->render();
+    }
 
-
-        
+    public function viewStats(Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $stats = CaveStat::getGlobalStats();
+        return view('varcave.statistics',
+            [
+                "pageTitle" => __('varcave.statistics.title'),
+                "statistics" => $stats,
+            ]
+        );
     }
 
 }
