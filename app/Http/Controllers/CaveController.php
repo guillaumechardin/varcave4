@@ -281,7 +281,7 @@ class CaveController extends Controller
         $stats = CaveStat::getGlobalStats();
         return view('varcave.statistics',
             [
-                "pageTitle" => __('varcave.statistics.title'),
+                "pageTitle" => __('varcave.statistics.pageTitle'),
                 "statistics" => $stats,
             ]
         );
