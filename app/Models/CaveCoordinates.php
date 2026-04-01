@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\belongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class caveCoordinates extends Model
+class CaveCoordinates extends Model
 {
     use HasFactory;
 
