@@ -36,6 +36,10 @@
               </div>
             </div>
 
+            <div class="field has-text-centered mt-2">
+              <a href="{{ route('password.email') }}">{{__("varcave.login.forgotten")}}</a>
+            </div>
+
           </form>
         </div>
       </div>

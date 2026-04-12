@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
@@ -60,6 +61,15 @@ class User extends Authenticatable
     public function roles()
     {
         return $this->belongsToMany(Role::class);
+    }
+
+
+
+    public function sendPasswordResetNotification($token)
+    {
+        $ip = request()?->ip();
+        Log::info('Send password reset link to: ' . $this->email . ' from IP:' . $ip);
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     /**

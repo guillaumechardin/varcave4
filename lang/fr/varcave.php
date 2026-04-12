@@ -84,6 +84,7 @@ return [
         'loginFormUser'  => 'Nom d\'utilisateur',
         'loginFormPwd'  => 'Mot de passe',
         'login' => 'Se connecter',
+        'forgotten' => 'Mot de passe oublié.'
     ],
 
     /**
@@ -112,6 +113,7 @@ return [
      * My profile strings
      */
     'profile' => [
+        'hello_user' => 'Bonjour :firstname :lastname',
         'current-password' => 'Mot de passe actuel',
         'new-password' => 'Nouveau mot de passe',
         'confirm-password' => 'Confirmez le mot de passe',
@@ -126,6 +128,17 @@ return [
         'not-bookmark-owner' => 'vous n\'etes pas propriétaire de ce signet',
         'roles' => 'roles',
         'your_roles' => 'vous disposez des roles suivants:',
+    ],
+
+    /*
+     * Specific auth messages
+     */
+    'auth' => [
+        'user_email_fail' => 'Le couple :username/:email est invalide.',
+        'reset_password' => 'Réinitialisation du mot de passe',
+        'send_link' => 'Envoyer le lien de réinitialisation',
+        'to_login' => 'Retour à la page de connexion',
+        'change_pwd' => 'Changer le mot de passe',
     ],
 
     'table_cave' => [
