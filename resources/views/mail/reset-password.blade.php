@@ -51,7 +51,7 @@
     <div class="container">
         <div class="title-wrapper">
 		  <div style="display:flex; align-items:center;">
-			<img src="{{ $message->embed(storage_path('app/private/img/logo_cds83_100x100.png')) }}" style="max-height:100px; margin-right:15px;">
+			<img src="{{ $message->embed(public_path('img/logo_mail_pw-reset_100x100.png')) }}" style="max-height:100px; margin-right:15px;">
 			<h1 style="margin:0;">{{__('reset-password.subject')}}</h1>
 		  </div>
 		</div>
