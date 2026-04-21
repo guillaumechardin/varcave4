@@ -99,7 +99,7 @@ class User extends Authenticatable
             return empty(array_diff($roles, $userRoles));
         }
 
-        // at least one role present
+        // check if at least one role present or return false
         return !empty(array_intersect($roles, $userRoles));
     }
 
@@ -151,6 +151,11 @@ class User extends Authenticatable
         }
 
         $this->roles()->syncWithoutDetaching([$roleId]);
+    }
+
+    public function isAdmin()
+    {
+        return $this->hasRole('admin');
     }
 
 }

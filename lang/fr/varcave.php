@@ -107,6 +107,8 @@ return [
         'support_info' => 'informations technique',
         'users_mgmt' => 'gestion des utilisateurs',
         'statistics' => 'Statistiques cavités',
+        'resources' => 'ressources',
+        'files' => 'fichiers',
     ],
 
     /**
@@ -391,6 +393,21 @@ return [
         'views' => 'Nombre de vues'
 
     ],
+    'resources' => [
+        'page_title' => 'Fichiers / ressources',
+        'pageTitle' => 'Fichiers ressources',
+        'files' => 'Fichiers',
+    ],
+
+    'roles' => [
+            'admin' => 'Administrateur',
+            'users' => 'Utilisateurs du site',
+            'public' => '',
+            'cave-editor' => '',
+            'announcement-editor' => '',
+            'resource-admin' => '',
+
+        ]
 
 ];
 

@@ -38,14 +38,26 @@
           </a>
           <a class="navbar-item" href="{{ route('varcave.caves.statistics') }}">
             {{ Str::ucfirst( __('varcave.navbar.statistics')) }}
-          </a>
-          
-          
+          </a> 
         </div>
       </div>
-      {{-- END UNauthenticated navbar content --}}
 
-      {{-- admin navbar content --}}
+      {{-- RESOURCES MENU --}}
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          {{ Str::ucfirst( __('varcave.navbar.resources')) }}
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="{{ route('varcave.resources.file-show') }}">
+            {{ Str::ucfirst( __('varcave.navbar.files')) }}
+          </a>
+        </div>
+      </div>
+      {{-- END RESOURCES MENU --}}
+      {{-- END UNauthenticated NAVBAR CONTENT --}}
+
+      {{-- ADMIN NAVBAR CONTENT --}}
       @can('admin-access')
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link">
@@ -90,20 +102,20 @@
           </span>
         </a>
         <div class="navbar-dropdown is-right">
-          <a class="navbar-item">
-            <button class="button-select-theme" data-theme="light">
+          <a class="navbar-item button-select-theme" data-theme="light">
+            <button class="">
               <i class="bi bi-brightness-high-fill has-text-warning"></i>
               <span class="ml-3">{{__('varcave.navbar.modeLight')}}</span>
             </button>
           </a>
-          <a class="navbar-item">
-            <button class="button-select-theme" data-theme="dark">
+          <a class="navbar-item button-select-theme" data-theme="dark">
+            <button class="">
               <i class="bi bi-moon-stars-fill has-text-link"></i>
               <span class="ml-3">{{__('varcave.navbar.modeDark')}}</span>
             </button>
           </a>
-          <a class="navbar-item">
-            <button class="button-select-theme" data-theme="system">
+          <a class="navbar-item button-select-theme" data-theme="system">
+            <button class="">
               <i class="bi bi-circle-half has-text-light"></i>
               <span class="ml-3">{{__('varcave.navbar.modeSystem')}}</span>
             </button>

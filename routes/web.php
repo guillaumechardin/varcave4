@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CaveController;
+use App\Http\Controllers\FileResourcesController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
@@ -19,6 +20,8 @@ Route::group([], function (){
     Route::get('/vm', [CaveController::class, 'vm'])->name('varcave.vm');
     Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');
     Route::get('/statistics', [CaveController::class, 'viewStats'])->name('varcave.caves.statistics');
+    
+    Route::get('/resources', [FileResourcesController::class, 'show'])->name('varcave.resources.file-show');
     
     Route::get('/test', [CaveController::class, 'test'])->name('varcave.caves.test');
 });

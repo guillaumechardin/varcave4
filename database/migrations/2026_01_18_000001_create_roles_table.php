@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
 
@@ -31,10 +32,12 @@ return new class extends Migration
 
         $now = Carbon::now();
         DB::table('roles')->insert([
-            ['name' => 'user', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'admin', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'users', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'public', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'cave-editor', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'announcement-editor', 'created_at' => $now, 'updated_at' => $now],
+
         ]);
 
         DB::table('role_user')->insert([

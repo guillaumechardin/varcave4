@@ -144,6 +144,8 @@ $(document).ready(function($){
                 },
                 processing: true,
                 serverSide: true,
+                fixedHeader: true,
+                ordering: false,
                 language: {!!  $datatablesLang !!},
                 columns: [    
                     @foreach(array_keys($datatablesFields) as $key)
@@ -161,12 +163,7 @@ $(document).ready(function($){
                         }
                     },
                     top: null, //'info', 
-                    topEnd: {
-                        search: {
-
-                        },
-                    }, 
-                    
+                    topEnd: null, 
                     bottomStart: {
                         info: {
                             text: 'Affiche les cavités _START_ à _END_ sur un total de _TOTAL_ ',
