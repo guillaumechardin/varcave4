@@ -51,6 +51,7 @@
     
   </head>
   <body>
+    <div class="is-danger">({{ session('theme') }})</div>
   
   <x-varcave.modal/>
 

@@ -118,6 +118,13 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'theme' => ['required', 'string', 'in:dark,light,system'],
         ]);
+        if($request->user() === null)
+        {
+            session([ 'theme' => $validated['theme'] ]);
+            Log::debug('guest user set theme to session: '.$validated['theme']);
+            return true;
+        }
+
         if($validated['theme'] == "system")
         {
             $request->user()->theme = null;
@@ -125,7 +132,10 @@ class ProfileController extends Controller
         else {
             $request->user()->theme = $validated['theme'];
         }
+        Log::debug('user set theme to: ' . $request->user()->theme);
         
+        //prevent tests in header.blade to use a bad session var.
+        session([ 'theme' => null ]);
         $request->user()->save();
     }
 

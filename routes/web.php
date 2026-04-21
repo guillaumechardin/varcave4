@@ -23,7 +23,8 @@ Route::group([], function (){
     
     Route::get('/resources', [FileResourcesController::class, 'show'])->name('varcave.resources.file-show');
     
-    Route::get('/test', [CaveController::class, 'test'])->name('varcave.caves.test');
+    Route::post('/guest/theme', [ProfileController::class, 'storeTheme'])->name('varcave.guest.theme.store');
+    
 });
 
 
@@ -39,7 +40,7 @@ Route::middleware('auth')->group(function () {
     
     
     Route::delete('/profile/bookmark/{bookmark}', [ProfileController::class, 'deleteBookmark'])->name('varcave.profile.bookmark.delete');
-    
+
 });
 
 Route::middleware(['auth', 'can:admin-access'])->group(function () {

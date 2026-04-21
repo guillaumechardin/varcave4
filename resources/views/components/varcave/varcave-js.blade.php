@@ -405,7 +405,15 @@ function changeTheme(theme){
       $('html').removeAttr('data-theme');
     
   }
-  const url='{{ route('varcave.profile.theme.store') }}';
+  @auth
+    {{-- route for auth users --}}
+    const url='{{ route('varcave.profile.theme.store') }}';
+  @endauth
+  @guest
+    {{-- route for guest users users --}}
+    const url='{{ route('varcave.guest.theme.store') }}';
+  @endguest
+  
   var data = {
       theme: theme,
     };

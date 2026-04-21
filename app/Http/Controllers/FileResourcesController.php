@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FileResource;
 use App\Models\FileResourceGroup;
 use App\Models\Role;
 use Illuminate\Contracts\View\View;
