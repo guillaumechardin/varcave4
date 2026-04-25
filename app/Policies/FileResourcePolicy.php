@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\FileResource;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
@@ -19,10 +20,12 @@ class FileResourcePolicy
     public function getResource(?User $user, FileResource $res): bool
     {
         Log::debug(__METHOD__  . ' called.');
-        $accessRights = json_decode($res->access_rights);
+        $accessRights = $res->access_rights;
 
+        $frg = Role::where('name', 'public')->firstOrFail();
+        
         //accept public file download if file is set public
-        if(in_array('public', $accessRights)){ 
+        if(in_array($frg->id, $accessRights)){ 
             return true;
         }
 

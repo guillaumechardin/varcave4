@@ -125,7 +125,7 @@ function sendAjaxRequest(url, method, data, onSuccess, onError) {
             return true;
           }
           else if(onSuccess === 'redirect'){
-            Logger.info('redirect to given url');
+            Logger.info('redirect to given url:' + response.redirectUrl);
             window.location.replace(response.redirectUrl);
           }
           else{

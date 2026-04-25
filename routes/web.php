@@ -21,7 +21,9 @@ Route::group([], function (){
     Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');
     Route::get('/statistics', [CaveController::class, 'viewStats'])->name('varcave.caves.statistics');
     
-    Route::get('/resources', [FileResourcesController::class, 'show'])->name('varcave.resources.file-show');
+    Route::get('/resources/{fileResource}', [FileResourcesController::class, 'get'])->name('varcave.resource.download');
+    Route::get('/resources', [FileResourcesController::class, 'show'])->name('varcave.resource.show');
+
     
     Route::post('/guest/theme', [ProfileController::class, 'storeTheme'])->name('varcave.guest.theme.store');
     
@@ -37,9 +39,14 @@ Route::middleware('auth')->group(function () {
     
     Route::post('/profile/theme', [ProfileController::class, 'storeTheme'])->name('varcave.profile.theme.store');
     Route::post('/profile/bookmark', [ProfileController::class, 'storeBookmark'])->name('varcave.profile.bookmark.store');
+
+    Route::patch('/resource/{fileResource}', [FileResourcesController::class, 'update'])->name('varcave.resource.update');
+    Route::post('/resource', [FileResourcesController::class, 'store'])->name('varcave.resource.store');
+
     
     
     Route::delete('/profile/bookmark/{bookmark}', [ProfileController::class, 'deleteBookmark'])->name('varcave.profile.bookmark.delete');
+    Route::delete('/resource/{fileResource}', [FileResourcesController::class, 'destroy'])->name('varcave.resource.delete');
 
 });
 

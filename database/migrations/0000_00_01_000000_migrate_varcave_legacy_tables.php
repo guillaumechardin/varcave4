@@ -149,13 +149,8 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        /*** FILE RESSOURCES  ***/
-        Schema::rename('files_ressources', 'file_resources');
-        Schema::table('file_resources', function (Blueprint $table) {
-            $table->renameColumn('indexid', 'id');
-            $table->dropColumn('creation_date');
-            $table->timestamps();
-        });
+        /*** FILE RESOURCES  ***/
+        Schema::dropIfExists('files_ressources');
 
         /*** GROUPS  ***/
         Schema::rename('groups', 'varcave4_groups');

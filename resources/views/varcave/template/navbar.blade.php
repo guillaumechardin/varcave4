@@ -49,7 +49,7 @@
         </a>
 
         <div class="navbar-dropdown">
-          <a class="navbar-item" href="{{ route('varcave.resources.file-show') }}">
+          <a class="navbar-item" href="{{ route('varcave.resource.show') }}">
             {{ Str::ucfirst( __('varcave.navbar.files')) }}
           </a>
         </div>

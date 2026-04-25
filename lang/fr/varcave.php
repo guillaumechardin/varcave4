@@ -24,6 +24,7 @@ return [
         'no' => 'non',
         'action' => 'action',
         'chooseFile' => 'sélectionnez un fichier',
+        'choose_file_short' => 'Choisir fichier',
         'noFileSelected' => 'pas de fichier sélectionné',
         'save' => 'enregistrer',
         'unauthorized' => 'vous n\'êtes pas autorisé à accéder à cette page',
@@ -35,6 +36,9 @@ return [
         'send' => 'envoyer',
         'never' => 'jamais',
         'unlock' => 'déverrouiller',
+        'creation_date' => 'date de création',
+        'download' => 'télécharger',
+        
     ],
 
     'homepage' => [
@@ -334,8 +338,10 @@ return [
         'user_must_accept_EULA_hlp' => "Indique si les utilisateurs doivent valider le contrat de licence avant accès au site.",
         'user_login_tip_dsp' => "Exemple nom d'utilisateur connexion",
         'user_login_tip_hlp' => "Nom d'utilisateur indiqué en exemple lors d'une connexion au site",
-        'authorized_file_types_dsp' => "Types de fichiers autorisés",
-        'authorized_file_types_hlp' => "Liste des fichiers autorisés pour les téléversements",
+        'authorized_cave_file_type_dsp' => "Types de fichiers autorisés (cavités)",
+        'authorized_cave_file_type_hlp' => "Liste des fichiers autorisés pour les téléversements dans les fiches de cavités",
+        'authorized_resources_file_type_dsp' => "Types de fichiers autorisés (ressources)",
+        'authorized_resources_file_type_hlp' => "Liste des fichiers autorisés pour les téléversements dans dans la page de resources",
         'include_GPX_details_dsp' => "Inclure des détails au GPX",
         'include_GPX_details_hlp' => "Permet d'ajouter des informations complémetaires au fichier GPX (présence photos, profondeur, devellopement, etc)",
         
@@ -397,6 +403,19 @@ return [
         'page_title' => 'Fichiers / ressources',
         'pageTitle' => 'Fichiers ressources',
         'files' => 'Fichiers',
+        'add_file' => 'Ajouter un nouveau fichier',
+        'file_title' => 'Nom/titre du fichier',
+        'file_title_phldr' => 'Nom du  fichier à partager',
+        'create_group' => 'Créer nouveau groupe',
+        'new_group' => 'Nouveau groupe',
+        'new_group_phldr' => 'Créer nouveau groupe',
+        'use_existing_group' => 'Utiliser groupe existant',
+        'choose_group' => 'Choisir groupe',
+        'choose' => 'choisir',
+        'select_rights' => 'Définir les droits d\'accès',
+        'add_rem_group' => 'SELECT/REMOVE GROUP',
+        'description' => 'description',
+        'rights_mgt' => 'Gestion des droits',
     ],
 
     'roles' => [

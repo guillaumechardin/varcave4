@@ -51,23 +51,22 @@
     
   </head>
   <body>
-    <div class="is-danger">({{ session('theme') }})</div>
   
-  <x-varcave.modal/>
+    <x-varcave.modal/>
 
-  <x-varcave.message-box />
-  <!-- Progress Bar -->
-  <div id="modal-progress" class="modal">
-    <div class="modal-background"></div>
-    <div class="modal-content">
-      <div class="box">
-        <div id="progress-bar" >
-                <progress class="progress is-large is-info" value="" max="100"></progress>
+    <x-varcave.message-box />
+    <!-- Progress Bar -->
+    <div id="modal-progress" class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <div id="progress-bar" >
+                  <progress class="progress is-large is-info" value="" max="100"></progress>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <!-- End progress Bar -->
+    <!-- End progress Bar -->
 
   
   

@@ -30,6 +30,7 @@ return new class extends Migration
             UPDATE `settings` SET `type` = "numeric" where `type` = "dec";
             UPDATE `settings` SET `name` = "collect_cave_stats" where `name` = "stats";
             UPDATE `settings` SET `name` = "displayed_stats" where `name` = "displayedStats";
+            UPDATE `settings` SET `name` = "authorized_cave_file_type" where `name` = "authorized_file_types";
             UPDATE `settings` SET value = "Fichier des cavités du Var" WHERE name="websiteFullName";
         ');
 
@@ -52,6 +53,15 @@ return new class extends Migration
         
 EOF;
         DB::unprepared($queries);
+
+        DB::table('settings')->insert([
+            'name' =>'authorized_resources_file_type',
+            'value' => '["jpg","txt","pdf","xls","doc","docx","xlsx","png","zip","odt"]',
+            'type'  => 'json',
+            'category' => 'general',
+            'is_advanced_option' => 1,
+            'legacy_mtime' => 0,
+        ]);
 
         DB::table('settings')->insert([
             'name' =>'default_coordinates',
