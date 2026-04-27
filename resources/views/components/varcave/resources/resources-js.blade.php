@@ -23,7 +23,7 @@ $(document).ready(function(){
         Logger.debug('load file: '+fileName);
     });
 
-    $('#show-add-res-wrapper').on('click', function(e){
+    $('.show-add-res-wrapper').on('click', function(e){
         Logger.debug('add clicked');
         $('#add-res-wrapper').toggleClass('is-hidden is-active');
         $(this).find('span i').toggleClass('bi-chevron-down bi-chevron-up');

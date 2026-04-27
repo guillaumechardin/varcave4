@@ -1,7 +1,7 @@
 @include('varcave.template.header')
 @include('varcave.template.navbar')
 <section class="section">
-    <h1 class="title is-2">
+    <h1 class="title is-1">
     {{ __('varcave.resources.pageTitle') }}
     </h1>
 
@@ -13,11 +13,12 @@
     <div class="columns mt-4">
         <div class="column is-one-quarter">
             
-            <h1 id="show-add-res-wrapper" class="title is-4" >{{Str::upper(__('varcave.resources.add_file'))}}
+            <h1  class="title is-4 show-add-res-wrapper" >{{Str::upper(__('varcave.resources.add_file'))}}
                 <span class="icon is-small">
                     <i class="bi bi-chevron-down"></i>
                 </span>
             </h1>
+            <h1 class="show-add-res-wrapper subtitle  is-6" >{{__('varcave.resources.show_more')}}</h1>
             <div class="mt-1 has-background-primary" style="height: 2px; width: 19%;"></div>
             @if ($errors->upload->any())
                 <div class="notification is-danger mt-2">
@@ -174,7 +175,7 @@
 @foreach($fileResourceByGroup as $rg)
     <div class=" mt-6">
         <p>
-            <h1 class="title is-4">
+            <h1 class="title is-3">
                 {{ Str::upper($rg->name) }}
                 <div class="mt-1 has-background-primary" style="height: 2px; width: 19%;"></div>
             </h1>

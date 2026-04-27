@@ -416,6 +416,7 @@ return [
         'add_rem_group' => 'SELECT/REMOVE GROUP',
         'description' => 'description',
         'rights_mgt' => 'Gestion des droits',
+        'show_more' => 'Cliquez pour développer/ajouter',
     ],
 
     'roles' => [
