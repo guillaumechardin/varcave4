@@ -191,8 +191,8 @@ class ProfileController extends Controller
 
         Log::info('  EULA read status set to' . $validated['eula_accepted']);
 
-        return redirect()
-            ->route('varcave.profile')
+        return redirect(
+            route('varcave.profile') . '#tab-security')
             ->with('success', __('varcave.general.opSuccess'));
     }
 

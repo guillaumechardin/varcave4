@@ -339,8 +339,8 @@ return [
         'near_caves_max_number_hlp' => "Nombre de cavités affiché lors de la recherches des cavités alentour",
         
         
-        'user_must_accept_EULA_dsp' => "Acceptation EULA obligatoire",
-        'user_must_accept_EULA_hlp' => "Indique si les utilisateurs doivent valider le contrat de licence avant accès au site.",
+        'user_must_accept_EULA_dsp' => 'Acceptation Charte d\'Utilisation obligatoire',
+        'user_must_accept_EULA_hlp' => 'Indique si les utilisateurs doivent accepter la Charte d\'Utilisation avant accès au site.',
         'user_login_tip_dsp' => "Exemple nom d'utilisateur connexion",
         'user_login_tip_hlp' => "Nom d'utilisateur indiqué en exemple lors d'une connexion au site",
         'authorized_cave_file_type_dsp' => "Types de fichiers autorisés (cavités)",
@@ -351,7 +351,7 @@ return [
         'include_GPX_details_hlp' => "Permet d'ajouter des informations complémetaires au fichier GPX (présence photos, profondeur, devellopement, etc)",
         
         'featured_caves_delay_dsp' => 'Délai cavité mises en avant',
-        'featured_caves_delay_hlp' => 'Délai maximum de changement de la cavité mise en avant en page d\'accueil (en minutes)',
+        'featured_caves_delay_hlp' => 'Délai maximum de changement de la cavité mise en avant en page d\'accueil (en secondes)',
 
         'category_name' => [
             'captcha' => 'google CAPTCHA',

@@ -70,6 +70,14 @@
         this.switchTab($clickedLink);
       });
 
+      const hash = window.location.hash.replace('#', '');
+      Logger.debug('hash target: '+hash);
+      if (hash) {
+          const $target = $('#'+hash);
+          this.goToTabById( hash );
+          return //prevent code exec, #tab has precedence
+      }
+
       // Determine which tab to activate initially
       if (this.initialTab) {
         // Activate specified tab
