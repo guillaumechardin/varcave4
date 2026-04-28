@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -84,5 +85,32 @@ class Cave extends Model
         return $this->caveFiles()->where('file_type', $type)->exists();
     }
 
-    
+    /**
+     * Get random cave(s) with filter arg
+     * withFiles=['photos']
+     * 
+     */
+    public static function getRandomWithFile(int $maxResults = 1, string $filter = 'photos' )
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $hasFile = false;
+        while(!$hasFile)
+        {
+            //try to get cave
+            $id = rand(1, Cave::max('id'));
+            $_cave = Cave::find($id);
+
+            //there can be non-contiguous ids
+            if ($_cave != null)
+            {
+                $hasFile = $_cave->hasFileType($filter);
+            }
+            else{
+                continue;
+            }
+        }
+        $cave = $_cave->load('caveFiles');
+        return $cave;
+    }
+
 }

@@ -56,7 +56,7 @@
                       />
                     </figure>
                   </div>
-                  <a href="{{route('varcave.caves.show', $cavelog->cave->uuid)}}"><div class="media-content ">
+                  <a href="{{route('varcave.caves.show', $cavelog->cave->uuid)}}" target="_blank"><div class="media-content ">
                     <p class="title is-5 has-text-weight-semibold">{{ $cavelog->cave->name }}</p>
                     <p class="subtitle is-7">{{$cavelog->created_at}}</p>
                   </div></a>
@@ -71,7 +71,7 @@
           @endforeach
       </div>
       <div class="column">
-        <h3 class="title is-3">{{ __('varcave.homepage.randomCave')}}</h3>
+        <h3 class="title is-3">{{ __('varcave.homepage.featuredCave')}}</h3>
         <div class="card is-link">
           <div class="card-content">
             <div class="media">
@@ -83,19 +83,21 @@
                   />
                 </figure>
               </div>
-              <a href="{{ route('varcave.caves.show', ['uuid' => $randomCave->uuid] ) }}"><div class="media-content ">
-                <p class="title is-5 has-text-weight-semibold">{{ $randomCave->name }}</p>
-                <p class="subtitle is-7">{{$randomCave->created_at}}</p>
+              <a href="{{ route('varcave.caves.show', ['uuid' => $featuredCave->uuid] ) }}" target="_blank"><div class="media-content ">
+                <p class="title is-5 has-text-weight-semibold">{{ $featuredCave->name }}</p>
+                <p class="subtitle is-7">{{$featuredCave->created_at}}</p>
               </div></a>
             </div>
 
             <div class="content">
-              {{ \Illuminate\Support\Str::limit($randomCave->description, 160)}}
+              {{ \Illuminate\Support\Str::limit($featuredCave->description, 160)}}
               <div class="grid">
-                @foreach($caveFiles as $files)
-                <div class="cell">
-                  <img src="{{ Storage::url($files->file_path) }}"></img>
-                </div>  
+                @foreach($featuredCave->caveFiles as $files)
+                  @if($files['file_type'] == 'photos')
+                    <div class="cell">
+                      <img src="{{ Storage::url($files->file_path) }}"></img>
+                    </div>  
+                  @endif
                 @endforeach
                 
               </div>

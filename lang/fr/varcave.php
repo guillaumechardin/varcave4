@@ -47,7 +47,7 @@ return [
         'connectinfo' => 'Connectez vous accédez à plus d\'options',
         'homeAnnouncements' => 'Actualités',
         'lastCavesUpdates' => 'Dernières nouveautés',
-        'randomCave' => 'Une cavité au hasard',
+        'featuredCave' => 'Cavité du jour',
     ],
 
     /**
@@ -350,6 +350,9 @@ return [
         'include_GPX_details_dsp' => "Inclure des détails au GPX",
         'include_GPX_details_hlp' => "Permet d'ajouter des informations complémetaires au fichier GPX (présence photos, profondeur, devellopement, etc)",
         
+        'featured_caves_delay_dsp' => 'Délai cavité mises en avant',
+        'featured_caves_delay_hlp' => 'Délai maximum de changement de la cavité mise en avant en page d\'accueil (en minutes)',
+
         'category_name' => [
             'captcha' => 'google CAPTCHA',
             'general' => 'configuration générale',

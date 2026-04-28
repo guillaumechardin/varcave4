@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
  */
 Route::group([], function (){
     
-    Route::get('/', [HomepageController::class, 'displayHomepage'])->name('varcave.homepage');
+    Route::get('/', [HomepageController::class, 'show'])->name('varcave.homepage');
     
     //CAVES PUBLIC PAGES
     Route::get('/caves/search', [CaveController::class, 'search'])->name('varcave.caves.search');
