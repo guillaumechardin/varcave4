@@ -134,6 +134,11 @@ return [
         'not-bookmark-owner' => 'vous n\'etes pas propriétaire de ce signet',
         'roles' => 'roles',
         'your_roles' => 'vous disposez des roles suivants:',
+        'show_eula_title' => 'Charte d\'utilisation',
+        'accept_terms' => 'J\'accepte les terme de la charte',
+        'eula_was_accepted_at' => 'Vous avez accepté la charte d\'utilisation le:',
+        'eula_not_yet_accepted' => 'Vous n\'avez pas encore accepté la charte d\'utilisation.',
+
     ],
 
     /*

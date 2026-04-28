@@ -14,38 +14,44 @@ use Illuminate\Support\Facades\Route;
 Route::group([], function (){
     
     Route::get('/', [HomepageController::class, 'displayHomepage'])->name('varcave.homepage');
+    
+    //CAVES PUBLIC PAGES
     Route::get('/caves/search', [CaveController::class, 'search'])->name('varcave.caves.search');
     Route::get('/caves/{uuid}', [CaveController::class, 'show'])->whereUuid('uuid')->name('varcave.caves.show');
     Route::get('/caves', [CaveController::class, 'search'])->name('varcave.caves.all');
     Route::get('/vm', [CaveController::class, 'vm'])->name('varcave.vm');
     Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');
-    Route::get('/statistics', [CaveController::class, 'viewStats'])->name('varcave.caves.statistics');
     
+    
+    //PUBLIC RESOURCES PAGES
     Route::get('/resources/{fileResource}', [FileResourcesController::class, 'get'])->name('varcave.resource.download');
     Route::get('/resources', [FileResourcesController::class, 'show'])->name('varcave.resource.show');
 
-    
+    //SET THEME ROUTE
     Route::post('/guest/theme', [ProfileController::class, 'storeTheme'])->name('varcave.guest.theme.store');
+
+    Route::get('/statistics', [CaveController::class, 'viewStats'])->name('varcave.caves.statistics');
     
 });
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'show'])->name('varcave.profile');
+    
+    //CAVES
     Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->name('varcave.caves.gpx');
     Route::get('/caves/{uuid}/pdf', [CaveController::class, 'getPdf'])->whereUuid('uuid')->name('varcave.caves.pdf');
-
-    //Route::get('/users/{user}', [UserController::class, 'show'])->name('varcave.users.show');
     
+    //PROFILE
+    route::get('/profile/eula', [ProfileController::class, 'showEULA'])->name('varcave.profile.eula.show');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('varcave.profile');
+    Route::patch('/profile/eula', [ProfileController::class, 'updateEULA'])->name('varcave.profile.eula.update');
+    Route::delete('/profile/bookmark/{bookmark}', [ProfileController::class, 'deleteBookmark'])->name('varcave.profile.bookmark.delete');
     Route::post('/profile/theme', [ProfileController::class, 'storeTheme'])->name('varcave.profile.theme.store');
     Route::post('/profile/bookmark', [ProfileController::class, 'storeBookmark'])->name('varcave.profile.bookmark.store');
-
-    Route::patch('/resource/{fileResource}', [FileResourcesController::class, 'update'])->name('varcave.resource.update');
+    
+    //RESOURCES
     Route::post('/resource', [FileResourcesController::class, 'store'])->name('varcave.resource.store');
-
-    
-    
-    Route::delete('/profile/bookmark/{bookmark}', [ProfileController::class, 'deleteBookmark'])->name('varcave.profile.bookmark.delete');
+    Route::patch('/resource/{fileResource}', [FileResourcesController::class, 'update'])->name('varcave.resource.update');
     Route::delete('/resource/{fileResource}', [FileResourcesController::class, 'destroy'])->name('varcave.resource.delete');
 
 });
@@ -68,7 +74,7 @@ Route::middleware(['auth', 'can:admin-access'])->group(function () {
 });
 
 
-//sensitive pages
+//sensitive pages need pwd confirmation
 Route::middleware(['auth', 'password.confirm'])->group(function () {
     Route::get('/profile/update-password', [ProfileController::class, 'showUpdatePassword'])->name('varcave.profile.show-password-update');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('varcave.profile.password-update');

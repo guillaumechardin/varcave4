@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
-use App\Models\User;
-use App\Models\Cave;
-use App\Models\UserBookmark;
-use App\Helpers\VarcaveApiResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Str;
 use App\Actions\Fortify\UpdateUserPassword;
-use Illuminate\Validation\ValidationException;
+use App\Helpers\VarcaveApiResponse;
+use App\Models\Cave;
+use App\Models\User;
+use App\Models\UserBookmark;
+use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -156,6 +158,42 @@ class ProfileController extends Controller
                 Str::ucfirst(__('varcave.profile.bookmark-deleted')),
                 ['deletedBookmarkId' => $bookmarkID],
         );
+    }
+
+    public function showEULA(Request $request)
+    {
+       Log::debug(__METHOD__ . ' called.');
+       $eula_localized_content = DB::table('eula')
+        ->where('lang', App::getLocale())
+        ->first();
+
+        return view('varcave.profile.eula', [
+                'pageTitle' => Str::ucfirst(__('varcave.profile.show_eula_title')),
+                'user' => $request->user(),
+                'eula' => $eula_localized_content,
+            ]);
+
+    }
+
+    public function updateEULA(Request $request)
+    {
+        Log::info('User update EULA', ['username' => $request->user()->username]);
+          
+        $validated = $request->validate([
+            'eula_accepted' =>['required', 'boolean'],
+        ]);
+
+        //user update itself
+        $user = $request->user();
+        $user->eula_accepted = $validated['eula_accepted'];
+        $user->eula_accepted_at = now();
+        $user->save();
+
+        Log::info('  EULA read status set to' . $validated['eula_accepted']);
+
+        return redirect()
+            ->route('varcave.profile')
+            ->with('success', __('varcave.general.opSuccess'));
     }
 
 }
