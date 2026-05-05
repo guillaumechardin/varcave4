@@ -33,7 +33,7 @@ return new class extends Migration
         $now = Carbon::now();
         DB::table('roles')->insert([
             ['name' => 'admin', 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'users', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'user', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'public', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'cave-editor', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'announcement-editor', 'created_at' => $now, 'updated_at' => $now],

@@ -11,7 +11,7 @@
 <section class="section">
     <section class="hero">
         <div class="hero-body">
-            <p class="title">{{ $caveData['attributes']['data']['name']}}</p>
+            <p class="title">{{ $caveData['attributes']['data']['name'] }}</p>
         </div>
     </section>
 
@@ -45,7 +45,7 @@
                     
                 </span>
                 <span id="caveshow-action-pdfdownload" class="icon is-icon-wrapper bi-xl">
-                    <i class="bi bi-file-pdf-fill"></i>
+                    <a class="bi bi-file-pdf-fill" href="{{  route('varcave.caves.pdf', ['uuid' => $caveObj->uuid]) }}"></a>
                 </span>
                 <span class="mr-4">&nbsp;</span>
             @endcan                   {{-- END OF `CAN' FEATURES --}}

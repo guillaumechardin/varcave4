@@ -39,7 +39,8 @@ Route::middleware('auth')->group(function () {
     
     //CAVES
     Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->name('varcave.caves.gpx');
-    Route::get('/caves/{uuid}/pdf', [CaveController::class, 'getPdf'])->whereUuid('uuid')->name('varcave.caves.pdf');
+    //adapt throttle to acceptable values
+    Route::get('/caves/{uuid}/pdf', [CaveController::class, 'getPdf'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.pdf');
     
     //PROFILE
     route::get('/profile/eula', [ProfileController::class, 'showEULA'])->name('varcave.profile.eula.show');

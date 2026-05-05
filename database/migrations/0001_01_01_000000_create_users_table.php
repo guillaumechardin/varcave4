@@ -55,51 +55,24 @@ return new class extends Migration
         //inject simple users
         $users = [
             [
-                'username' => 'admin',
+                'username' => 'Admin',
                 'firstname' => 'Admin',
                 'lastname' => 'ADMIN',
                 'email' => 'admin@myhost.local',
-                'password' => Hash::make('speleo2025'),// -- speleo2025
+                'password' => Hash::make('speleo2025'),
                 'created_at' => now(),
                 'updated_at' => NULL,
             ],
 
             [
-                'username' => 'test',
-                'firstname' => 'Tes',
-                'lastname' => 'TEUR',
-                'email' => 'user@domain.com',
+                'username' => 'User',
+                'firstname' => 'User',
+                'lastname' => 'user',
+                'email' => 'user@myhost.local',
                 'password' => Hash::make('testeur25'),
                 'created_at' => now(),
                 'updated_at' => NULL,
             ],
-            [
-                'username' => 'fprevost',
-                'firstname' => 'Franck',
-                'lastname' => 'PREVOST',
-                'email' => 'franckprevo@gmail.C-omme',
-                'password' => 'NO_PASS',
-                'created_at' => now(),
-                'updated_at' => NULL,
-            ],
-            [
-                'username' => 'rfreminet',
-                'firstname' => 'Robert',
-                'lastname' => 'FREMINET',
-                'email' => 'robertisa83@yahoo.F-aire',
-                'password' => 'NO_PASS',
-                'created_at' => now(),
-                'updated_at' => NULL,
-            ],
-            [
-                'username' => 'hfessard',
-                'firstname' => 'Herrick',
-                'lastname' => 'FESSARD',
-                'email' => 'fessardherrick@free.F-aire',
-                'password' => 'NO_PASS',
-                'created_at' => now(),
-                'updated_at' => NULL,
-            ]
         ];
          foreach ($users as $user) {            
             DB::table('users')->insert($user);
