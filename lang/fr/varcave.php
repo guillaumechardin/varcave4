@@ -435,7 +435,12 @@ return [
             'announcement-editor' => '',
             'resource-admin' => '',
 
-        ]
-
+    ],
+    
+    'pdf' => [
+        'speleometry' => 'Spéléométrie',
+        'access' => 'Information d\'accès',
+    ],
+    
 ];
 

@@ -55,6 +55,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/resource/{fileResource}', [FileResourcesController::class, 'update'])->name('varcave.resource.update');
     Route::delete('/resource/{fileResource}', [FileResourcesController::class, 'destroy'])->name('varcave.resource.delete');
 
+    //STATIC MAP SERVICE
+    Route::get('/cave/{uuid}/staticmap', [StaticmapController::class, 'getmap'])->whereUuid('uuid')->name('varcave.staticmap');
+
 });
 
 Route::middleware(['auth', 'can:admin-access'])->group(function () {
