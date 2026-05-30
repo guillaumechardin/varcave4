@@ -77,11 +77,13 @@ class CaveService
     public const ADD_NEAR_CAVES         = 0x2;
     public const ADD_FILES              = 0x4;
     public const ADD_CHANGELOG          = 0x6;
+    public const ADD_ACCESS             = 0x7;
     //public const ADD_CAVEMAPS_ONLY      = 0x7; // to be implemented
     public const ADD_ALL        =     self::ADD_COORDS
                                     | self::ADD_NEAR_CAVES
                                     | self::ADD_FILES
-                                    | self::ADD_CHANGELOG;
+                                    | self::ADD_CHANGELOG
+                                    | self::ADD_ACCESS;
 
 
     public const OUTPUT_ARRAY = 0;
@@ -158,6 +160,11 @@ class CaveService
                     ];
                 }
             }
+
+            if($this->OPTIONS & self::ADD_ACCESS){
+                //add access_txt to results
+                $this->outputRaw['accessTxt'] = $this->cave->access_text;
+            }
         }
         //add changelog
         if($this->OPTIONS & self::ADD_CHANGELOG){
@@ -177,6 +184,7 @@ class CaveService
                 'data' => $this->caveViewReadyData, 
                 'model' => $page->getModelFields(),
             ],
+            'accessTxt' => $this->outputRaw['accessTxt'] ?? null,
             'coordinates' => $this->outputRaw['coordinates'] ?? null,
             'caveFiles' => $this->outputRaw['caveFiles'] ?? null,
             'changelogs' => $this->outputRaw['changelogs'] ?? null,

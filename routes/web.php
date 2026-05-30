@@ -5,6 +5,7 @@ use App\Http\Controllers\FileResourcesController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\StaticMapController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,9 +39,12 @@ Route::group([], function (){
 Route::middleware('auth')->group(function () {
     
     //CAVES
+    Route::get('/caves/{uuid}/map', [CaveController::class, 'getmap'])->whereUuid('uuid')->name('varcave.caves.gpx');
     Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->name('varcave.caves.gpx');
     //adapt throttle to acceptable values
     Route::get('/caves/{uuid}/pdf', [CaveController::class, 'getPdf'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.pdf');
+    Route::get('/pdftest', [CaveController::class, 'getPdftest'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.pdftest');
+    Route::get('/cave/{uuid}/staticmap', [CaveController::class, 'getStaticMap'])->whereUuid('uuid')->name('varcave.staticmap');
     
     //PROFILE
     route::get('/profile/eula', [ProfileController::class, 'showEULA'])->name('varcave.profile.eula.show');
@@ -55,8 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/resource/{fileResource}', [FileResourcesController::class, 'update'])->name('varcave.resource.update');
     Route::delete('/resource/{fileResource}', [FileResourcesController::class, 'destroy'])->name('varcave.resource.delete');
 
-    //STATIC MAP SERVICE
-    Route::get('/cave/{uuid}/staticmap', [StaticmapController::class, 'getmap'])->whereUuid('uuid')->name('varcave.staticmap');
+    
 
 });
 

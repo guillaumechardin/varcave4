@@ -2,21 +2,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cave;
+use App\Models\CaveStat;
 use App\Models\CoordinateSystemHandler;
 use App\Models\Page;
 use App\Models\Setting;
-use App\Models\CaveStat;
-use App\Models\User;
-use App\Services\CavePdfService;
 use App\Services\CaveService;
 use App\Services\GpxService;
-use App\ViewModels\CaveViewModel;
+use App\Services\StaticMapService;
+use App\Services\VarcaveTcpdf;
+use Com\Tecnick\Pdf\Tcpdf;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CaveController extends Controller
@@ -270,8 +268,16 @@ class CaveController extends Controller
         $pagePdf = new Page()->setPageModelFor('pdf', 'main', true);
         $caveData = $cs->renderForPage($pagePdf);
 
-        $pdf = new CavePdfService($caveData);
+        $pageBiblio = new Page()->setPageModelFor('pdf', 'bibliography');
+        $bib = $cs->renderForPage($pageBiblio);  
+        $caveData['bibliography'] = $bib['attributes'];
+        $caveData['raw'] = $cave->toArray();
 
+        $pdf = new VarcaveTcpdf(
+            'mm', // string $unit = 'mm',
+            true, // bool $isunicode = true,);
+        );
+        $pdf->build($caveData);
         $pdf->render();
     }
 
@@ -285,6 +291,115 @@ class CaveController extends Controller
                 "statistics" => $stats,
             ]
         );
+    }
+
+    public function getStaticMap(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        
+        $cave = Cave::getByUuid($uuid);
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        $map = new StaticMapService($request->user(), $cave);
+
+    }
+
+    public function getmap(string $uuid, Request $request )
+    {
+        $cave = Cave::getByuuid($uuid);
+        $cs = new CaveService($cave, $request->user(), CaveService::ADD_COORDS);
+        
+        $pageMain = new Page()->setPageModelFor('display', 'main', true);
+        $caveData = $cs->renderForPage($pageMain);
+        $sms = new StaticMapService($caveData);
+        $sms->getmap();
+
+    }
+
+    public function getPdftest(Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+
+        $fontPath = storage_path('app/private/pdf/fonts');
+		\define('K_PATH_FONTS', realpath($fontPath));
+
+        $pdf = new Tcpdf(
+            unit: 'mm',
+            isunicode: true,
+        );
+
+        $bfont = $pdf->font->insert($pdf->pon, 'casualmemories', '', 12);
+
+        $margin = 0;
+        $pdf->addPage([
+			'orientation' => 'p',
+			'format' => 'A4',
+			'margin' => [
+				'PT' => $margin,
+				'PR' => $margin,
+				'PB' => $margin,
+				'PL' => $margin,
+				'HB' => 0,
+				'FT' => 0,
+			],
+		]);
+
+        $pdf->page->addContent($pdf->getTextLine(
+				'This text is located at X:30, Y:30',
+				30,
+				30,
+				0, //justify text if this text width set. 0 = no justify
+		));
+
+
+        $LINE_STYLE_DEFAULT = [
+            'all'=> [
+                'lineWidth' => 0.4,
+                'lineCap' => 'butt',
+                'lineJoin' => 'miter',
+                'dashArray' => [],
+                'dashPhase' => 0,
+                'lineColor' => '#000000',
+                'fillColor' => '#e20ffe',
+                ]
+        ];
+
+        $pdf->addTextCell(
+			'This cell string is at x:30 y:30 and use document $margin: ' . $margin  ,// string $txt,
+			-1, // int $pid = -1,
+			30, // float $posx = 0,
+			30, // float $posy = 0,
+			40, // float $width = 0,
+			90, // float $height = 0,
+			0, // float $offset = 0,
+			0, // float $linespace = 0,
+			'T', // string $valign = 'T',
+			'L', // string $halign = '',
+			null, // ?array $cell = null,
+			$LINE_STYLE_DEFAULT, // array $styles = [],
+			0, // float $strokewidth = 0,
+			0, // float $wordspacing = 0,
+			0, // float $leading = 0,
+			0, // float $rise = 0,
+			true, // bool $jlast = true,
+			true, // bool $fill = true,
+			false, // bool $stroke = false,
+			false, //bool $underline = false,
+			false, //bool $linethrough = false,
+			false, //bool $overline = false,
+			false, // bool $clip = false,
+			true, // bool $drawcell = true,
+			'', // string $forcedir = '',
+			null, // ?array $shadow = null,
+		);
+
+
+        $rawpdf = $pdf->getOutPDFString();
+
+        $pdf->renderPDF(rawpdf: $rawpdf);
     }
 
 }

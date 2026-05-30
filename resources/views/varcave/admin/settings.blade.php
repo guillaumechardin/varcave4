@@ -82,6 +82,30 @@
                             </div>
                             @break;
 
+                            @case('list')
+                            <div class="field has-addons">
+                                <div class="select">
+                                    <select id="settingid-{{ $s->id }}">
+                                        @foreach($listsDetails['setting.'.$s->name] as $list)
+                                            <option 
+                                                value="{{ $list['value'] }}"
+                                                @selected($s->value == $list['value'])
+                                            >
+                                                {{$list['i18n_key']}}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-primary save-button" data-target-setting="{{ $s->id }}">
+                                        <span class="icon">
+                                            <i class="bi bi-floppy"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                            @break;
+
                             @default {{--  text input type --}}
                             <div class="field has-addons">
                                 @if ( strlen($s->value) < 60 ) {{-- short to medium text --}}

@@ -286,11 +286,9 @@ return [
         
         'ol_zoom_map_lvl_dsp' => "Niveau de zoom carte openLayers",
         'ol_zoom_map_lvl_hlp' => "Défini le niveau de zoom par défaut lors de l'utilisation des API openlayers",
-        'use_geoapi_dyn_map_img_pdf_dsp' => "Utiliser les geo API pour les PDF",
+        'use_geoapi_dyn_map_img_pdf_dsp' => "Utiliser les geo API pour les PDF *unused*",
         'use_geoapi_dyn_map_img_pdf_hlp' => "Utilise les geo API API pour afficher les croquis de repérage dans les PDF",
-        'select_geoapi_src_img_pdf_dsp' => "Choix source image accès PDF",
-        'select_geoapi_src_img_pdf_hlp' => "Sélection de la source pour les croquis d'accès affiché dans les PDF",
-        'static_map_service_url_dsp' => "Url static map",
+        'static_map_service_url_dsp' => "Url static map *unused*",
         'static_map_service_url_hlp' => "Url à utiliser pour la génération des static map",
         
         
@@ -329,7 +327,14 @@ return [
         
         'pdf_coords_system_dsp' => "Système de coordonnées dans les PDF",
         'pdf_coords_system_hlp' => "Système de coordonnées utilisé pour l'affichage des coordonnées dans les fichiers PDF",
-        
+        'pdf_map_zoom_dsp' => 'Niveau de zoom carte',
+        'pdf_map_zoom_hlp' => 'Niveau de zoom utilisé pour la génération des mini carte sur les PDF',
+        'pdf_map_cache_delay_dsp' => 'Delai d\'expiration cache mini cartes',
+        'pdf_map_cache_delay_hlp' => 'Delai d\'expiration du cache  des mini cartes (en heures) pour les PDF',
+        'pdf_file_cache_delay_dsp' => 'Delai d\'expiration cache fichiers PDF',
+        'pdf_file_cache_delay_hlp' => 'Delai d\'expiration de la mise en cache des fichiers PDF pour les fiches de cavité (en heures)',
+        'pdf_minimap_service_dsp'  => 'Choix source mini carte',
+        'pdf_minimap_service_hlp' => 'Sélection de la source pour les croquis d\'accès affiché dans les PDF',
         
         'legal_notice_dsp' => "Informations légales",
         'legal_notice_hlp' => "Affiche des informations dans le bloc d'informations légales en page d'accueil",
@@ -440,6 +445,7 @@ return [
     'pdf' => [
         'speleometry' => 'Spéléométrie',
         'access' => 'Information d\'accès',
+        'coordinates' => 'Coordonnées',
     ],
     
 ];
