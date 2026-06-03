@@ -271,7 +271,13 @@ class CaveController extends Controller
         $pageBiblio = new Page()->setPageModelFor('pdf', 'bibliography');
         $bib = $cs->renderForPage($pageBiblio);  
         $caveData['bibliography'] = $bib['attributes'];
+        
+        $pageDescription = new Page()->setPageModelFor('pdf', 'description');
+        $descr = $cs->renderForPage($pageDescription);
+        $caveData['description'] = $descr['attributes'];
+        
         $caveData['raw'] = $cave->toArray();
+        
 
         $pdf = new VarcaveTcpdf(
             'mm', // string $unit = 'mm',
@@ -331,7 +337,9 @@ class CaveController extends Controller
             isunicode: true,
         );
 
-        $bfont = $pdf->font->insert($pdf->pon, 'casualmemories', '', 12);
+        
+        $font = $pdf->font->insert($pdf->pon, 'casualmemories', '', 12);
+        $pdf->page->addContent($font['out']);
 
         $margin = 0;
         $pdf->addPage([
@@ -402,4 +410,90 @@ class CaveController extends Controller
         $pdf->renderPDF(rawpdf: $rawpdf);
     }
 
+    public function getPdftest2(Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+
+        $fontPath = storage_path('app/private/pdf/fonts');
+		\define('K_PATH_FONTS', realpath($fontPath));
+
+        $pdf = new Tcpdf(
+            unit: 'mm',
+            isunicode: true,
+        );
+
+        $font = $pdf->font->insert($pdf->pon, 'casualmemories', '', 10);
+        
+        $pdf->addPage([
+			'orientation' => 'P',
+			'format' => 'A4',
+			'margin' => [
+				'PL' => 10,
+                'PR' => 10,
+                'CT' => 10,
+                'CB' => 10,
+			],
+            'region' => [
+                [
+                    'RX' => 20,
+                    'RY' => 20,
+                    'RW' => 190,
+                    'RH' => 297.0 - 20,
+                ],
+            ],
+		]);
+
+        $pdf->page->addContent($font['out']);
+        $lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+        $str='';
+        for($i=0;$i<=50;$i++){
+            $str .= $lorem . "\n";
+        }
+
+        $LINE_STYLE_DEFAULT = [
+            'all'=> [
+                'lineWidth' => 0.4,
+                'lineCap' => 'butt',
+                'lineJoin' => 'miter',
+                'dashArray' => [],
+                'dashPhase' => 0,
+                'lineColor' => '#000000',
+                'fillColor' => '',
+                ]
+        ];
+
+        $pdf->addTextCell(
+			$str,// string $txt,
+			-1, // int $pid = -1,
+			0, // float $posx = 0,
+			0, // float $posy = 0,
+			0, // float $width = 0,
+			0, // float $height = 0,
+			0, // float $offset = 0,
+			0, // float $linespace = 0,
+			'T', // string $valign = 'T',
+			'L', // string $halign = '',
+			null, // ?array $cell = null,
+			$LINE_STYLE_DEFAULT, // array $styles = [],
+			0, // float $strokewidth = 0,
+			0, // float $wordspacing = 0,
+			0, // float $leading = 0,
+			0, // float $rise = 0,
+			true, // bool $jlast = true,
+			true, // bool $fill = true,
+			false, // bool $stroke = false,
+			false, //bool $underline = false,
+			false, //bool $linethrough = false,
+			false, //bool $overline = false,
+			false, // bool $clip = false,
+			true, // bool $drawcell = true,
+			'', // string $forcedir = '',
+			null, // ?array $shadow = null,
+		);
+
+
+        $rawpdf = $pdf->getOutPDFString();
+
+        $pdf->renderPDF(rawpdf: $rawpdf);
+    }
 }

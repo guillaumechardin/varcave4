@@ -147,33 +147,6 @@ class CavePdfService
 		}
     }
 
-	/**
-	* build default page template. Call disable enableDefaultPageContent before : with enableDefaultPageContent(false) 
-	*/
-	private function buildTemplate()
-	{
-		$tmpl = new VarcaveTcpdf();
-		$srcFont = $tmpl->font->insert($tmpl->pon, $this->pdf->getDefaultFont(), '', 14);
-
-		$tmpl->addPage();
-		$tmpl->page->addContent($srcFont['out']);
-		$this->addHeader($tmpl);
-
-		$this->pdf->setDefaultPageContent($tmpl->getOutPDFString()); //portrait
-
-		$tmplL = new VarcaveTcpdf();
-		$srcFont = $tmplL->font->insert($tmplL->pon, $this->pdf->getDefaultFont(), '', 14);
-
-		$tmplL->addPage([
-			'orientation' => 'L',
-			'format' => 'A4',
-		]);
-		$tmplL->page->addContent($srcFont['out']);
-		$this->addHeader($tmplL);
-
-		$this->pdf->setDefaultPageContent($tmplL->getOutPDFString(), 'L'); //landscape
-	}
-
 	private function addHeader(VarcaveTcpdf $pdf)
 	{
 		/**
