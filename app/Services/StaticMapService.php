@@ -385,7 +385,7 @@ class StaticMapService
             }
         } else {
             // no cache
-            $path = $this->mapsDir . '/'. $this->cavedata['attributes']['data']['uuid'] . '.png';
+            $path = $this->mapsDir . '/'. $this->cavedata['raw']['uuid'] . '.png';
             $isOlder = false;
             if(file_exists($path)){
                 $fileTime = filemtime($path);

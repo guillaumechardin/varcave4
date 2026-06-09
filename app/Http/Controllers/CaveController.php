@@ -265,7 +265,7 @@ class CaveController extends Controller
 
         $csOptions = CaveService::ADD_ALL;
         $cs = new CaveService($cave, $request->user(), $csOptions); 
-        $pagePdf = new Page()->setPageModelFor('pdf', 'main', true);
+        $pagePdf = new Page()->setPageModelFor('pdf', 'main');
         $caveData = $cs->renderForPage($pagePdf);
 
         $pageBiblio = new Page()->setPageModelFor('pdf', 'bibliography');
@@ -337,78 +337,87 @@ class CaveController extends Controller
             isunicode: true,
         );
 
+        $docPageOrientation = ['P', 'L', 'P', 'P', 'P',];
+        //$docPageOrientation = ['P', 'P', 'P', 'P', 'P',];
+        //$docPageOrientation = ['L', 'L', 'L', 'L', 'L',];
         
-        $font = $pdf->font->insert($pdf->pon, 'casualmemories', '', 12);
-        $pdf->page->addContent($font['out']);
-
         $margin = 0;
-        $pdf->addPage([
-			'orientation' => 'p',
-			'format' => 'A4',
-			'margin' => [
-				'PT' => $margin,
-				'PR' => $margin,
-				'PB' => $margin,
-				'PL' => $margin,
-				'HB' => 0,
-				'FT' => 0,
-			],
-		]);
 
-        $pdf->page->addContent($pdf->getTextLine(
-				'This text is located at X:30, Y:30',
-				30,
-				30,
-				0, //justify text if this text width set. 0 = no justify
-		));
+        foreach($docPageOrientation as $orientation){
+            $pdf->addPage([
+                'orientation' => $orientation,
+                'format' => 'A4',
+                'margin' => [
+                    'CT' => $margin,
+                    'PR' => $margin,
+                    'CB' => $margin,
+                    'PL' => $margin,
+                    'HB' => $margin,
+                    'FT' => $margin,
+                ],
+            ]);
+            $font = $pdf->font->insert($pdf->pon, 'casualmemories', '', 12);
+            $pdf->page->addContent($font['out']);
 
+		    $pdf->page->addContent($pdf->color->getPdfColor('black'));
 
-        $LINE_STYLE_DEFAULT = [
-            'all'=> [
-                'lineWidth' => 0.4,
-                'lineCap' => 'butt',
-                'lineJoin' => 'miter',
-                'dashArray' => [],
-                'dashPhase' => 0,
-                'lineColor' => '#000000',
-                'fillColor' => '#e20ffe',
-                ]
-        ];
+            $page = $pdf->page->getPage();
 
-        $pdf->addTextCell(
-			'This cell string is at x:30 y:30 and use document $margin: ' . $margin  ,// string $txt,
-			-1, // int $pid = -1,
-			30, // float $posx = 0,
-			30, // float $posy = 0,
-			40, // float $width = 0,
-			90, // float $height = 0,
-			0, // float $offset = 0,
-			0, // float $linespace = 0,
-			'T', // string $valign = 'T',
-			'L', // string $halign = '',
-			null, // ?array $cell = null,
-			$LINE_STYLE_DEFAULT, // array $styles = [],
-			0, // float $strokewidth = 0,
-			0, // float $wordspacing = 0,
-			0, // float $leading = 0,
-			0, // float $rise = 0,
-			true, // bool $jlast = true,
-			true, // bool $fill = true,
-			false, // bool $stroke = false,
-			false, //bool $underline = false,
-			false, //bool $linethrough = false,
-			false, //bool $overline = false,
-			false, // bool $clip = false,
-			true, // bool $drawcell = true,
-			'', // string $forcedir = '',
-			null, // ?array $shadow = null,
-		);
+            $pdf->page->addContent($pdf->getTextLine(
+                'This text is located at X:30, Y:30 on page ' . $page['pid'] +1,
+                30,
+                30,
+            ));
 
+             $pdf->page->addContent($pdf->getTextLine(
+                'This text is centered  on page :' . $page['pid'] +1,
+                $page['width'] /2,
+                $page['height'] /2,
+            ));
+
+            $pdf->page->addContent($pdf->getTextLine(
+                'Page dim: width/height:' . round($page['width'], 2) . '/'. round($page['height'],2),
+                $page['width'] /2 ,
+                $page['height'] /2 +20,
+            ));
+        }
+
+        $pages = $pdf->page->getPages();
+
+        $pageNumberPrefix  = 'Page';
+        $x = 120;
+        $y = 15;
+
+        foreach ($pages as $page) {
+            $totalPages = count($pages);
+            $pageNumber = $page['pid'] + 1;
+            $pdf->page->addContent($pdf->color->getPdfColor('red'), $page['pid']);
+            if($page['orientation'] == 'P'){
+                $pdf->addTextCellXY(
+                    $pageNumberPrefix . ' : ' . $pageNumber . ' / ' . $totalPages . " ($x, $y)",
+                    $page['pid'],
+                    $x,
+                    $y,
+                    drawcell:false,
+                );
+            }
+            else{
+                $pdf->addTextCellXY(
+                    $pageNumberPrefix . ' : ' . $pageNumber . ' / ' . $totalPages . " ($x, $y Orientation L)",
+                    $page['pid'],
+                    $x,
+                    $y,
+                    drawcell:false,
+                );
+            }
+
+        }
 
         $rawpdf = $pdf->getOutPDFString();
 
         $pdf->renderPDF(rawpdf: $rawpdf);
     }
+    
 
     public function getPdftest2(Request $request)
     {
@@ -436,9 +445,9 @@ class CaveController extends Controller
             'region' => [
                 [
                     'RX' => 20,
-                    'RY' => 20,
+                    'RY' => 50,
                     'RW' => 190,
-                    'RH' => 297.0 - 20,
+                    'RH' => 297.0 - 50,
                 ],
             ],
 		]);
@@ -462,8 +471,88 @@ class CaveController extends Controller
                 ]
         ];
 
+        $firstPage = $pdf->page->getPage();
+        $note = $pdf->getTextLine(
+				'page id:' . $firstPage['pid'],
+				10,
+				10,
+		);
+		$pdf->page->addContent($note);
+
+
         $pdf->addTextCell(
 			$str,// string $txt,
+			-1, // int $pid = -1,
+			0, // float $posx = 0,
+			0, // float $posy = 0,
+			0, // float $width = 0,
+			0, // float $height = 0,
+			0, // float $offset = 0,
+			0, // float $linespace = 0,
+			'T', // string $valign = 'T',
+			'L', // string $halign = '',
+			null, // ?array $cell = null,
+			$LINE_STYLE_DEFAULT, // array $styles = [],
+			0, // float $strokewidth = 0,
+			0, // float $wordspacing = 0,
+			0, // float $leading = 0,
+			0, // float $rise = 0,
+			true, // bool $jlast = true,
+			true, // bool $fill = true,
+			false, // bool $stroke = false,
+			false, //bool $underline = false,
+			false, //bool $linethrough = false,
+			false, //bool $overline = false,
+			false, // bool $clip = false,
+			true, // bool $drawcell = true,
+			'', // string $forcedir = '',
+			null, // ?array $shadow = null,
+		);
+
+        $lastPage = $pdf->page->getPageID();
+        $noteEnd1 = $pdf->getTextLine(
+            'page id:' . $lastPage,
+            10,
+            15,
+		);
+		$pdf->page->addContent($noteEnd1);
+
+        $lastPage2 = $pdf->page->getPage();
+        $noteEnd2 = $pdf->getTextLine(
+            'page id:' . $lastPage2['pid'],
+            10,
+            20,
+		);
+		$pdf->page->addContent($noteEnd2);
+
+        $plastPage3 = $pdf->page->getCurrentPage();
+        $noteEnd3 = $pdf->getTextLine(
+            'page id:' . $plastPage3['pid'],
+            10,
+            25,
+		);
+		$pdf->page->addContent($noteEnd3);
+
+
+        $noteEnd4 = $pdf->getTextLine(
+            'Manual added line (should be added at the end of document',
+            10,
+            30,
+		);
+		$pdf->page->addContent($noteEnd4);
+
+        $lastPage5 = $pdf->page->getPage();
+        $noteEnd5 = $pdf->getTextLine(
+            'page id:' . $lastPage5['pid'],
+            10,
+            35,
+		);
+		$pdf->page->addContent($noteEnd5);
+
+        $nwStr = 'Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar. The Big Oxmox advised her not to do so, because there were thousands of bad Commas, wild Question Marks and devious Semikoli, but the Little Blind Text didn’t listen. She packed her seven versalia, put her initial into the belt and made herself on the way. When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then .';
+
+        $pdf->addTextCell(
+			$nwStr,// string $txt,
 			-1, // int $pid = -1,
 			0, // float $posx = 0,
 			0, // float $posy = 0,

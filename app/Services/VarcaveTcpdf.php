@@ -614,7 +614,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
         $margins = $this->getMargins();
         $page = $this->page->getPage();
         $availableH = $page['height'] - $margins['top'] - $margins['bottom'] - $this->currentY;
-
+		
         //add bibliography on new page if available space < 50mm
 		if($availableH < 50){
             Log::debug('add new page for bibliography text. Not enough space available');
@@ -639,6 +639,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
                 ],*/
             ];
             $this->addPage($pageOpt);
+			$page = $this->page->getPage(); //force new page selection
         }
     
 		/** add section title **/
@@ -688,7 +689,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
                 'fillColor' => '#f5adff',
                 ]
         ];
-
         
         $override = [
             'fillColor' => '#f5adff',
@@ -736,6 +736,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 
         $margins = $this->getMargins();
         $page = $this->page->getPage();
+		
         $availableH = $page['height'] - $margins['top'] - $margins['bottom'] - $this->currentY;
 
         //add bibliography on new page if available space < 50mm
@@ -763,6 +764,10 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
             ];
             $this->addPage($pageOpt);
         }
+		
+		$pages = $this->page->getPages();
+
+		dd([$page, $pages]);
 
         // Add section header
 		$this->setFont(size: self::sizeTitle1);
@@ -782,8 +787,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 			'lineWidth' => 0.4,
 			'lineColor' => '#acacac',
 		]);
-
-		$page = $this->page->getPage();
+		
 		$margins = $this->getMargins();
 		$xPageEnd = floor($page['width'] - $margins['right']);
 		$xPageStart = 7;
@@ -792,13 +796,12 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$line = $this->graph->getLine($xPageStart, $this->currentY, $xPageEnd , $this->currentY, $lineStyle);
 		$this->page->addContent($line);
         
-        
         //add cave text description
 		$this->setFont(size: self::sizeM);
 		$this->setColor();
         $font = $this->font->getCurrentFont();
         
-        $descriptionTxt = $this->getTextCell(
+        /*$descriptionTxt = $this->getTextCell(
 			$this->cave['description']['data']['description'],
 			$this->margins['left'],
 			$this->currentY,
@@ -807,7 +810,18 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 			drawcell : true,
 			styles: ['all'=> $this->getLineStyle(['fillColor' => '#7cc044'])],
 		);
-		$this->page->addContent($descriptionTxt);
+		$this->page->addContent($descriptionTxt);*/
+
+		$this->addTextCellXY(
+			$this->cave['description']['data']['description'],
+			$page['pid'],
+			$this->margins['left'],
+			$this->currentY,
+			190,
+			halign: 'L',
+			drawcell : true,
+			styles: ['all'=> $this->getLineStyle(['fillColor' => '#7cc044'])],
+		);
 		$cellMetrics = $this->getLastCellBBox();
 		$this->currentY += $cellMetrics['h'] + $font['height'] * 0.7; //descent is neg
     }
@@ -905,6 +919,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
         $ret =[];
         foreach($pages as $page)
         {
+			$cPage = $this->setCurrentPage($page['pid']);
 			$this->beginArtifact();
             Log::debug('NEW PAGE: ' . $page['orientation']);
             //set font and lines styles
@@ -913,12 +928,12 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
                 'lineColor' => '#B5B5B5',//'gray',
             ]);
 
-            $xRight = $page['width'] - $page['margin']['PR'];
-            $yBottom = $page['height'] - $page['margin']['PB'];
+            $xRight = $page['width'] - $this->margins['left'];
+            $yBottom = $page['height'] - $this->margins['bottom'];
             
 
-            $this->setFont(size: self::sizeS, pid: $page['pid']);	
-            $this->setColor('red', $page['pid']);
+            $this->setFont(size: self::sizeS, pid: $cPage['pid']);	
+            $this->setColor('red', $cPage['pid']);
         
             /*
             * H lines
@@ -927,15 +942,15 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
             {
                 //if($page['orientation'] == 'L'){dd([$this->margins['left'],$y]);}
                 $line = $this->graph->getLine($this->margins['left'], $y, $xRight , $y, $gridStyle);
-                $this->page->addContent($line, $page['pid']);
+                $this->page->addContent($line, $cPage['pid']);
                 Log::debug('draw H grid x/y: '. $y . '/' . $this->margins['left']);
                 $lineNbr = $this->getTextLine(
-                    $y,
+                    $y ,
                     $this->margins['left'],
                     $y,
                     0,
                 );
-                $this->page->addContent($lineNbr, $page['pid']);
+                $this->page->addContent($lineNbr, $cPage['pid']);
             }
 
             /*
@@ -985,23 +1000,27 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
      *
      * @return void
      */
-	public function pagination(string $pageNumberPrefix = 'Page', float $x = 160.0, float $y = 10.0): void
+	public function pagination(string $pageNumberPrefix = 'Page', float $x = 160.0, float $y = 5.0): void
 	{
-		$this->setColor();
+		$this->setColor('black');
 		$this->setFont(size: self::sizeM);	
 
 		$pages = $this->page->getPages();
 		foreach ($pages as $page) {
+			$cPage = $this->setCurrentPage($page['pid']);
 			$totalPages = count($pages);
 			$pageNumber = $page['pid'] + 1; // $pid index starts at 0
-
-			$pageNbrTxt = $this->getTextLine(
-				$pageNumberPrefix . ' : ' . $pageNumber . ' / '. $totalPages . "($x, $y)",
+			
+			$pageNbrTxt = $pageNumberPrefix . ' : ' . $pageNumber  . ' / '. $totalPages;// . "($x, $y)";
+			$this->addTextCellXY(
+				$pageNbrTxt,
+				$cPage['pid'],
 				$x,
-			    $y,
-				0, //justify text if this text width set. 0 = no justify
+				$y,
+				width: 30,
+				drawcell: false,
 			);
-			$this->page->addContent($pageNbrTxt, $page['pid']);
+			//$this->page->addContent($pageNbrTxt, $page['pid']);
 		}
 	}
 
@@ -1127,11 +1146,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
      */
     public function defaultPageContent(int $pid = -1): string
     {       
-        if ($pid < 0) {
-            $pid = $this->page->getPageId();
-        }
-
-        $page = $this->page->getPage($pid);
+        $page = $this->page->getPage();
         Log::debug('page orientation:'. $page['orientation']);
     
         //to do : handle page orientation if needed
