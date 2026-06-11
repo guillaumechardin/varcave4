@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 namespace App\Services;
 
@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use phpDocumentor\Reflection\Types\ArrayKey;
+use RuntimeException;
 
 /**
  * Service to generate maps image from openstreet map data or equivalent
@@ -140,6 +141,21 @@ class StaticMapService
         $this->tileCacheBaseDir = $this->staticMapBaseDir . '/cache/tiles';
         $this->mapCacheBaseDir = $this->staticMapBaseDir . '/cache/maps';
         $this->mapsDir = $this->staticMapBaseDir . '/maps';
+        $folders = [
+            $this->tileCacheBaseDir,
+            $this->mapCacheBaseDir,
+            $this->mapsDir
+        ];
+        foreach($folders as $folder){
+            if (!file_exists($folder)){
+                Log::warning('Folder [' . $folder . '] inexistant, creating');
+                if (!mkdir($folder, 0755, true)) {
+                    $error = error_get_last();
+                    throw new RuntimeException('Unable to create directory :' . $folder);
+                    Log::error('Unable to create folder, check perms');
+                }
+            }
+        }
         $this->cavedata = $cave;
     }
 
