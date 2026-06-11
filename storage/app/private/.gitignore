@@ -1,2 +1,5 @@
 *
+!staticmap
+!proj4-crs-handler
+!pdf
 !.gitignore

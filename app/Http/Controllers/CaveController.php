@@ -14,6 +14,7 @@ use Com\Tecnick\Pdf\Tcpdf;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -278,10 +279,25 @@ class CaveController extends Controller
         
         $caveData['raw'] = $cave->toArray();
         
+        $privateStore = (string) realpath( config('filesystems.disks.local.root') );
+        $publicStore = (string) realpath( config('filesystems.disks.public.root') );
 
+        $fileOptions = [
+            'allowedPaths' => [
+                (string) realpath(sys_get_temp_dir()),
+                $privateStore,
+                $publicStore,
+            ],
+            /*
+            'markupAllowedPaths' => [   
+            ],
+            */
+        ];
+       
         $pdf = new VarcaveTcpdf(
             'mm', // string $unit = 'mm',
             true, // bool $isunicode = true,);
+            fileOptions: $fileOptions,
         );
         $pdf->build($caveData);
         $pdf->render();
@@ -525,7 +541,7 @@ class CaveController extends Controller
 		);
 		$pdf->page->addContent($noteEnd2);
 
-        $plastPage3 = $pdf->page->getCurrentPage();
+        $plastPage3 = $pdf->page->setCurrentPage();
         $noteEnd3 = $pdf->getTextLine(
             'page id:' . $plastPage3['pid'],
             10,
@@ -550,9 +566,9 @@ class CaveController extends Controller
 		$pdf->page->addContent($noteEnd5);
 
         $nwStr = 'Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar. The Big Oxmox advised her not to do so, because there were thousands of bad Commas, wild Question Marks and devious Semikoli, but the Little Blind Text didn’t listen. She packed her seven versalia, put her initial into the belt and made herself on the way. When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then .';
-
+        
         $pdf->addTextCell(
-			$nwStr,// string $txt,
+			$str,// string $txt,
 			-1, // int $pid = -1,
 			0, // float $posx = 0,
 			0, // float $posy = 0,

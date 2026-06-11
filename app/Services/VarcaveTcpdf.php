@@ -4,17 +4,15 @@ namespace App\Services;
 
 use App\Models\CoordinateSystemHandler;
 use App\Models\Setting;
-use Com\Tecnick\Pdf\Import\PageTemplateInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use proj4php\Point;
 use proj4php\Proj4php;
 use proj4php\Proj;
-use LogicException;
 use RuntimeException;
 
-define('K_PATH_FONTS', realpath('../storage\app\private\pdf\fonts'));
+define('K_PATH_FONTS', realpath('../storage/app/private/pdf/fonts'));
 
 class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 {
@@ -115,7 +113,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
      */
     public function build(array $cavedata){
         Log::debug('Start PDF initialization');
-        Log::debug('Tcpdf will look for fonts into subfolders: ' . K_PATH_FONTS);
+        Log::debug('Tcpdf will look for fonts into subfolders: [' . K_PATH_FONTS . ']');
         $this->cavedata = $cavedata['attributes']['data'];
 		$this->cave = $cavedata;
 
@@ -139,7 +137,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		//$this->buildTemplate();
         $this->enableDefaultPageContent(true);
 		
-		$page01 = $this->addPage([
+		$this->addPage([
 			'orientation' => 'P',
 			'format' => 'A4',
 			'margin' => [
@@ -150,14 +148,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 				'HB' => $this->margins['header_bottom'],
 				'FT' => $this->margins['footer_top'],
 			],
-            /*'region' => [
-                [
-                    'RX' => 20,
-                    'RY' => 20,
-                    'RW' => 210 - $this->margins['left'] -$this->margins['right'],
-                    'RH' => 297 - $this->margins['top'] - $this->margins['bottom'],
-                ],
-            ],*/
 		]);
 		
 		$this->addCaveTitle(); //to first page
@@ -170,7 +160,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		
 		
 		/**
-		 * Add debug grid into PDF
+		 * Add debug grid into PDF on debug mode
 		 */
 		if(env('APP_DEBUG', true))
 		{
@@ -295,7 +285,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 
 		//3 column sheet
 		$maxCol = 3;
-		$itemPerCol = round(count($this->cavedata) / $maxCol, 0, PHP_ROUND_HALF_UP);
 		
 		$xColPadding = 2;
 		$colDef = [];
@@ -334,8 +323,9 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->currentY += 5; //5mm margin bellow title
 		
 		$col  = $yOffset = 0;
-		//process cave data horizontally
+		//process cave data horizontally to match display cave page
 		//and change col numbering on each iteration
+		
 		foreach($this->cavedata as $key => $data){
 			if ($col >= $maxCol){
 				$col = 0;
@@ -354,10 +344,10 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 			//add item title
 			$this->setFont(size: self::sizeM);
 			$this->setColor('grey');
-			$str = $key . ':';
-			//$keyItemSize = $this->measureText($str);
+
+			$str = Str::upper($this->cave['attributes']['model'][$key]['i18n_label']) . ':';
 			$keyTxt = $this->getTextLine(
-				Str::upper($str),
+				$str,
 				$colDef['col'][$col]['xStart'],
 				$this->currentY,
 				0, //justification off
@@ -429,8 +419,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$x = 76;
 		$this->currentY += 5;
 
-
-
 		$coord = $this->getTextLine(
 				__('varcave.pdf.coordinates'). ': ',
 				$x,
@@ -439,7 +427,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->page->addContent($coord);
 		
 		$this->currentY += $font['descent'] * -2.5; //descent is neg
-
 
 		$coordSystemPref = Setting::get('pdf_coords_system');
 		$coordSystem = CoordinateSystemHandler::findOrFail($coordSystemPref);
@@ -513,6 +500,10 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 	 */
 	private function addCaveMap(): void
 	{
+		if(! isset($this->cave['caveFiles']['cave_maps'])){
+			Log::warning('no cave maps for this cave');
+			return;
+		}
         foreach($this->cave['caveFiles']['cave_maps'] as $file){
 			$caveMap = $file['file_path'];
 			//$this->addCaveMap($f, 12, 12);
@@ -529,7 +520,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
                 $orientation = 'L';
             }
 
-            
             $img = $this->image->add($caveMap);
 
             //try to do the best to fit image on page
@@ -551,20 +541,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
                 ],
             ]);
 
-            
-        /*///////////
-                $logoHeader = Storage::disk('local')->path($this->logoHeader); 
-                $img_00 = $this->image->add($logoHeader);
-            
-                //resize image to size
-                $width_mm  = 17;
-                $height_mm = 15;
-
-                $page = $this->page->getPage();
-
-                $img_00_out = $this->image->getSetImage($img_00, 4, 4, $width_mm, $height_mm, $page['height']);
-                $this->page->addContent($img_00_out);
-        ////////*/
             $page = $this->page->getPage();
             $margins = $this->getMargins();
 
@@ -626,17 +602,9 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
                     'PR' => $this->margins['right'],
                     'CB' => $this->margins['bottom'],
                     'PL' => $this->margins['left'],
-                    //'HB' => 15,//$this->margins['header_bottom'],
-                    //'FT' => 15,//$this->margins['footer_top'],
+                    'HB' => $this->margins['header_bottom'],
+                    'FT' => $this->margins['footer_top'],
                 ],
-                /*'region' => [
-                    [
-                        'RX' => 20,
-                        'RY' => 20,
-                        'RW' => 210 - $this->margins['left'] -$this->margins['right'],
-                        'RH' => 297 - $this->margins['top'] - $this->margins['bottom'],
-                    ],
-                ],*/
             ];
             $this->addPage($pageOpt);
 			$page = $this->page->getPage(); //force new page selection
@@ -646,7 +614,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->setFont(size: self::sizeTitle1);
 		$this->setColor();
 		$font = $this->font->getCurrentFont();
-		$this->currentY += $font['ascent'];
+		//$this->currentY += $font['ascent'];
 		
 		$sectionTitle = $this->getTextLine(
 				$this->cave['bibliography']['model']['bibliography']['i18n_label'],
@@ -676,52 +644,14 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$font = $this->font->getCurrentFont();
 		$this->currentY += $font['ascent'] * 0.1;
         
-		$str = implode("\n", $this->cave['bibliography']['data']['bibliography']);
+		$str = implode("\n", $this->cave['bibliography']['data']['bibliography']);        
 
-        $LINE_STYLE_DEFAULT = [
-            'all'=> [
-                'lineWidth' => 0.4,
-                'lineCap' => 'butt',
-                'lineJoin' => 'miter',
-                'dashArray' => [],
-                'dashPhase' => 0,
-                'lineColor' => '#000000',
-                'fillColor' => '#f5adff',
-                ]
-        ];
-        
-        $override = [
-            'fillColor' => '#f5adff',
-            //'lineColor' => '#000000'
-        ];
         $this->addTextCellXY(
-            $str,// string $txt,
-			-1, // int $pid = -1,
-			$this->margins['left'], // float $posx = 0,
-			$this->currentY, // float $posy = 0,
-            styles: $this->getLineStyle($override),
-			/*0, // float $width = 0,
-			0, // float $height = 0,
-			0, // float $offset = 0,
-			0, // float $linespace = 0,
-			'T', // string $valign = 'T',
-			'L', // string $halign = '',
-			null, // ?array $cell = null,
-			
-			0, // float $strokewidth = 0,
-			0, // float $wordspacing = 0,
-			0, // float $leading = 0,
-			0, // float $rise = 0,
-			true, // bool $jlast = true,
-			true, // bool $fill = true,
-			false, // bool $stroke = false,
-			false, //bool $underline = false,
-			false, //bool $linethrough = false,
-			false, //bool $overline = false,
-			false, // bool $clip = false,
-			true, // bool $drawcell = true,
-			'', // string $forcedir = '',
-			null, // ?array $shadow = null,*/
+            $str,
+			-1,
+			$this->margins['left'],
+			$this->currentY,
+			drawcell: false,
         );
 
         $cellMetrics = $this->getLastCellBBox();
@@ -750,38 +680,23 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
                     'PR' => $this->margins['right'],
                     'CB' => $this->margins['bottom'],
                     'PL' => $this->margins['left'],
-                    //'HB' => 15,//$this->margins['header_bottom'],
-                    //'FT' => 15,//$this->margins['footer_top'],
+                    'HB' => $this->margins['header_bottom'],
+                    'FT' => $this->margins['footer_top'],
                 ],
-                /*'region' => [
-                    [
-                        'RX' => 20,
-                        'RY' => 20,
-                        'RW' => 210 - $this->margins['left'] -$this->margins['right'],
-                        'RH' => 297 - $this->margins['top'] - $this->margins['bottom'],
-                    ],
-                ],*/
             ];
             $this->addPage($pageOpt);
         }
-		
-		$pages = $this->page->getPages();
-
-		dd([$page, $pages]);
 
         // Add section header
 		$this->setFont(size: self::sizeTitle1);
 		$this->setColor();
-        //$font = $this->font->getCurrentFont();
-        //$this->currentY += $font['ascent']; //V offset after prev section
 		
 		$description = $this->getTextLine(
-				__($this->cave['description']['model']['description']['i18n_label']),
+				$this->cave['description']['model']['description']['i18n_label'],
 				8,
 				$this->currentY,
 		);
 		$this->page->addContent($description);
-
 
 		$lineStyle = $this->getLineStyle([
 			'lineWidth' => 0.4,
@@ -800,17 +715,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->setFont(size: self::sizeM);
 		$this->setColor();
         $font = $this->font->getCurrentFont();
-        
-        /*$descriptionTxt = $this->getTextCell(
-			$this->cave['description']['data']['description'],
-			$this->margins['left'],
-			$this->currentY,
-			190,
-			halign: 'L',
-			drawcell : true,
-			styles: ['all'=> $this->getLineStyle(['fillColor' => '#7cc044'])],
-		);
-		$this->page->addContent($descriptionTxt);*/
 
 		$this->addTextCellXY(
 			$this->cave['description']['data']['description'],
@@ -819,67 +723,11 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 			$this->currentY,
 			190,
 			halign: 'L',
-			drawcell : true,
-			styles: ['all'=> $this->getLineStyle(['fillColor' => '#7cc044'])],
+			drawcell : false,
+			//styles: $this->getLineStyle(),
 		);
 		$cellMetrics = $this->getLastCellBBox();
 		$this->currentY += $cellMetrics['h'] + $font['height'] * 0.7; //descent is neg
-    }
-    
-
-    private function addmore()
-    {
-        $lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-        $str='';
-        for($i=0;$i<=150;$i++){
-            $str .= ' ' . $lorem . "\r\n";
-        }
-
-        $LINE_STYLE_DEFAULT = [
-            'all'=> [
-                'lineWidth' => 0.4,
-                'lineCap' => 'butt',
-                'lineJoin' => 'miter',
-                'dashArray' => [],
-                'dashPhase' => 0,
-                'lineColor' => '#000000',
-                'fillColor' => '#f5adff',
-                ]
-        ];
-
-        $font = $this->font->insert($this->pon, 'casualmemories', '', 9);
-        $this->setColor('#271aa1');
-        $this->page->addContent($font['out']);
-
-        $this->addTextCell(
-            $str,// string $txt,
-			-1, // int $pid = -1,
-			0, // float $posx = 0,
-			0, // float $posy = 0,
-			0, // float $width = 0,
-			0, // float $height = 0,
-			0, // float $offset = 0,
-			0, // float $linespace = 0,
-			'T', // string $valign = 'T',
-			'L', // string $halign = '',
-			null, // ?array $cell = null,
-			$this->getLineStyle(['fillColor' => '#f5adff']),
-			0, // float $strokewidth = 0,
-			0, // float $wordspacing = 0,
-			0, // float $leading = 0,
-			0, // float $rise = 0,
-			true, // bool $jlast = true,
-			true, // bool $fill = true,
-			false, // bool $stroke = false,
-			false, //bool $underline = false,
-			false, //bool $linethrough = false,
-			false, //bool $overline = false,
-			false, // bool $clip = false,
-			true, // bool $drawcell = true,
-			'', // string $forcedir = '',
-			null, // ?array $shadow = null,
-        );
-
     }
 
 	function pxToMm(int $px, int $dpi = 96): float
@@ -903,8 +751,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
             $this->downloadPDF($rawpdf);
         }
     }
-
-	
 
 	/**
 	 * Insert a grid on pages to help debug on pdf creation page units 
@@ -1146,11 +992,10 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
      */
     public function defaultPageContent(int $pid = -1): string
     {       
-        $page = $this->page->getPage();
-        Log::debug('page orientation:'. $page['orientation']);
-    
         //to do : handle page orientation if needed
         /*
+		$page = $this->page->getPage();
+		Log::debug('page orientation:'. $page['orientation']);
         if($page['orientation'] == 'P'){
             
         }else{
@@ -1161,7 +1006,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
         $this->addHeader();
 
         $font = $this->font->getCurrentFont();
-        $this->currentY = $this->margins['header_bottom'] + $font['descent'] * 1.3;
+        $this->currentY = $this->margins['header_bottom'] + $font['ascent'] *0.6 ;
 
         return '';
     }
