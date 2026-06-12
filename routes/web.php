@@ -37,14 +37,10 @@ Route::group([], function (){
 
 
 Route::middleware('auth')->group(function () {
-    
     //CAVES
-    Route::get('/caves/{uuid}/map', [CaveController::class, 'getmap'])->whereUuid('uuid')->name('varcave.caves.gpx');
-    Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->name('varcave.caves.gpx');
-    //adapt throttle to acceptable values
+    Route::get('/caves/{uuid}/map', [CaveController::class, 'getmap'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.map');
+    Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.gpx');
     Route::get('/caves/{uuid}/pdf', [CaveController::class, 'getPdf'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.pdf');
-    Route::get('/pdftest2', [CaveController::class, 'getPdftest2'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.pdftest2');
-    Route::get('/pdftest', [CaveController::class, 'getPdftest'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.pdftest');
     Route::get('/cave/{uuid}/staticmap', [CaveController::class, 'getStaticMap'])->whereUuid('uuid')->name('varcave.staticmap');
     
     //PROFILE
