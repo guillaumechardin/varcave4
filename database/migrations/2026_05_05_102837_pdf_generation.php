@@ -87,10 +87,17 @@ return new class extends Migration
             ['list_name' =>'setting.pdf_minimap_service', 'value' => 3, 'i18n_key' => 'opentopomap', 'sort_order' => 0, 'is_active' => 1],
             ['list_name' =>'setting.pdf_minimap_service', 'value' => 4, 'i18n_key' => 'outdoor', 'sort_order' => 0, 'is_active' => 1],
             //CRS 
-            ['list_name' =>'setting.pdf_coords_system', 'value' => 0, 'i18n_key' => 'varcave.coordinateSystems.wgs84', 'sort_order' => 0, 'is_active' => 1],
-            ['list_name' =>'setting.pdf_coords_system', 'value' => 1, 'i18n_key' => 'varcave.coordinateSystems.lambert3', 'sort_order' => 0, 'is_active' => 1],
-            ['list_name' =>'setting.pdf_coords_system', 'value' => 2, 'i18n_key' => 'varcave.coordinateSystems.lambert93', 'sort_order' => 0, 'is_active' => 1],
-            ['list_name' =>'setting.pdf_coords_system', 'value' => 3, 'i18n_key' => 'varcave.coordinateSystems.utm', 'sort_order' => 0, 'is_active' => 1],
+            ['list_name' =>'setting.pdf_coords_system', 'value' => 1, 'i18n_key' => 'varcave.coordinateSystems.wgs84', 'sort_order' => 0, 'is_active' => 1],
+            ['list_name' =>'setting.pdf_coords_system', 'value' => 2, 'i18n_key' => 'varcave.coordinateSystems.lambert3', 'sort_order' => 0, 'is_active' => 1],
+            ['list_name' =>'setting.pdf_coords_system', 'value' => 3, 'i18n_key' => 'varcave.coordinateSystems.lambert93', 'sort_order' => 0, 'is_active' => 1],
+            ['list_name' =>'setting.pdf_coords_system', 'value' => 4, 'i18n_key' => 'varcave.coordinateSystems.utm', 'sort_order' => 0, 'is_active' => 1],
+        ]);
+
+        DB::table('settings')
+            ->where('name', 'pdf_coords_system')
+            ->update([
+                'value' => 1,
+                'type'  => 'list',
         ]);
     }
 
