@@ -1,18 +1,25 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Helpers\VarcaveApiResponse;
 use App\Models\Cave;
+use App\Models\CaveCoordinates;
 use App\Models\CaveStat;
 use App\Models\CoordinateSystemHandler;
+use App\Models\Field;
 use App\Models\Page;
 use App\Models\Setting;
+use App\Models\User;
 use App\Services\CaveService;
 use App\Services\GpxService;
 use App\Services\StaticMapService;
 use App\Services\VarcaveTcpdf;
 use Com\Tecnick\Pdf\Tcpdf;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -46,7 +53,7 @@ class CaveController extends Controller
         }
 
 
-        $pageMain = new Page()->setPageModelFor('display', 'main', true);
+        $pageMain = new Page()->setPageModelFor('display', 'main', false);
         $caveData = $cs->renderForPage($pageMain);
 
         $pageDescription = new Page()->setPageModelFor('display', 'description');
@@ -329,7 +336,7 @@ class CaveController extends Controller
 
     }
 
-    public function getMap(string $uuid, Request $request )
+    public function getMap(string $uuid, Request $request)
     {
         $cave = Cave::getByuuid($uuid);
         $cs = new CaveService($cave, $request->user(), CaveService::ADD_COORDS);
@@ -340,5 +347,209 @@ class CaveController extends Controller
         $sms->getmap();
 
     }
-    
+
+    public function caveEditPage(string $uuid, Request $request)
+    {
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        //permit access to users with roles
+        Gate::authorize('updateCave', $cave);
+
+        $csOptions = 0;
+        $cs = new CaveService($cave, $request->user(), $csOptions);
+
+        $pageMain = new Page()->setPageModelFor('edit', 'main');
+        $caveData = $cs->renderForPage($pageMain);
+
+        $pageDescription = new Page()->setPageModelFor('edit', 'description');
+        $caveDescription = $cs->renderForPage($pageDescription);
+
+        $pageBiblio = new Page()->setPageModelFor('edit', 'bibliography');
+        $caveBibliography = $cs->renderForPage($pageBiblio);
+
+        //access and coords
+        $csOptions = CaveService::ADD_COORDS;
+        $cs = new CaveService($cave, $request->user(), $csOptions);
+        $pageAccess = new Page()->setPageModelFor('edit', 'access');
+        $caveAccess = $cs->renderForPage($pageAccess);
+
+        $crs = CoordinateSystemHandler::getAllCrs();
+
+        /**
+         * Isolate cave docs, resulting in 2 array
+         *   documents "photos"
+         *   documents that are not photos (pdf, docx, pdf,)
+         */
+
+        $caveDocsPhotos = array();
+        $caveDocsFiles = array();
+        
+        //or unauthenticated user
+        if($caveData['caveFiles'] === null) $caveData['caveFiles'] = array();
+
+        foreach($caveData['caveFiles']  as $key => $docTypes){
+            if( in_array($key, ['cave_maps','photos']) ) continue; //skip specific documents type
+            
+            foreach($docTypes as $doc){
+                //$filename = storage_path('app/public/'.$doc['file_path']);
+                $photosFilesExt = ['jpg','jpeg','png','webp'];
+                $doc['extension'] = pathinfo($doc['file_path'], PATHINFO_EXTENSION);
+                if(in_array($doc['extension'], $photosFilesExt))
+                {
+                    $doc['is_img'] = true;
+                    $caveDocsFiles[] = $doc;
+                    
+                }else{
+                    $doc['is_img'] = false;
+                    $caveDocsFiles[] = $doc;
+                }
+            }
+        }
+
+        return view('varcave.caveupdate',
+        [
+            'pageTitle' => $caveData['attributes']['data']['name'],
+            'caveObj' => $cave,
+            'caveData' => $caveData,
+            'caveDescription' => $caveDescription ?? '',
+            'caveDocsPhotos' => $caveDocsPhotos,
+            'caveDocsFiles' => $caveDocsFiles,
+            'rescueFiles' => $caveData['caveFiles']['rescue_files'] ?? [],
+            'caveBibliography' => $caveBibliography ?? null,
+            
+            'caveAccess' => $caveAccess ?? null,
+            'changelog' => $cave->changelog,
+        ]);
+
+    }
+
+    public function updateCaveData(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        //permit access to users with roles
+        Gate::authorize('updateCave', $cave); 
+
+        $type = Field::where('key', $request->fieldname)->sole('data_type');
+
+        //re-affect right validation rule
+        switch($type->data_type){
+            case 'bool':
+                $dataType = 'boolean';
+                break;
+            
+            case 'date':
+                $dataType = 'date';
+                break;
+            
+            case 'delimitedArray':
+                $dataType = 'json';
+                break;
+            
+            case 'number':
+                $dataType = 'numeric';
+                break;
+
+            default:
+                $dataType = 'string';
+        }
+        
+        $validated = $request->validate([
+            'fieldname' => ['required', 'string'],
+            'value' => ['required', $dataType],
+        ]);
+
+        Log::info('Update cave '. $validated['fieldname'] . ' with value: '. Str::limit($validated['value'], 15));
+        try
+        {
+            $f = $validated['fieldname'];
+            $cave->$f = $validated['value'];
+            $cave->save();
+
+            $success = 'success';
+            $title = Str::ucfirst(__('varcave.general.opSuccess'));
+            $msg = Str::ucfirst(__('varcave.settings.settings_saved'));
+            $data = $validated['value'];
+            $code = 200;
+        }
+        catch(Exception $e)
+        {
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = Str::ucfirst(__('varcave.cave_update.save_fail') . '(' . $e->getMessage() . ')');
+            $data = $cave->$f;
+            $code = 500;
+        }
+        
+        return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                $data,
+                $code,
+        );
+    }
+
+    public function addCoord(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        //permit access to users with roles
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'lon' => ['required_without_all:y,z', 'numeric'],
+            'lat' => ['required_without_all:x,z', 'numeric'],
+            'z' => ['required_without_all:x,y', 'numeric'],
+        ]);
+
+        CaveCoordinates::create([
+            'cave_id' => $cave->id,
+            'location' => DB::raw("POINT({$validated['lon']}, {$validated['lat']}) "),
+            'z' => $validated['z'],
+        ]);
+    }
+
+    public function destroyCoord(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        //permit access to users with roles
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'coord_id' => ['required', 'integer'],
+        ]);
+        
+        dd($cave);
+        $cave->load('caveCoordinates');
+
+        CaveCoordinates::destroy([
+            $validated['coord_id']
+        ]);
+    }
+
 }

@@ -57,4 +57,15 @@ class CavePolicy
         Log::debug('Has role failed');
         return false;
     }
+
+    public function updateCave(User $user, Cave $cave): bool
+    {
+        Log::debug(__METHOD__  . ' called.');
+        if($user->hasRole('cave-editor') || $user->hasRole('admin') ) {
+            Log::debug('Has role succeed');
+            return true;
+        }
+        Log::debug('Has role failed');
+        return false;
+    }
 }

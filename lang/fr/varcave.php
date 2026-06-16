@@ -76,8 +76,13 @@ return [
         'rescue_info' => 'informations secours',
         'rescue_documents' => 'Documents info secours',
         'no_rescue_data' => 'pas de données secours'
+    ],
 
-
+    /**
+     * Cave udpate page
+     */
+    'cave_update' => [
+        'save_fail' => 'Le paramètre n\'a pas été enregistré',
     ],
 
     /**
@@ -209,7 +214,7 @@ return [
             'none' => "NULLE",
             'low' => "FAIBLE",
             'medium' => "MOYENNE",
-            'hight' => "FORTE",
+            'high' => "FORTE",
         ],
 
     ],

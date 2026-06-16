@@ -36,7 +36,20 @@ class CaveCoordinates extends Model
         return $this->belongsTo(Cave::class);
     }
 
-    public static function get(string $caveUuid,  $user): ?Collection
+    /**
+     * Retrieves cave coordinates from the database and checks user permissions
+     * when the cave is geo-protected.
+     *
+     * If the user is not authorized to access the coordinates, an empty
+     * collection is returned. Returns null if an unexpected error occurs.
+     *
+     * @param string $caveUuid UUID of the cave.
+     * @param User|null $user User requesting the coordinates.
+     *
+     * @return Collection|null Collection of coordinates, an empty collection if
+     *                         access is denied, or null on failure.
+     */
+    public static function get(string $caveUuid, $user): ?Collection
     {
         $cave = Cave::getByUuid($caveUuid);
         if(!$cave)
@@ -51,7 +64,7 @@ class CaveCoordinates extends Model
             return collect([self::$emptyCoordsCollection]);
         }
         
-        $coords =  self::where('cave_id', $cave->id)->selectRaw('ST_X(location) as x, ST_Y(location) as y, z');
+        $coords =  self::where('cave_id', $cave->id)->selectRaw('id, ST_X(location) as x, ST_Y(location) as y, z');
  
         Log::debug(__METHOD__ . ' coordinates.', [
                         'caveId' => $cave->id,
@@ -66,15 +79,33 @@ class CaveCoordinates extends Model
         
         return $coords->get()->map(function ($c) {
             return [
+                'id'   => $c->id,
                 'x'    => (float) $c->x,
                 'y'    => (float) $c->y,
-                'lon' => (float) $c->x,
+                'lon'  => (float) $c->x,
                 'lat'  => (float) $c->y,
                 'z'    => (float) $c->z,
             ];
         });
     }
 
+    /**
+     * Finds caves located within a specified radius of the given origin coordinates.
+     *
+     * The search is limited to a maximum number of caves and can exclude a
+     * specific cave from the results. The returned collection may optionally
+     * be formatted for direct use as a JavaScript array.
+     *
+     * @param Collection $origin Origin coordinates used as the search center.
+     *                           Expected to contain the coordinate values required
+     *                           by the distance calculation logic.
+     * @param float $maxRadius Maximum search radius around the origin coordinates.
+     * @param int $maxCavesToFind Maximum number of caves to return.
+     * @param int $excludeCaveId Cave ID to exclude from the search results.
+     * @param bool $jsarray When true, formats the result for JavaScript array usage.
+     *
+     * @return Collection Collection of nearby caves matching the search criteria.
+     */
     public static function findNearCaves(
         Collection $origin,
         float $maxRadius,

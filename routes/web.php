@@ -38,9 +38,14 @@ Route::group([], function (){
 
 Route::middleware('auth')->group(function () {
     //CAVES
-    Route::get('/caves/{uuid}/map', [CaveController::class, 'getmap'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.map');
+    Route::get('/caves/{uuid}/map', [CaveController::class, 'getMap'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.map');
     Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.gpx');
     Route::get('/caves/{uuid}/pdf', [CaveController::class, 'getPdf'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.pdf');
+    Route::get('/caves/{uuid}/edit', [CaveController::class, 'caveEditPage'])->whereUuid('uuid')->name('varcave.caves.caveEditPage');
+    Route::post('/caves/{uuid}', [CaveController::class, 'updateCaveData'])->whereUuid('uuid')->name('varcave.caves.updateCaveData');
+    Route::post('/caves/{uuid}/coord', [CaveController::class, 'addCoord'])->whereUuid('uuid')->name('varcave.caves.coord.store');
+    Route::patch('/caves/{uuid}/coord', [CaveController::class, 'updateCoord'])->whereUuid('uuid')->name('varcave.caves.coord.update');
+    Route::delete('/caves/{uuid}/coord', [CaveController::class, 'destroyCoord'])->whereUuid('uuid')->name('varcave.caves.coord.destroy');
     Route::get('/cave/{uuid}/staticmap', [CaveController::class, 'getStaticMap'])->whereUuid('uuid')->name('varcave.staticmap');
     
     //PROFILE
@@ -55,9 +60,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/resource', [FileResourcesController::class, 'store'])->name('varcave.resource.store');
     Route::patch('/resource/{fileResource}', [FileResourcesController::class, 'update'])->name('varcave.resource.update');
     Route::delete('/resource/{fileResource}', [FileResourcesController::class, 'destroy'])->name('varcave.resource.delete');
-
-    
-
 });
 
 Route::middleware(['auth', 'can:admin-access'])->group(function () {

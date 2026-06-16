@@ -29,7 +29,13 @@
             &nbsp;
         </div>
         <div class="column is-background-info is-flex is-justify-content-flex-end ">
-            @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}}
+            @can('updateCave', $caveObj)     {{-- START OF `CAN' showAllCaveDetails FEATURES --}}
+                <span id="caveshow-action-update" class="icon is-icon-wrapper bi-xl">
+                    <a href="{{ route('varcave.caves.caveEditPage', ['uuid' => $caveObj->uuid ]) }}" class="bi bi-pencil-square"></a>
+                </span>
+            @endcan     {{-- END OF `CAN' showAllCaveDetails FEATURES --}}
+
+            @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' showAllCaveDetails FEATURES --}}
                 <span id="caveshow-action-gpxdownload" class="icon is-icon-wrapper bi-xl">
                     <a href="{{ route('varcave.caves.gpx', ['uuid' => $caveObj->uuid ]) }}" class="bi bi-geo-alt-fill"></a>
                 </span>
@@ -48,7 +54,7 @@
                     <a class="bi bi-file-pdf-fill" href="{{  route('varcave.caves.pdf', ['uuid' => $caveObj->uuid]) }}"></a>
                 </span>
                 <span class="mr-4">&nbsp;</span>
-            @endcan                   {{-- END OF `CAN' FEATURES --}}
+            @endcan     {{-- END OF `CAN' showAllCaveDetails FEATURES --}}
         </div>
     </div>
     <div id="caveshow-tabs" class="tabs is-toggle is-toggle-rounded is-centered is-fullwidth" data-bulma="tabs">
