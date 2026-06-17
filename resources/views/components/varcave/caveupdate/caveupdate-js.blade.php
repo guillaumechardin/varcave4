@@ -16,7 +16,7 @@ $(document).ready(function(){
             value: $(this).val(),
         };
 
-        $(this).after('<progress class="progress save-progress is-link"  max="100">FR saving</progress>');
+        $(this).after(progressBar);
         $(this).attr('disabled', true);
         $currentTarget = $(this);
         sendAjaxRequest(url, 'post', data, dataUpdateSucceed, dataUpdateFailed) ;
@@ -49,9 +49,32 @@ $(document).ready(function(){
             z:   z,
         };
 
-        console.log(data);
-        sendAjaxRequest(url, 'post', data, 'coordUpdateSucceed', 'coordUpdateFailed') ;
+        $('#add-coord-fields').after(progressBar);
+        
+        sendAjaxRequest(url, 'post', data, coordUpdateSucceed, coordUpdateFailed);
     });
+
+    /**
+     * Start deletion of coord set
+     */
+    $('body').on('click', '.del-coord-set', function(e){
+        Logger.debug('Start delete coord set');
+        
+        const coordId = $(this).data('coord-id');
+
+        $(this).closest('.coord-wrapper').after(progressBar);
+
+        var data = {
+            coord_id: coordId,
+        };
+
+        const url = "{{ route('varcave.caves.coord.destroy', ['uuid' => $uuid]) }}";
+        sendAjaxRequest(url, 'delete', data, coordDestroySucceed, coordDestroyFail);
+
+    });
+
+
+
 });
 
 function dataUpdateSucceed()
@@ -67,48 +90,83 @@ function dataUpdateFailed(response)
     $('.save-progress').remove();
 }
 
-const addCoord = `       <div id="add-coord-fields">
-                            <div class="field is-grouped is-grouped-multiline">
-                                <div class="field has-addons has-addons-left">
-                                    <p class="control">
-                                        <button class="button is-static has-background-info has-text-primary-invert">
-                                        Longitude
-                                        </button>
-                                    </p>
-                                    <p class="control">
-                                        <input class="input coord-lon" type="text" placeholder="3.255445 E or W" value="0">
-                                    </p> 
-                                </div>
-                                
-                                <div class="field has-addons has-addons-left">
-                                    <p class="control">
-                                        <button class="button is-static has-background-info has-text-primary-invert">
-                                        Latitude
-                                        </button>
-                                    </p>
-                                    <p class="control">
-                                        <input class="input coord-lat" type="text" placeholder="43.559845 N or S" value="0">
-                                    </p> 
-                                </div>
+function coordUpdateFailed(response)
+{
+    showMessageBox(response, "is-danger", 5000);
+    $('.save-progress').remove();
+    $('#add-coord-fields').remove();
+    
+}
 
-                                <div class="field has-addons has-addons-left">
-                                    <p class="control">
-                                        <button class="button is-static has-background-info has-text-primary-invert">
-                                        Elevation
-                                        </button>
-                                    </p>
-                                    <p class="control">
-                                        <input class="input coord-elev" type="text" placeholder="258.5" value="0">
-                                    </p> 
-                                </div>
+function coordUpdateSucceed(response)
+{
+    Logger.debug('Save coord complete');
+    showMessageBox(response);
+    $('.save-progress').remove();
+}
 
-                                <div class="field has-addons">
-                                    <p class="control">
-                                        <span class="icon is-icon-wrapper bi-md " >
-                                            <a id="add-coord-save" class="bi bi-floppy has-text-primary"></a>
-                                        </span> 
-                                    </p> 
-                                </div>
-                            </div>
-                        </div>
+function coordDestroySucceed(response)
+{
+    Logger.debug('delete coord complete');
+    showMessageBox(response);
+    $('.save-progress').remove();
+
+    //remove coord set
+    $('a[data-coord-id="' + response.data + '"]').closest('.coord-wrapper').hide(800);
+}
+
+function coordDestroyFail(response)
+{
+    Logger.debug('delete coord failed');
+    showMessageBox(response, "is-danger", 5000);
+    $('.save-progress').remove();
+}
+
+const progressBar = '<progress class="progress save-progress is-link"  max="100">FR saving</progress>';
+
+const addCoord = `
+    <div id="add-coord-fields">
+        <div class="field is-grouped is-grouped-multiline">
+            <div class="field has-addons has-addons-left">
+                <p class="control">
+                    <button class="button is-static has-background-info has-text-primary-invert">
+                    Longitude
+                    </button>
+                </p>
+                <p class="control">
+                    <input class="input coord-lon" type="text" placeholder="3.255445 E or W" value="0">
+                </p> 
+            </div>
+            
+            <div class="field has-addons has-addons-left">
+                <p class="control">
+                    <button class="button is-static has-background-info has-text-primary-invert">
+                    Latitude
+                    </button>
+                </p>
+                <p class="control">
+                    <input class="input coord-lat" type="text" placeholder="43.559845 N or S" value="0">
+                </p> 
+            </div>
+
+            <div class="field has-addons has-addons-left">
+                <p class="control">
+                    <button class="button is-static has-background-info has-text-primary-invert">
+                    Elevation
+                    </button>
+                </p>
+                <p class="control">
+                    <input class="input coord-elev" type="text" placeholder="258.5" value="0">
+                </p> 
+            </div>
+
+            <div class="field has-addons">
+                <p class="control">
+                    <span class="icon is-icon-wrapper bi-md " >
+                        <a id="add-coord-save" class="bi bi-floppy has-text-primary"></a>
+                    </span> 
+                </p> 
+            </div>
+        </div>
+    </div>
 `.trim();  

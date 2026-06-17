@@ -11,8 +11,9 @@
             </span>                
             <ul id="coord-list" class="my-2">
                 @foreach($caveAccess['coordinates']['entrance'] as $coord)
-                    <span>{{ __('varcave.caveshow.cave-entrance', ["nbr"=> $loop->index+1]) }}:</span>
+                    
                     <div class="coord-wrapper">
+                        <span>{{ __('varcave.caveshow.cave-entrance', ["nbr"=> $loop->index+1]) }}:</span>
                         <div class="field is-grouped is-grouped-multiline">
                             <div class="field has-addons has-addons-left">
                                 <p class="control">
@@ -49,8 +50,8 @@
 
                             <div class="field has-addons">
                                 <p class="control">
-                                    <span class="icon is-icon-wrapper bi-md " >
-                                        <a id="add-coord" class="bi bi-trash has-text-warning"></a>
+                                    <span class="icon is-icon-wrapper bi-md">
+                                        <a class="del-coord-set bi bi-trash has-text-warning" data-coord-id="{{ $coord['id'] }}" ></a>
                                     </span> 
                                 </p> 
                             </div>

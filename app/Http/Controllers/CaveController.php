@@ -515,16 +515,43 @@ class CaveController extends Controller
         Gate::authorize('updateCave', $cave);
 
         $validated = $request->validate([
-            'lon' => ['required_without_all:y,z', 'numeric'],
-            'lat' => ['required_without_all:x,z', 'numeric'],
-            'z' => ['required_without_all:x,y', 'numeric'],
+            'lon' => ['required', 'numeric'],
+            'lat' => ['required', 'numeric'],
+            'z' => ['required', 'numeric'],
         ]);
 
-        CaveCoordinates::create([
-            'cave_id' => $cave->id,
-            'location' => DB::raw("POINT({$validated['lon']}, {$validated['lat']}) "),
-            'z' => $validated['z'],
-        ]);
+        try{
+            CaveCoordinates::create([
+                'cave_id' => $cave->id,
+                'location' => DB::raw("POINT({$validated['lon']}, {$validated['lat']}) "),
+                'z' => $validated['z'],
+            ]);
+
+            $success = 'success';
+            $title = Str::ucfirst(__('varcave.general.opSuccess'));
+            $msg = Str::ucfirst(__('varcave.settings.settings_saved'));
+            $data = [$validated['lon'], $validated['lat'], $validated['z']  ];
+            $code = 200;
+            $redirect = route('varcave.caves.caveEditPage', ['uuid' => $cave->uuid]);
+        }
+        catch(Exception $e){
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = Str::ucfirst(__('varcave.cave_update.save_fail') . ' (' . $e->getMessage() . ')');
+            $data = '';
+            $code = 500;
+            $redirect= '';
+        }
+
+        return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                $data,
+                $code,
+                redirectUrl: $redirect,
+        );
+        
     }
 
     public function destroyCoord(string $uuid, Request $request)
@@ -544,12 +571,41 @@ class CaveController extends Controller
             'coord_id' => ['required', 'integer'],
         ]);
         
-        dd($cave);
-        $cave->load('caveCoordinates');
+       
+        $cave->load('caveCoordinates')->toArray();
+        $coords = $cave->caveCoordinates->toArray();
+
+        if (!in_array($validated['coord_id'], array_column($coords, 'id'))) {
+            Log::warning($validated['coord_id'] . ' is not in cave coord set');
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = ('Coord id: ' . $validated['coord_id'] . ' is not related to cave ' . $cave->uuid);
+
+            return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                data: $validated['coord_id'],
+                code: 400,
+            );
+        }
+
+        Log::info('Delete coord set: '. $validated['coord_id']);
 
         CaveCoordinates::destroy([
             $validated['coord_id']
         ]);
+
+        $success = 'success';
+        $title = Str::ucfirst(__('varcave.general.opSuccess'));
+        $msg = Str::ucfirst(__('varcave.cave_update.coord_deleted'));
+
+        return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                data: $validated['coord_id'],
+            );
     }
 
 }

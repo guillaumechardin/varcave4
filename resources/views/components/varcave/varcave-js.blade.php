@@ -209,14 +209,14 @@ function showModal(title, bodyContent, $el = $('#modal-message') ){
  *
  * @param {Object} response
  *   The response object. Can be:
- *   - a plain object containing `title`, `message`, `redirecturl`
+ *   - a plain object containing `title`, `message`, `redirectUrl`
  *   - a jQuery AJAX response containing `responseJSON`
  *      
  *   Each kind of response MUST contain an object of this type :
  *      {
  *        'title' : 'Displayed title',
  *        'message' : 'Main message body',
- *        'redirecturl : 'An optionnal redirection URL', 
+ *        'redirectUrl : 'An optionnal redirection URL', 
  *      }
  *
  * @param {String} statusClass
@@ -252,10 +252,10 @@ function showMessageBox(response, statusClass = "is-success", duration = 3000){
     $("#varcave-message-box").addClass('is-hidden');
   }, duration)
 
-  if(response.redirecturl && response.redirecturl !== ""){
+  if(response.redirectUrl && response.redirectUrl !== ""){
     Logger.info('Redirect to given URL')
     setTimeout(function(){
-      window.location.replace(response.redirecturl);
+      window.location.replace(response.redirectUrl);
     }, duration + 500)
   }
 }

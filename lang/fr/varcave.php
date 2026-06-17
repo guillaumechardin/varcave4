@@ -83,6 +83,7 @@ return [
      */
     'cave_update' => [
         'save_fail' => 'Le paramètre n\'a pas été enregistré',
+        'coord_deleted' => 'Les coordonnées ont été supprimées',
     ],
 
     /**
