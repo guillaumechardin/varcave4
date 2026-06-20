@@ -521,18 +521,22 @@ class CaveController extends Controller
         ]);
 
         try{
-            CaveCoordinates::create([
+            $coord = CaveCoordinates::create([
                 'cave_id' => $cave->id,
-                'location' => DB::raw("POINT({$validated['lon']}, {$validated['lat']}) "),
+                'location' => DB::raw("POINT({$validated['lon']}, {$validated['lat']})"),
                 'z' => $validated['z'],
             ]);
+            dd($coord);
+
+            $html = view('varcave.template.caveupdate.coord-wrapper', [
+                'coord' => $coord,
+            ])->render();
 
             $success = 'success';
             $title = Str::ucfirst(__('varcave.general.opSuccess'));
             $msg = Str::ucfirst(__('varcave.settings.settings_saved'));
-            $data = [$validated['lon'], $validated['lat'], $validated['z']  ];
+            $data = $html;
             $code = 200;
-            $redirect = route('varcave.caves.caveEditPage', ['uuid' => $cave->uuid]);
         }
         catch(Exception $e){
             $success = 'fail';
@@ -540,7 +544,6 @@ class CaveController extends Controller
             $msg = Str::ucfirst(__('varcave.cave_update.save_fail') . ' (' . $e->getMessage() . ')');
             $data = '';
             $code = 500;
-            $redirect= '';
         }
 
         return VarcaveApiResponse::ajaxResponse(
@@ -549,7 +552,6 @@ class CaveController extends Controller
                 $msg,
                 $data,
                 $code,
-                redirectUrl: $redirect,
         );
         
     }

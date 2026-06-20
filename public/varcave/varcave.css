@@ -81,4 +81,14 @@
     .is-icon-wrapper.bi-xl { width: 3rem; height: 3rem; font-size: 2.5rem; }
 }
 
+/**
+ * Set icon with a disabled sign
+ * not natively supported by bulma/html
+ */
+.is-icon-disabled
+{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 

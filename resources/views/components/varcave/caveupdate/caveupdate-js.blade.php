@@ -42,7 +42,7 @@ $(document).ready(function(){
         
         const lon = $('#add-coord-fields .coord-lon').val();
         const lat = $('#add-coord-fields .coord-lat').val();
-        const z = $('#add-coord-fields .coord-elev').val();
+        const z = $('#add-coord-fields .coord-z').val();
         var data = {
             lon: lon,
             lat: lat,
@@ -55,10 +55,31 @@ $(document).ready(function(){
     });
 
     /**
+     * Permit deletion of coordinates
+     */
+    $('body').on('change', '#permit-coord-set-delete', function(e){
+        //let isChecked = ;
+        if( $(this).prop('checked') ){
+            $('.del-coord-set').removeClass('is-icon-disabled');
+        }
+        else{
+            $('.del-coord-set').addClass('is-icon-disabled');
+        }
+        
+    });
+
+
+    /**
      * Start deletion of coord set
      */
     $('body').on('click', '.del-coord-set', function(e){
         Logger.debug('Start delete coord set');
+        if($(this).hasClass('is-icon-disabled'));
+        {
+            Logger.info('deletion not allowed');
+            e.preventDefault();
+            return false;
+        }
         
         const coordId = $(this).data('coord-id');
 
@@ -77,8 +98,9 @@ $(document).ready(function(){
 
 });
 
-function dataUpdateSucceed()
+function dataUpdateSucceed(response)
 {
+    showMessageBox(response);
     $('.save-progress').remove();
     $currentTarget.attr('disabled', false);
 }
@@ -102,6 +124,7 @@ function coordUpdateSucceed(response)
 {
     Logger.debug('Save coord complete');
     showMessageBox(response);
+    $('#coord-list').append(response.data);
     $('.save-progress').remove();
 }
 
@@ -134,7 +157,7 @@ const addCoord = `
                     </button>
                 </p>
                 <p class="control">
-                    <input class="input coord-lon" type="text" placeholder="3.255445 E or W" value="0">
+                    <input class="input coord-lon" type="text" placeholder="3.255445 E or W" value="0" tabindex="500001">
                 </p> 
             </div>
             
@@ -145,7 +168,7 @@ const addCoord = `
                     </button>
                 </p>
                 <p class="control">
-                    <input class="input coord-lat" type="text" placeholder="43.559845 N or S" value="0">
+                    <input class="input coord-lat" type="text" placeholder="43.559845 N or S" value="0" tabindex="500001">
                 </p> 
             </div>
 
@@ -156,7 +179,7 @@ const addCoord = `
                     </button>
                 </p>
                 <p class="control">
-                    <input class="input coord-elev" type="text" placeholder="258.5" value="0">
+                    <input class="input coord-z" type="text" placeholder="258.5" value="0" tabindex="500002">
                 </p> 
             </div>
 
