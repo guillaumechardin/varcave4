@@ -1,8 +1,10 @@
 @props([
-    'caveDocsPhotos',
-    'caveDocsFiles',
+    'caveFiles',
 ])
 
+{{ dd($caveFiles)}}
+
+{{-- 
 <div class="gallery grid">
     @foreach ($caveDocsFiles as $key => $doc)
        @if($doc['is_img'] )
@@ -32,3 +34,4 @@
         zoomable: true
     });
 </script>
+ --}}

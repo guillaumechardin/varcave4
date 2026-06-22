@@ -36,7 +36,7 @@
                     <span class="icon is-small">
                         <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i>
                     </span>
-                    <span>{{ Str::ucfirst(__('varcave.caveshow.files')) }}</span>
+                    <span>{{ Str::ucfirst(__('varcave.cave_update.files')) }}</span>
                 </a>
             </li>
             <li>
@@ -66,8 +66,7 @@
             </li>
             <li>
                 <div id="tab-cave-files" class="tab-content mx-2 mt-2">
-                    no files
-                        {{-- <x-varcave.caveupdate.tab-files :caveAccess="$caveAccess['attributes']" :caveCoords="$caveData['coordinates']" :caveData="$caveData['attributes']" :crs="$crs"/> --}}
+                        <x-varcave.caveupdate.tab-files :caveFiles="$caveFiles"/>
                 </div>
             </li>
             

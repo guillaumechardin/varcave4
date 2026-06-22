@@ -360,7 +360,7 @@ class CaveController extends Controller
         //permit access to users with roles
         Gate::authorize('updateCave', $cave);
 
-        $csOptions = 0;
+        $csOptions = CaveService::ADD_FILES;
         $cs = new CaveService($cave, $request->user(), $csOptions);
 
         $pageMain = new Page()->setPageModelFor('edit', 'main');
@@ -378,38 +378,9 @@ class CaveController extends Controller
         $pageAccess = new Page()->setPageModelFor('edit', 'access');
         $caveAccess = $cs->renderForPage($pageAccess);
 
-        $crs = CoordinateSystemHandler::getAllCrs();
 
-        /**
-         * Isolate cave docs, resulting in 2 array
-         *   documents "photos"
-         *   documents that are not photos (pdf, docx, pdf,)
-         */
-
-        $caveDocsPhotos = array();
-        $caveDocsFiles = array();
-        
-        //or unauthenticated user
+       //Files, if no files default to empty array
         if($caveData['caveFiles'] === null) $caveData['caveFiles'] = array();
-
-        foreach($caveData['caveFiles']  as $key => $docTypes){
-            if( in_array($key, ['cave_maps','photos']) ) continue; //skip specific documents type
-            
-            foreach($docTypes as $doc){
-                //$filename = storage_path('app/public/'.$doc['file_path']);
-                $photosFilesExt = ['jpg','jpeg','png','webp'];
-                $doc['extension'] = pathinfo($doc['file_path'], PATHINFO_EXTENSION);
-                if(in_array($doc['extension'], $photosFilesExt))
-                {
-                    $doc['is_img'] = true;
-                    $caveDocsFiles[] = $doc;
-                    
-                }else{
-                    $doc['is_img'] = false;
-                    $caveDocsFiles[] = $doc;
-                }
-            }
-        }
 
         return view('varcave.caveupdate',
         [
@@ -417,13 +388,10 @@ class CaveController extends Controller
             'caveObj' => $cave,
             'caveData' => $caveData,
             'caveDescription' => $caveDescription ?? '',
-            'caveDocsPhotos' => $caveDocsPhotos,
-            'caveDocsFiles' => $caveDocsFiles,
-            'rescueFiles' => $caveData['caveFiles']['rescue_files'] ?? [],
-            'caveBibliography' => $caveBibliography ?? null,
-            
             'caveAccess' => $caveAccess ?? null,
-            'changelog' => $cave->changelog,
+            'caveBibliography' => $caveBibliography ?? null,
+            'caveFiles' => $caveData['caveFiles'],
+            //'changelog' => $cave->changelog,
         ]);
 
     }
@@ -526,10 +494,23 @@ class CaveController extends Controller
                 'location' => DB::raw("POINT({$validated['lon']}, {$validated['lat']})"),
                 'z' => $validated['z'],
             ]);
-            dd($coord);
+
+            $cs = new CaveService($cave, $request->user(), CaveService::ADD_COORDS);
+            //instanciate "dummy" page since only coords are needed in this case
+            $pageMain = new Page()->setPageModelFor('display', 'main', false);
+            $caveData = $cs->renderForPage($pageMain);
+
+            $result = null;
+            foreach ($caveData['coordinates']['entrance'] as $entrance) {
+                if ($entrance['id'] == $coord['id']) {
+                    $result = $entrance;
+                    break;
+                }
+            }
 
             $html = view('varcave.template.caveupdate.coord-wrapper', [
-                'coord' => $coord,
+                'coord' => $result,
+                'loopNbr' => false,
             ])->render();
 
             $success = 'success';
@@ -594,20 +575,29 @@ class CaveController extends Controller
 
         Log::info('Delete coord set: '. $validated['coord_id']);
 
-        CaveCoordinates::destroy([
-            $validated['coord_id']
-        ]);
+        try{
+            CaveCoordinates::destroy([
+                $validated['coord_id']
+            ]);
+            $success = 'success';
+            $title = Str::ucfirst(__('varcave.general.opSuccess'));
+            $msg = Str::ucfirst(__('varcave.cave_update.coord_deleted'));
+            $code = 200;
 
-        $success = 'success';
-        $title = Str::ucfirst(__('varcave.general.opSuccess'));
-        $msg = Str::ucfirst(__('varcave.cave_update.coord_deleted'));
+        }catch(Exception $e){
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = Str::ucfirst(__('varcave.cave_update.coord_not_deleted'));
+            $code = '500'; 
+        }
 
         return VarcaveApiResponse::ajaxResponse(
-                $success,
-                $title,
-                $msg,
-                data: $validated['coord_id'],
-            );
+            $success,
+            $title,
+            $msg,
+            data: $validated['coord_id'],
+            code: $code,
+        );
     }
 
 }

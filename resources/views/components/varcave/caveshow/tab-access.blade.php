@@ -294,7 +294,7 @@
             </script>
         </div>
         <div class="column">
-            <p class="title is-5"> {{ Str::ucfirst('coordonnées') }} : </p>
+            <p class="title is-5"> {{ Str::ucfirst(__('varcave.caveshow.coordinates')) }} : </p>
             {{-- Load crs custom functions --}}
             <script src="/lib/proj4js/2.20.2/proj4.js"></script>
             @foreach($crs as $script)

@@ -55,17 +55,16 @@ $(document).ready(function(){
     });
 
     /**
-     * Permit deletion of coordinates
+     * Permit deletion of coordinates, unlock trash button
      */
     $('body').on('change', '#permit-coord-set-delete', function(e){
         //let isChecked = ;
         if( $(this).prop('checked') ){
-            $('.del-coord-set').removeClass('is-icon-disabled');
+            $('.del-coord-set').removeClass('is-icon-disabled').addClass('is-icon-clickable');
         }
         else{
-            $('.del-coord-set').addClass('is-icon-disabled');
+            $('.del-coord-set').addClass('is-icon-disabled').removeClass('is-icon-clickable');
         }
-        
     });
 
 
@@ -74,8 +73,7 @@ $(document).ready(function(){
      */
     $('body').on('click', '.del-coord-set', function(e){
         Logger.debug('Start delete coord set');
-        if($(this).hasClass('is-icon-disabled'));
-        {
+        if($(this).hasClass('is-icon-disabled')){
             Logger.info('deletion not allowed');
             e.preventDefault();
             return false;
@@ -94,7 +92,12 @@ $(document).ready(function(){
 
     });
 
-
+    /**
+     * Save current coords set
+     */
+    $('body').on('click', '.save-coord-set', function(e){
+        Logger.debug('Start delete coord set');
+    });
 
 });
 
@@ -117,14 +120,20 @@ function coordUpdateFailed(response)
     showMessageBox(response, "is-danger", 5000);
     $('.save-progress').remove();
     $('#add-coord-fields').remove();
-    
 }
 
 function coordUpdateSucceed(response)
 {
     Logger.debug('Save coord complete');
     showMessageBox(response);
+    
+    //add new coord to list
     $('#coord-list').append(response.data);
+
+    //and finally hide add form
+    $('#add-coord-fields').hide(1000, function () {
+        $(this).remove();
+    });
     $('.save-progress').remove();
 }
 
@@ -135,7 +144,9 @@ function coordDestroySucceed(response)
     $('.save-progress').remove();
 
     //remove coord set
-    $('a[data-coord-id="' + response.data + '"]').closest('.coord-wrapper').hide(800);
+    $('div.coord-wrapper[data-coord-id="' + response.data + '"]').slideUp(800, function () {
+        $(this).remove();
+    });
 }
 
 function coordDestroyFail(response)
@@ -186,7 +197,7 @@ const addCoord = `
             <div class="field has-addons">
                 <p class="control">
                     <span class="icon is-icon-wrapper bi-md " >
-                        <a id="add-coord-save" class="bi bi-floppy has-text-primary"></a>
+                        <i id="add-coord-save" class="bi bi-floppy has-text-primary is-icon-clickable"></i>
                     </span> 
                 </p> 
             </div>

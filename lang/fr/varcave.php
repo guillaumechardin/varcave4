@@ -75,7 +75,8 @@ return [
         'edited_by' => 'modifié par:',
         'rescue_info' => 'informations secours',
         'rescue_documents' => 'Documents info secours',
-        'no_rescue_data' => 'pas de données secours'
+        'no_rescue_data' => 'pas de données secours',
+        'coordinates' => 'coordonnées',
     ],
 
     /**
@@ -84,6 +85,10 @@ return [
     'cave_update' => [
         'save_fail' => 'Le paramètre n\'a pas été enregistré',
         'coord_deleted' => 'Les coordonnées ont été supprimées',
+        'coord_not_deleted' => 'Les coordonnées n\'ont pas ont été supprimées',
+        'new_coords' => 'Nouvelles coordonnées',
+        'unlock_del_coords' => 'Autoriser la suppression des coordonnées',
+        'files' => 'fichiers',
     ],
 
     /**

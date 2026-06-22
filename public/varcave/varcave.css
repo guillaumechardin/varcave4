@@ -91,4 +91,11 @@
   cursor: not-allowed;
 }
 
+/**
+ * Change curson icon with clickable one
+ */
+.is-icon-clickable
+{
+  cursor: pointer;
+}
 

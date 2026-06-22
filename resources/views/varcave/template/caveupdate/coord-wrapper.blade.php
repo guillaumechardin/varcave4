@@ -1,6 +1,13 @@
-{{-- This template is used in tab-access AJAX responses to render a new coordinate set --}}
+{{-- This template is used in cave edit and AJAX responses to render a new coordinate set --}}
 <div class="coord-wrapper" data-coord-id="{{ $coord['id'] }}">
-    <span>{{ __('varcave.caveupdate.new_entrance') }}:</span>
+    <span>
+        @if($loopNbr != false)
+            {{ __('varcave.caveshow.cave-entrance', ['nbr' => $loopNbr]) }}
+        @else
+            {{ __('varcave.cave_update.new_coords')  }}
+        @endif
+        :
+    </span>
 
     <div class="field is-grouped is-grouped-multiline">
         <div class="field has-addons has-addons-left">
