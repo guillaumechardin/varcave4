@@ -1,7 +1,7 @@
 var $currentTarget = '';
 $(document).ready(function(){
 
-    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-cave-access');
+    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-cave-files');
 
     /*
      * update cave data with specified value when input field is changed

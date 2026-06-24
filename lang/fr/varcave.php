@@ -89,6 +89,7 @@ return [
         'new_coords' => 'Nouvelles coordonnées',
         'unlock_del_coords' => 'Autoriser la suppression des coordonnées',
         'files' => 'fichiers',
+        'editCave' => 'Modification de la cavité :caveName',
     ],
 
     /**
@@ -457,6 +458,15 @@ return [
         'speleometry' => 'Spéléométrie',
         'access' => 'Information d\'accès',
         'coordinates' => 'Coordonnées',
+    ],
+
+    'cave_files' => [
+        'cave_maps'         => 'topographies',
+        'photos'            => 'photos',
+        'sketch_access'     => 'croquis d\'accès',
+        'biologyDocuments'  => 'document biologie',
+        'documents'         => 'document généraux',
+        'rescue_data'       => 'données secours',
     ],
     
 ];

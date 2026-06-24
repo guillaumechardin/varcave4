@@ -9,7 +9,7 @@
 <section class="section">
     <section class="hero">
         <div class="hero-body">
-            <p class="title">{{ __('edition') . ' de ' . $caveData['attributes']['data']['name'] }}</p>
+            <p class="title is-italic">{{ __('varcave.cave_update.editCave', ['caveName' => $caveData['attributes']['data']['name'], ]) }}</p>
         </div>
     </section>
 <section>
@@ -66,7 +66,7 @@
             </li>
             <li>
                 <div id="tab-cave-files" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveupdate.tab-files :caveFiles="$caveFiles"/>
+                        <x-varcave.caveupdate.tab-files :caveFiles="$caveFiles" :caveFileList="$caveFileList"/>
                 </div>
             </li>
             

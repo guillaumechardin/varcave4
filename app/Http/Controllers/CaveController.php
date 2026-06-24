@@ -7,6 +7,7 @@ use App\Models\CaveCoordinates;
 use App\Models\CaveStat;
 use App\Models\CoordinateSystemHandler;
 use App\Models\Field;
+use App\Models\ListValue;
 use App\Models\Page;
 use App\Models\Setting;
 use App\Models\User;
@@ -379,8 +380,26 @@ class CaveController extends Controller
         $caveAccess = $cs->renderForPage($pageAccess);
 
 
+
        //Files, if no files default to empty array
         if($caveData['caveFiles'] === null) $caveData['caveFiles'] = array();
+        $caveFileList = ListValue::getByListName('cave_files.file_type', false);
+
+        $caveDocsFiles = array();
+        //reprocess file array to add some details
+        foreach($caveData['caveFiles']  as $key => &$docTypes){
+            foreach($docTypes as &$doc){
+                $photosFilesExt = ['jpg','jpeg','png','webp'];
+                $doc['extension'] = pathinfo($doc['file_path'], PATHINFO_EXTENSION);
+                if(in_array($doc['extension'], $photosFilesExt))
+                {
+                    $doc['is_img'] = true;
+                    
+                }else{
+                    $doc['is_img'] = false;
+                }
+            }
+        }
 
         return view('varcave.caveupdate',
         [
@@ -391,7 +410,8 @@ class CaveController extends Controller
             'caveAccess' => $caveAccess ?? null,
             'caveBibliography' => $caveBibliography ?? null,
             'caveFiles' => $caveData['caveFiles'],
-            //'changelog' => $cave->changelog,
+            'caveFileList' => $caveFileList,
+            'changelog' => $cave->changelog,
         ]);
 
     }
