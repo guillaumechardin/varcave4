@@ -23,6 +23,7 @@ return [
         'yes' => 'oui',
         'no' => 'non',
         'action' => 'action',
+        'choose' => 'choisir',
         'chooseFile' => 'sélectionnez un fichier',
         'choose_file_short' => 'Choisir fichier',
         'noFileSelected' => 'pas de fichier sélectionné',
@@ -38,6 +39,8 @@ return [
         'unlock' => 'déverrouiller',
         'creation_date' => 'date de création',
         'download' => 'télécharger',
+        'file_already_exists' => 'Le fichier existe déjà',
+        'file_deleted' => 'Fichier supprimé',
         
     ],
 
@@ -88,8 +91,18 @@ return [
         'coord_not_deleted' => 'Les coordonnées n\'ont pas ont été supprimées',
         'new_coords' => 'Nouvelles coordonnées',
         'unlock_del_coords' => 'Autoriser la suppression des coordonnées',
+        'unlock_del_files' => 'Autoriser la suppression des fichiers',
         'files' => 'fichiers',
         'editCave' => 'Modification de la cavité :caveName',
+        'choose_category' => 'Choisir la catégorie',
+        'add_new_file' => 'Ajouter un nouveau fichier',
+        'add_file_note' => 'Ajouter une information',
+        'file_note' => 'Note de fichier',
+        'file_added' => 'fichier ajouté',
+        'file_not_owned' => 'Le fichier spécifié n\'est pas lié à la cavité',
+        'note_not_owned' => 'La note de fichier spécifiée n\'est pas lié à la cavité',
+        'note_updated' => 'Note de fichier enregistrée.',
+        
     ],
 
     /**

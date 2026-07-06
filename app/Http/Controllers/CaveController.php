@@ -1,9 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Helpers\Tools;
 use App\Helpers\VarcaveApiResponse;
 use App\Models\Cave;
 use App\Models\CaveCoordinates;
+use App\Models\CaveFile;
 use App\Models\CaveStat;
 use App\Models\CoordinateSystemHandler;
 use App\Models\Field;
@@ -23,7 +25,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CaveController extends Controller
@@ -397,6 +401,7 @@ class CaveController extends Controller
                     
                 }else{
                     $doc['is_img'] = false;
+                    $doc['icon-class'] = Tools::getBiIcon($doc['extension']);
                 }
             }
         }
@@ -412,6 +417,7 @@ class CaveController extends Controller
             'caveFiles' => $caveData['caveFiles'],
             'caveFileList' => $caveFileList,
             'changelog' => $cave->changelog,
+            'fileTypeList' => ListValue::getByListName('cave_files.file_type'),
         ]);
 
     }
@@ -620,4 +626,273 @@ class CaveController extends Controller
         );
     }
 
+    public function updateCoord(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        //permit access to users with roles
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'lon' => ['required', 'numeric'],
+            'lat' => ['required', 'numeric'],
+            'z' => ['required', 'numeric'],
+            'coordId' => ['required', 'integer'],
+        ]);
+
+        try{
+
+            $coord = CaveCoordinates::findOrFail($validated['coordId']);
+            
+            $coord->update([
+                'cave_id' => $cave->id,
+                'location' => DB::raw("POINT({$validated['lon']}, {$validated['lat']})"),
+                'z' => $validated['z'],
+            ]);
+
+            $cs = new CaveService($cave, $request->user(), CaveService::ADD_COORDS);
+            //instanciate "dummy" page since only coords are needed in this case
+            $pageMain = new Page()->setPageModelFor('display', 'main', false);
+            $caveData = $cs->renderForPage($pageMain);
+
+            $result = null;
+            foreach ($caveData['coordinates']['entrance'] as $entrance) {
+                if ($entrance['id'] == $coord['id']) {
+                    $result = $entrance;
+                    break;
+                }
+            }
+
+            $success = 'success';
+            $title = Str::ucfirst(__('varcave.general.opSuccess'));
+            $msg = Str::ucfirst(__('varcave.settings.settings_saved'));
+            $data = $result;
+            $code = 200;
+        }
+        catch(Exception $e){
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = Str::ucfirst(__('varcave.cave_update.save_fail') . ' (' . $e->getMessage() . ')');
+            $data = '';
+            $code = 500;
+        }
+
+        return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                $data,
+                $code,
+        );
+    }
+
+    public function destroyFile(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        //permit access to users with roles
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'fileId' => ['required', 'integer'],
+        ]);
+
+        Log::info('start deletion of file:'.$validated['fileId']);
+
+        /*
+         * Check that file is owned by cave
+         */
+        $cave->load('caveFiles');
+        $isOwned = false;
+        $targetFile = null;
+        foreach($cave->caveFiles as $file)
+        {
+            $fArr = $file->toArray();
+            Log::debug('find: '. $validated['fileId'].' in'.$fArr['id']);
+            if ($validated['fileId'] == $fArr['id']){
+                $isOwned = true;
+                $targetFile = $file;
+                break;
+            }
+        }
+
+        if(!$isOwned){
+            Log::error('File is not owned by cave');
+            return redirect()
+                ->back()
+                ->with('error', __('varcave.cave_update.file_not_owned'));
+        }
+
+        $path = Storage::disk('public')->path($targetFile['file_path']);
+        Log::info('Try to delete file: ' . $path);
+        if(!Storage::disk('public')->exists($targetFile['file_path'])){
+            Log::warning('File does not exists');
+        }
+        Storage::disk('public')->delete($targetFile['file_path']);
+        Log::info('File deleted');
+        
+        //clear database
+        $targetFile->delete();
+        Log::info('File deleted from db');
+        
+        return redirect()
+            ->back()
+            ->with('success', Str::ucfirst(__('varcave.general.opSuccess')) . '. '. __('varcave.general.file_deleted'));
+    }
+
+    public function patchFile(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        //permit access to users with roles
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'file-note' => ['nullable', 'string'],
+            'fileId' => ['required', 'integer'],
+        ]);
+
+        Log::info('update file note');
+        /*
+         * Check that CaveFile is owned by cave
+         */
+        $cave->load('caveFiles');
+        $isOwned = false;
+        $targetCaveFile = null;
+        foreach($cave->caveFiles as $file)
+        {
+            $fArr = $file->toArray();
+            Log::debug('find: '. $validated['fileId'].' in'.$fArr['id']);
+            if ($validated['fileId'] == $fArr['id']){
+                $isOwned = true;
+                $targetCaveFile = $file;
+                break;
+            }
+        }
+
+        if(!$isOwned){
+            Log::error('CaveFile is not owned by cave');
+            return redirect()
+                ->back()
+                ->with('error', __('varcave.cave_update.note_not_owned'));
+        }
+
+        $targetCaveFile->file_note = $validated['file-note'] ?? '';
+        $targetCaveFile->save();
+
+        
+        return redirect()
+            ->back()
+            ->with('success', Str::ucfirst(__('varcave.general.opSuccess')) . '. '. __('varcave.cave_update.note_updated'));
+        
+    }
+
+    public function createFile(string $uuid, Request $request)
+    {
+        /*
+        dd([
+            $request->session()->token(),
+            csrf_token(),
+            'request_token' => request()->input('_token'),
+        ]);
+        */
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        //permit access to users with roles
+        Gate::authorize('updateCave', $cave);
+
+        $authorizedCaveFilesTypes = json_decode(Setting::get('authorized_cave_file_type')) ;
+
+        $validator = Validator::make($request->all(), [
+            'new-file' => [
+                'required',
+                File::types($authorizedCaveFilesTypes),
+            ],
+            'file-group' => [
+                'string',
+                'max:64',
+                'required',
+            ],
+            'file-note' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        if($validator->fails()) {
+            Log::debug('File validation fail',[$validator->errors()]);
+            return redirect()->back()
+                ->withErrors($validator, 'upload')
+                ->withInput();
+        }
+        
+        $validated = $validator->validated();
+
+        try{
+            Log::info('Cave file upload: validation complete');
+            $file = $request->file('new-file');
+            
+            $fileNoExt = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $filename = Str::slug($fileNoExt) . '.' . $file->getClientOriginalExtension();
+            
+            $catName = CaveFile::folderCategory((int)$validated['file-group']);
+            $baseDir = 'caves/'. $cave->uuid . '/' . $catName;
+            $fullPath = $baseDir . '/' . $filename;
+
+            Log::info('Add new file to: ' . $baseDir . '/'. $filename);
+            if (Storage::disk('public')->exists($fullPath)) {
+                Log::warning('File already exists: ' . $fullPath);
+                
+                // Interruption de l'opération
+                throw new \Exception(__('varcave.general.file_already_exists'));
+            }
+            $path = $file->storeAs($baseDir, $filename, 'public');
+
+            Log::info('File save succesfully');
+
+            //create Resource
+            CaveFile::create([
+                'cave_id' => $cave->id,
+                'file_type' => $catName,
+                'file_path' => $path,
+                'file_note' => $validated['file-note'],
+                'created_at' => now(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('success', Str::ucfirst(__('varcave.general.opSuccess') . ' ' . __('varcave.cave_update.file_added')));
+        }
+        catch(Exception $e){
+            Log::error('File add failed:'.$e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', Str::ucfirst(__('varcave.general.opFailed') . ': '. $e->getMessage())) ;
+        }
+
+        
+
+
+    }
 }

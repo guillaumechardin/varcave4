@@ -17,9 +17,9 @@
             </div>
             <ul id="coord-list" class="my-2">
                 @foreach($caveAccess['coordinates']['entrance'] as $coord)
-
+                    
                     @include('varcave.template.caveupdate.coord-wrapper', ['coord' => $coord, 'loopNbr' => $loop->iteration])
-                                        
+
                 @endforeach
             </ul>
             <hr>

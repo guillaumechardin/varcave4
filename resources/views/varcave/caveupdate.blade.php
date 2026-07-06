@@ -16,7 +16,7 @@
     <div id="caveupdate-tabs" class="tabs is-toggle is-toggle-rounded is-centered is-fullwidth" data-bulma="tabs">
         <ul>
             <li>
-                <a  data-tabs-target="tab-cave-info">
+                <a data-tabs-target="tab-cave-info">
                     <span class="icon is-small">
                         <i class="bi bi-info-square" aria-hidden="true"></i>
                     </span>
@@ -24,7 +24,7 @@
                 </a>
             </li>
             <li>
-                <a  data-tabs-target="tab-cave-access">
+                <a data-tabs-target="tab-cave-access">
                     <span class="icon is-small">
                         <i class="bi bi-geo" aria-hidden="true"></i>
                     </span>
@@ -32,7 +32,7 @@
                 </a>
             </li>
             <li>
-                <a  data-tabs-target="tab-cave-files">
+                <a data-tabs-target="tab-cave-files">
                     <span class="icon is-small">
                         <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i>
                     </span>
@@ -50,6 +50,33 @@
         </ul>
     </div>
 
+    {{-- start of form redirect message  --}}
+    @if ($errors->upload->any())
+        <div class="notification is-danger mt-2">
+            @foreach ($errors->upload->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
+    {{-- end of form redirect message  --}}    
+
+    {{-- start of form success message --}}
+    @if (session('success'))
+        <div class="notification is-success mt-2">
+             {{ session('success') }}
+        </div>
+    @endif
+    {{-- end of form success message  --}}
+
+    {{-- start of form error message --}}
+    @if (session('error'))
+        <div class="notification is-danger mt-2">
+             {{ session('error') }}
+        </div>
+    @endif
+    {{-- end of form error message  --}} 
+    
+
     <div id="tabs-contents">
         <ul>
             <li>
@@ -58,50 +85,23 @@
                 </div>
             </li>
             
-            </li>
             <li>
                 <div id="tab-cave-access" class="tab-content mx-2 mt-2"> 
                          <x-varcave.caveupdate.tab-access :caveAccess="$caveAccess" />
                 </div>
             </li>
+            
             <li>
                 <div id="tab-cave-files" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveupdate.tab-files :caveFiles="$caveFiles" :caveFileList="$caveFileList"/>
+                    <x-varcave.caveupdate.tab-files :caveFiles="$caveFiles" :caveFileList="$caveFileList" :fileTypeList="$fileTypeList" :caveUuid="$caveObj->uuid"/>
                 </div>
             </li>
             
             <li>
                 <div id="tab-cave-changehistory" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveupdate.tab-changehistory :changelog="$changelog" />
+                    <x-varcave.caveupdate.tab-changehistory :changelog="$changelog" />
                 </div>
             </li>
-        {{--
-            <li>
-                <div id="tab-cave-maps" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveupdate.tab-cave-maps :caveMaps="$caveDescription['caveFiles']['cave_maps'] ?? []"/>
-                </div>
-            </li> 
-            <li>
-                <div id="tab-photos" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveupdate.tab-photos :photos="$caveDescription['caveFiles']['photos'] ?? []"/>
-                </div>
-            </li>
-            <li>
-                <div id="tab-bibliography" class="tab-content mx-2 mt-2">
-                    <x-varcave.caveupdate.tab-bibliography :bibliography="$caveBibliography['attributes']['data']['bibliography']" />
-                </div>
-            </li>
-            <li>
-                <div id="tab-documents" class="tab-content mx-2 mt-2">
-                    <x-varcave.caveupdate.tab-documents :caveDocsFiles="$caveDocsFiles" :caveDocsPhotos="$caveDocsPhotos"/>
-                </div>
-            </li>
-            <li>
-                <div id="tab-rescue-info" class="tab-content mx-2 mt-2">
-                    <x-varcave.caveupdate.tab-rescue :rescueFiles="$rescueFiles"/>
-                </div>
-            </li>
-        --}}
         </ul>
     </div>
 

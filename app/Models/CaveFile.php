@@ -3,19 +3,47 @@
 namespace App\Models;
 
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\belongsTo;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class CaveFile extends Model
 {
+    protected $fillable = [
+        'cave_id',
+        'file_type',
+        'file_path',
+        'file_note',
+    ];
+
     //relation to cave table
     public function cave(): belongsTo
     {
         return $this->belongsTo(Cave::class);
     }
 
+    /**
+     * This function retreive target folder friendly name allowed to a cave file list. This does 
+     * not garanty uniqueness in dir names for now it use the end of i18n string
+     * @param int $fileListValue Target folder list value 
+     * @return string Folder category name, "no_category" if target category not found
+     */
+    public static function folderCategory(int $fileListValue): string
+    {
+        Log::debug(__METHOD__ . ' called');
+
+        $listValues = ListValue::getByListName('cave_files.file_type');
+        $cat = 'no_category';
+        foreach($listValues as $l){
+            if($l['value'] == $fileListValue){
+                $cat = Str::afterLast($l['i18n_key'], '.');
+            }
+        }
+
+        return $cat;
+    }
 
     /**
      * Retrieve files associated with a cave.

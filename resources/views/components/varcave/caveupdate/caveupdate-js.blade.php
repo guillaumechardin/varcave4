@@ -32,11 +32,11 @@ $(document).ready(function(){
     });
 
     /**
-     * Save new coordinates fields to db/cave
+     * Add a new coordinates fields to db/cave
      */
     $('body').on('click', '#add-coord-save', function(e){
         e.preventDefault();
-        Logger.debug('Save new coord set');
+        Logger.debug('add new coord set');
         
         const url = "{{ route('varcave.caves.coord.store', ['uuid' => $uuid]) }}";
         
@@ -51,7 +51,7 @@ $(document).ready(function(){
 
         $('#add-coord-fields').after(progressBar);
         
-        sendAjaxRequest(url, 'post', data, coordUpdateSucceed, coordUpdateFailed);
+        sendAjaxRequest(url, 'post', data, coordAddSucceed, coordAddFailed);
     });
 
     /**
@@ -67,9 +67,16 @@ $(document).ready(function(){
         }
     });
 
+    /**
+      *show add file form
+      */
+    $('#show-add-file-form ').on('click', function(e){
+        $('#add-file-wrapper').toggleClass('is-hidden');
+        $('#show-add-file-form').find('i').toggleClass('bi-chevron-up');
+    });
 
     /**
-     * Start deletion of coord set
+     * Start saving coord set
      */
     $('body').on('click', '.del-coord-set', function(e){
         Logger.debug('Start delete coord set');
@@ -93,10 +100,49 @@ $(document).ready(function(){
     });
 
     /**
-     * Save current coords set
+     * Update selected coords set
      */
     $('body').on('click', '.save-coord-set', function(e){
-        Logger.debug('Start delete coord set');
+        Logger.debug('Saving selected coord set');
+
+        const url = "{{ route('varcave.caves.coord.update', ['uuid' => $uuid]) }}";
+        
+        const lon = $(this).closest('.coord-wrapper').find('.coord-lon').val();
+        const lat = $(this).closest('.coord-wrapper').find('.coord-lat').val();
+        const z = $(this).closest('.coord-wrapper').find('.coord-z').val();
+        const coordId = $(this).data('coord-id');
+        var data = {
+            lon: lon,
+            lat: lat,
+            z:   z,
+            coordId: coordId,
+        };
+
+        $(this).closest('.coord-wrapper').after(progressBar);
+        console.log($(this).closest('.coord-wrapper'));
+        
+        sendAjaxRequest(url, 'put', data, coordUpdateSucceed, coordUpdateFailed);
+
+    });
+
+    /**
+     * Add new file handler, change the selected filename in the corresponding div
+     */
+    $('body').on('change', '#file-input', function(e){
+        Logger.debug('user change file');
+        
+        let file = this.files[0];
+        Logger.debug('user change file:'+ file.name);
+        $('#selected-file-name').html(file.name);
+    });
+
+    $('#permit-file-deletion').on('change', function(e){
+        if( $(this).prop('checked') ){
+            $('.del-file-button').attr('disabled', false);
+        }
+        else{
+           $('.del-file-button').attr('disabled', true);
+        }
     });
 
 });
@@ -115,14 +161,14 @@ function dataUpdateFailed(response)
     $('.save-progress').remove();
 }
 
-function coordUpdateFailed(response)
+function coordAddFailed(response)
 {
     showMessageBox(response, "is-danger", 5000);
     $('.save-progress').remove();
     $('#add-coord-fields').remove();
 }
 
-function coordUpdateSucceed(response)
+function coordAddSucceed(response)
 {
     Logger.debug('Save coord complete');
     showMessageBox(response);
@@ -154,6 +200,30 @@ function coordDestroyFail(response)
     Logger.debug('delete coord failed');
     showMessageBox(response, "is-danger", 5000);
     $('.save-progress').remove();
+}
+
+function coordUpdateSucceed(response)
+{
+    Logger.debug('Update coord complete');
+    showMessageBox(response);
+    $('.save-progress').remove();
+}
+
+function coordUpdateFailed(response)
+{
+    Logger.debug('Update coord failure');
+    showMessageBox(response);
+    $('.save-progress').remove();
+}
+
+function fileDestroySucceed(response)
+{
+
+}
+
+function fileDestroyFail(response)
+{
+
 }
 
 const progressBar = '<progress class="progress save-progress is-link"  max="100">FR saving</progress>';

@@ -1,5 +1,5 @@
 {{-- This template is used in cave edit and AJAX responses to render a new coordinate set --}}
-<div class="coord-wrapper" data-coord-id="{{ $coord['id'] }}">
+<li class="coord-wrapper" data-coord-id="{{ $coord['id'] }}">
     <span>
         @if($loopNbr != false)
             {{ __('varcave.caveshow.cave-entrance', ['nbr' => $loopNbr]) }}
@@ -17,7 +17,7 @@
                 </button>
             </p>
             <p class="control">
-                <input class="input coord-long" type="text" placeholder="3.255445" value="{{ $coord['lon'] }}" tabindex="{{ $coord['id'] +1 }}">
+                <input class="input coord-lon" type="text" placeholder="3.255445" value="{{ $coord['lon'] }}" tabindex="{{ $coord['id'] +1 }}">
             </p> 
         </div>
         
@@ -45,7 +45,7 @@
 
         <div class="field has-addons">
             <p class="control">
-                <span class="icon is-icon-wrapper bi-md ">
+                <span class="icon is-icon-wrapper bi-md is-icon-clickable">
                     <i class="save-coord-set bi bi-floppy has-text-primary" data-coord-id="{{ $coord['id'] }}" ></i>
                 </span>
             </p> 
@@ -59,4 +59,4 @@
             </p> 
         </div>
     </div>
-</div>
+</li>

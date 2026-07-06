@@ -44,8 +44,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/caves/{uuid}/edit', [CaveController::class, 'caveEditPage'])->whereUuid('uuid')->name('varcave.caves.caveEditPage');
     Route::post('/caves/{uuid}', [CaveController::class, 'updateCaveData'])->whereUuid('uuid')->name('varcave.caves.updateCaveData');
     Route::post('/caves/{uuid}/coord', [CaveController::class, 'addCoord'])->whereUuid('uuid')->name('varcave.caves.coord.store');
-    Route::patch('/caves/{uuid}/coord', [CaveController::class, 'updateCoord'])->whereUuid('uuid')->name('varcave.caves.coord.update');
+    Route::put('/caves/{uuid}/coord', [CaveController::class, 'updateCoord'])->whereUuid('uuid')->name('varcave.caves.coord.update');
     Route::delete('/caves/{uuid}/coord', [CaveController::class, 'destroyCoord'])->whereUuid('uuid')->name('varcave.caves.coord.destroy');
+    Route::post('/caves/{uuid}/file', [CaveController::class, 'createFile'])->whereUuid('uuid')->name('varcave.caves.file.create');
+    Route::delete('/caves/{uuid}/file', [CaveController::class, 'destroyFile'])->whereUuid('uuid')->name('varcave.caves.file.destroy');
+    Route::patch('/caves/{uuid}/file', [CaveController::class, 'patchFile'])->whereUuid('uuid')->name('varcave.caves.file.patch');
     Route::get('/cave/{uuid}/staticmap', [CaveController::class, 'getStaticMap'])->whereUuid('uuid')->name('varcave.staticmap');
     
     //PROFILE

@@ -72,6 +72,7 @@
 .is-icon-wrapper.bi-md { width: 2.5rem; height: 2.5rem; font-size: 2rem; }
 .is-icon-wrapper.bi-lg { width: 3rem; height: 3rem; font-size: 2.5rem; }
 .is-icon-wrapper.bi-xl { width: 3.5rem; height: 3.5rem; font-size: 3rem; }
+.is-icon-wrapper.bi-xxl { width: 5rem; height: 5rem; font-size: 4rem; }
 
 /* Custom size for mobile */
 @media screen and (max-width: 768px) {
@@ -79,6 +80,7 @@
     .is-icon-wrapper.bi-md { width: 2.2rem; height: 2.2rem; font-size: 1.7rem; }
     .is-icon-wrapper.bi-lg { width: 2.7rem; height: 2.7rem; font-size: 2.2rem; }
     .is-icon-wrapper.bi-xl { width: 3rem; height: 3rem; font-size: 2.5rem; }
+    .is-icon-wrapper.bi-xxl { width: 4rem; height: 4rem; font-size: 3.2rem; }
 }
 
 /**
