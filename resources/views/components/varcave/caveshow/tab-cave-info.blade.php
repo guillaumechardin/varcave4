@@ -1,4 +1,6 @@
-@props(['caveData'])
+@props([
+    'caveData',
+])
 
 <div class="box">
     <div class="fixed-grid has-2-cols-mobile has-5-cols-desktop">

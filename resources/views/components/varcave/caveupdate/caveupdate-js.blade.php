@@ -1,14 +1,13 @@
 var $currentTarget = '';
 $(document).ready(function(){
 
-    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-cave-files');
+    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-cave-info');
 
     /*
      * update cave data with specified value when input field is changed
      */
-    $('.cave-setting').on( 'change', function(e){
+    $('.cave-setting').on('change', function(e){
         Logger.debug('User change '+ $(this).data('fieldname'));
-        //$('#modal-progress').toggleClass('is-active');
 
         const url = "{{ route('varcave.caves.updateCaveData', ['uuid' => $uuid]) }}";
         var data = {
@@ -126,7 +125,7 @@ $(document).ready(function(){
     });
 
     /**
-     * Add new file handler, change the selected filename in the corresponding div
+     * Add new file form, change the selected filename in file field name
      */
     $('body').on('change', '#file-input', function(e){
         Logger.debug('user change file');
@@ -145,10 +144,33 @@ $(document).ready(function(){
         }
     });
 
+    /**
+     * Add a new change log to cave
+     */
+    $('#add-change-history').on('click', function(e){
+        Logger.debug('user change file');
+
+        const url = "{{ route('varcave.caves.updateCaveData', ['uuid' => $uuid]) }}";
+        var data = {
+            fieldname: $(this).data('fieldname'),
+            value: $(this).val(),
+        };
+
+        $(this).after(progressBar);
+        $(this).attr('disabled', true);
+        $currentTarget = $(this);
+        sendAjaxRequest(url, 'post', data, dataUpdateSucceed, dataUpdateFailed) ;
+    });
+
+    //start check edit time on startup
+    initEditDone()
+    setInterval(checkEditDone, 5 * 1000);
+
 });
 
 function dataUpdateSucceed(response)
 {
+    setEditDone();
     showMessageBox(response);
     $('.save-progress').remove();
     $currentTarget.attr('disabled', false);
@@ -216,17 +238,49 @@ function coordUpdateFailed(response)
     $('.save-progress').remove();
 }
 
-function fileDestroySucceed(response)
+function initEditDone()
 {
-
+    const editDone = false; //localStorage.getItem('editDone') === 'true';
+    const timestamp = null;
 }
 
-function fileDestroyFail(response)
-{
-
+function setEditDone() {
+    localStorage.setItem('editDone', 'true');
+    localStorage.setItem('editDoneTimestamp', Date.now().toString());
+    checkEditDone();
 }
 
-const progressBar = '<progress class="progress save-progress is-link"  max="100">FR saving</progress>';
+function checkEditDone(){
+    const editDone = localStorage.getItem('editDone') === 'true';
+    const timestamp = parseInt(localStorage.getItem('editDoneTimestamp'), 10);
+    if (editDone && !isNaN(timestamp)) {
+            const elapsed = Date.now() - timestamp;
+            const msgDelay = 35 //in sec
+            let time = msgDelay * 1000; //in ms
+            if (elapsed >= time) {
+                showModal(
+                    '{{ Str::upper(__('varcave.general.reminder')) }}',
+                    '{{ __('varcave.cave_update.add_note_reminder') }}' +
+                    '<p>\
+                        <a href="#tab=tab-cave-changehistory">\
+                            {{ __('varcave.cave_update.add_edit_note') }}\
+                        </a>\
+                    <p>'
+                );
+
+                // Facultatif : éviter de réafficher la fenêtre à chaque chargement
+                localStorage.removeItem('editDone');
+                localStorage.removeItem('editDoneTimestamp');
+            }
+        }
+}
+
+$(document).on('click', 'a[href^="#tab="]', function (e) {
+    $modal = $(this).closest('.modal');
+    closeModal( $modal, true );
+});
+
+const progressBar = '<progress class="progress save-progress is-link mt-2"  max="100">FR saving</progress>';
 
 const addCoord = `
     <div id="add-coord-fields">

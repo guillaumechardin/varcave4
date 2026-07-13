@@ -1,5 +1,9 @@
+@props([
+    'caveName',
+    'uuid',
+])
 $(document).ready(function(){
-    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-documents');
+    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-cave-info');
 
     let bookmarkProcessing = false;
     $('#caveshow-action-setfav a').on('click', function(e){
@@ -33,5 +37,14 @@ $(document).ready(function(){
         bookmarkProcessing = false;
         $("#progress").hide();
     }
+
+    $('#caveshow-action-copy').on('click', function(e){
+        Logger.debug('Load copy data form');
+        const copyFormContent = $('#copy-modal-template').html();
+        
+        showModal("{{ __('varcave.caveshow.copy_cave_modal_title', ['cavename' => $caveName ]) }}", copyFormContent);
+        $('#copy-cave-form').attr('action', "{{ route('varcave.caves.copy', ['uuid' => $uuid]) }}")
+    });
+    
 
 });

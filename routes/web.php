@@ -38,11 +38,13 @@ Route::group([], function (){
 
 Route::middleware('auth')->group(function () {
     //CAVES
+    Route::post('/caves/', [CaveController::class, 'create'])->name('varcave.caves.create');
     Route::get('/caves/{uuid}/map', [CaveController::class, 'getMap'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.map');
     Route::get('/caves/{uuid}/gpx', [CaveController::class, 'getGpx'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.gpx');
     Route::get('/caves/{uuid}/pdf', [CaveController::class, 'getPdf'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.pdf');
     Route::get('/caves/{uuid}/edit', [CaveController::class, 'caveEditPage'])->whereUuid('uuid')->name('varcave.caves.caveEditPage');
     Route::post('/caves/{uuid}', [CaveController::class, 'updateCaveData'])->whereUuid('uuid')->name('varcave.caves.updateCaveData');
+    Route::post('/caves/{uuid}/copy', [CaveController::class, 'copy'])->whereUuid('uuid')->name('varcave.caves.copy');
     Route::post('/caves/{uuid}/coord', [CaveController::class, 'addCoord'])->whereUuid('uuid')->name('varcave.caves.coord.store');
     Route::put('/caves/{uuid}/coord', [CaveController::class, 'updateCoord'])->whereUuid('uuid')->name('varcave.caves.coord.update');
     Route::delete('/caves/{uuid}/coord', [CaveController::class, 'destroyCoord'])->whereUuid('uuid')->name('varcave.caves.coord.destroy');

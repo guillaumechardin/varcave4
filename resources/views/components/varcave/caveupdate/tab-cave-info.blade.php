@@ -31,11 +31,11 @@
                                 @elseif($modelData['data_type'] == 'bool')
                                     <span class="select">
                                         <select class="cave-setting" data-fieldname="{{ $fieldName }}">
-                                            <option value="1" @selected( $caveData['attributes']['data'][$fieldName] == true) >{{ Str::upper(__('varcave.general.yes')) }}</option>
-                                            <option value="0" @selected( $caveData['attributes']['data'][$fieldName] == false)>{{ Str::upper(__('varcave.general.no')) }}</option>
+                                            <option value="1" @selected( $caveObj->{$fieldName} == 1) >{{ Str::upper(__('varcave.general.yes')) }}</option>
+                                            <option value="0" @selected( $caveObj->{$fieldName} == 0)>{{ Str::upper(__('varcave.general.no')) }}</option>
                                         </select>
                                     </span>
-
+                                    
                                 @elseif($modelData['data_type'] == 'number')
                                     <input class="cave-setting input" data-fieldname="{{ $fieldName }}" type="number" value="{{ $caveObj->$fieldName }}"/>
 
@@ -53,7 +53,7 @@
         <hr>
         <div>
             <p class="title is-5">
-                {{ Str::ucfirst('FR Description') }}
+                {{ Str::ucfirst($caveDescription['attributes']['model']['description']['i18n_label']) }}
             </p>
             <textarea class="cave-setting p-2" data-fieldname="description" style="width:80%;height:15em" >{{ trim($caveDescription['attributes']['data']['description']) }}</textarea>
         </div>

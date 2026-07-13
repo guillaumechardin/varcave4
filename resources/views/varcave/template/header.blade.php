@@ -22,14 +22,11 @@
     </title>
     <link rel="stylesheet" href="/lib/bulma/1.0.4/css/bulma.min.css">
     <link rel="stylesheet" href="/varcave/varcave.css" />
-    <!--<link rel="stylesheet" href="/fontawesome-free-6.7.2-web/css/solid.css" /> -->
+
     <link rel="stylesheet" href="/lib/bootstrap-icons/1.13.1/bootstrap-icons.min.css" />
     
-
-    
+    <!-- Jquery & JqueryUI libraries -->
     <script src="/lib/jquery/jquery-3.7.1.min.js"></script>
-
-    <!-- Jquery UI libraries -->
     <script src="/lib/jquery-ui/1.14.1/jquery-ui.min.js"></script>
     <script src="/lib/jquery-ui/i18n/datepicker-{{ App::getLocale() }}.js"></script>
     <link rel="stylesheet" href="/lib/jquery-ui/1.14.1/jquery-ui.min.css">
@@ -45,28 +42,18 @@
     <script src="/varcave/BulmaVar/modal.js"></script>
     <!-- END BulmaJS Section -->
     
-    
-
-    <!-- <script src="/feather/js/feather.min.js"></script> -->
-    
   </head>
   <body>
   
-    <x-varcave.modal/>
+  <x-varcave.modal />
 
-    <x-varcave.message-box />
-    <!-- Progress Bar -->
-    <div id="modal-progress" class="modal">
-      <div class="modal-background"></div>
-      <div class="modal-content">
-        <div class="box">
-          <div id="progress-bar" >
-                  <progress class="progress is-large is-info" value="" max="100"></progress>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- End progress Bar -->
+  <x-varcave.message-box />
+    
+  <x-varcave.progress-bar />
+
+  <template id="copy-modal-template">
+      <x-varcave.copy-cave-modal />
+  </template>
 
   
   

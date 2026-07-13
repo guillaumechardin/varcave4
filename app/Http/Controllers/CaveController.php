@@ -807,13 +807,6 @@ class CaveController extends Controller
 
     public function createFile(string $uuid, Request $request)
     {
-        /*
-        dd([
-            $request->session()->token(),
-            csrf_token(),
-            'request_token' => request()->input('_token'),
-        ]);
-        */
         Log::debug(__METHOD__ . ' called.');
         $cave = Cave::getByuuid($uuid);
   
@@ -894,5 +887,105 @@ class CaveController extends Controller
         
 
 
+    }
+
+    public function copy(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        //permit access to users with roles
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'new-name' => ['required', 'string'],
+            'new-ref'  => ['required', 'integer', 'unique:caves,cave_ref'],
+        ]);
+
+        try{
+            Log::info('Start copy cave process');
+            $excludedcopyfields = json_decode(Setting::get('excludedcopyfields'));
+            
+            //first create the basic
+            $cpyData = array();
+            foreach($cave->getAttributes() as $attr => $value){
+                //skip attrib
+                if(in_array($attr, $excludedcopyfields)){
+                    continue;
+                }
+                $cpyData[$attr] = $value;
+                 
+            }
+            $cpyData['name'] = $validated['new-name'];
+            $cpyData['cave_ref'] = $validated['new-ref'];
+            $cpyData['uuid'] = Str::uuid();
+            $cpyData['created_at'] = now();
+
+            $newCave = Cave::create($cpyData);
+
+            //insert an empty coordinates set
+            CaveCoordinates::add($newCave->id, 0, 0, 0);
+            
+            Log::info('Cave copied successfully');
+            
+            //redirect to new cave
+            return redirect(route('varcave.caves.show', ['uuid' => $newCave->uuid]))
+                ->with('success', __('varcave.caveshow.cave_copy_success') );
+
+        }
+        catch(Exception $e){
+            return redirect()
+                ->back()
+                ->with('error', Str::ucfirst(__('varcave.general.opFailed')) . ' ' . $e->getMessage() );
+        }
+    }
+
+    public function create(Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+
+
+        //permit access to users with roles
+        $cave = new Cave();
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'new-name' => ['required', 'string'],
+            'new-ref'  => ['required', 'integer', 'unique:caves,cave_ref'],
+        ]);
+
+        try{
+
+            Log::info('Start create cave process');
+            
+            $newCave = array();
+
+            $newCave['name'] = $validated['new-name'];
+            $newCave['cave_ref'] = $validated['new-ref'];
+            $newCave['uuid'] = Str::uuid();
+            $newCave['created_at'] = now();
+
+            $newCave = Cave::create($newCave);
+
+            //insert an empty coordinates set
+            CaveCoordinates::add($newCave->id, 0, 0, 0);
+            
+            Log::info('Cave created successfully');
+            
+            //redirect to new cave
+            return redirect(route('varcave.caves.show', ['uuid' => $newCave->uuid]))
+                ->with('success', __('varcave.cave_update.cave_created') );
+
+        }
+        catch(Exception $e){
+            return redirect()
+                ->back()
+                ->with('error', Str::ucfirst(__('varcave.general.opFailed')) . ' ' . $e->getMessage() );
+        }
     }
 }

@@ -41,6 +41,9 @@ return [
         'download' => 'télécharger',
         'file_already_exists' => 'Le fichier existe déjà',
         'file_deleted' => 'Fichier supprimé',
+        'create' => 'Créer',
+        'add' => 'ajouter',
+        'reminder' => 'rappel',
         
     ],
 
@@ -51,6 +54,7 @@ return [
         'homeAnnouncements' => 'Actualités',
         'lastCavesUpdates' => 'Dernières nouveautés',
         'featuredCave' => 'Cavité du jour',
+        'create_new_cave' => 'Création de cavité',
     ],
 
     /**
@@ -70,7 +74,7 @@ return [
         'documents' => 'documents',
         'mainEntrance' => 'Entrée cavité',
         'nearCaves' => 'Cavités proches',
-        'informChange' => 'Informer d\'une modification',
+        'informChange' => 'Proposer une modification',
         'caveAddToFav' => 'cavité ajoutée aux favoris',
         'caveDelFav' => 'cavité supprimée des favoris',
         'cave-entrance' => 'entrée n°:nbr',
@@ -80,6 +84,17 @@ return [
         'rescue_documents' => 'Documents info secours',
         'no_rescue_data' => 'pas de données secours',
         'coordinates' => 'coordonnées',
+        'copy_cave' => 'Copier cavité',
+        'edit_cave' => 'Modifier la cavité',
+        'dl_gpx' => 'Téléchargement GPX',
+        'add_favorites' => 'Ajouter aux cavités favorites',
+        'dl_pdf' => 'Télécharger la fiche en PDF',
+        'copy_name_hint' => 'Nouveau nom cavité',
+        'copy_ref_hint' => 'Nouveau numéro cavité',
+        'new_ref' => 'Nouveau numéro',
+        'new_name' => 'Nouveau nom cavité',
+        'copy_cave_modal_title' => 'Copie de: :cavename',
+        'cave_copy_success' => 'Cavité copiée avec succès',
     ],
 
     /**
@@ -93,7 +108,7 @@ return [
         'unlock_del_coords' => 'Autoriser la suppression des coordonnées',
         'unlock_del_files' => 'Autoriser la suppression des fichiers',
         'files' => 'fichiers',
-        'editCave' => 'Modification de la cavité :caveName',
+        'editCave' => 'Modification de la cavité ":caveName"',
         'choose_category' => 'Choisir la catégorie',
         'add_new_file' => 'Ajouter un nouveau fichier',
         'add_file_note' => 'Ajouter une information',
@@ -102,6 +117,11 @@ return [
         'file_not_owned' => 'Le fichier spécifié n\'est pas lié à la cavité',
         'note_not_owned' => 'La note de fichier spécifiée n\'est pas lié à la cavité',
         'note_updated' => 'Note de fichier enregistrée.',
+        'cave_created' => 'Cavité créée avec succès',
+        'add_change_log' => 'Ajouter une note de modification',
+        'add_note_reminder' => 'Pensez à mettre a jour l\'historique de modification',
+        'add_edit_note' => 'Ajouter une note de modification',
+
         
     ],
 
@@ -138,6 +158,7 @@ return [
         'statistics' => 'Statistiques cavités',
         'resources' => 'ressources',
         'files' => 'fichiers',
+        'create_cave' => 'Créer une cavité',
     ],
 
     /**

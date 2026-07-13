@@ -18,18 +18,17 @@ class CaveCoordinates extends Model
         'cave_id',
         'location',
         'z',
-        //'protected',
     ];
 
-    protected $emptyCoordsCollection = 
-        [
-            'x' => 0,
-            'y' => 0,
-            'lon' => 0,
-            'lat' => 0,
-        ];
+    protected static array $emptyCoords  = 
+    [
+        'x' => 0,
+        'y' => 0,
+        'lon' => 0,
+        'lat' => 0,
+        'z' => 0,
+    ];
     
-
     //relation to cave table
     public function cave(): belongsTo
     {
@@ -61,7 +60,7 @@ class CaveCoordinates extends Model
             $cave->is_location_protected 
             && !$user->hasRole('admin')
         ){
-            return collect([self::$emptyCoordsCollection]);
+            return collect([self::$emptyCoords]);
         }
         
         $coords =  self::where('cave_id', $cave->id)->selectRaw('id, ST_X(location) as x, ST_Y(location) as y, z');
@@ -74,7 +73,7 @@ class CaveCoordinates extends Model
 
         $results = $coords->get();
         if($results->isEmpty()) {
-            return collect([self::$emptyCoordsCollection]);
+            return collect([self::$emptyCoords]);
         }
         
         return $coords->get()->map(function ($c) {
@@ -149,5 +148,22 @@ class CaveCoordinates extends Model
                 'z' => (float)$c->z,
                 'distance' => (int)$c->distance,
             ]);
+    }
+
+    public static function add(int $caveId, float $lon, float $lat, float $z): CaveCoordinates
+    {
+        Log::debug(__METHOD__ . ' called.');
+        Log::info('Add a new coordinate set', [$lon, $lat, $z, $caveId]);
+
+         $id = DB::table('cave_coordinates')->insertGetId([
+            'cave_id' => $caveId,
+            'location' => DB::raw("ST_PointFromText('POINT($lon $lat)')"),
+            'z' => $z,
+            'created_at' => now(),
+        ]);
+
+        Log::info('Coord set added: '. $id);
+
+        return self::findOrFail($id);
     }
 }

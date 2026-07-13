@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="/lib/glightbox/3.3.0/dist/css/glightbox.css" />
 <script src="/lib/glightbox/3.3.0/dist/js/glightbox.min.js"></script>
 <script>
-    <x-varcave.caveshow.caveshow-js />
+    <x-varcave.caveshow.caveshow-js :caveName="$caveData['attributes']['data']['name']" :uuid="$caveObj->uuid" />
     const caveUuid = "{{ $caveObj->uuid }}";
 </script>
 
@@ -14,6 +14,24 @@
             <p class="title">{{ $caveData['attributes']['data']['name'] }}</p>
         </div>
     </section>
+    {{-- small notifications for cave restricted details --}}
+    @if($caveObj->no_access == 1)
+        <div id="no-access-notification" class="notification is-danger">
+            <button class="delete"></button>
+            <div id="no-access-content">
+                {{ \App\Models\Setting::get('no_access_message') }}
+            </div>
+        </div>
+    @endif
+
+    @if($caveObj->is_location_protected == 1)
+        <div id="location-protected-notification" class="notification is-warning">
+            <button class="delete"></button>
+            <div id="location-protected-content">
+                {{ \App\Models\Setting::get('location_protected_message') }}
+            </div>
+        </div>
+    @endif
 
     <div class="columns is-mobile"> 
         <div class="column is-background-info">
@@ -28,29 +46,32 @@
         <div class="column">
             &nbsp;
         </div>
-        <div class="column is-background-info is-flex is-justify-content-flex-end ">
+        <div class="column is-background-info is-flex is-justify-content-flex-end">
             @can('updateCave', $caveObj)     {{-- START OF `CAN' showAllCaveDetails FEATURES --}}
-                <span id="caveshow-action-update" class="icon is-icon-wrapper bi-xl">
+                <span id="caveshow-action-copy" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.copy_cave') }}">
+                    <a href="#" class="bi bi-copy"></a>
+                </span>
+                <span id="caveshow-action-update" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.edit_cave') }}">
                     <a href="{{ route('varcave.caves.caveEditPage', ['uuid' => $caveObj->uuid ]) }}" class="bi bi-pencil-square"></a>
                 </span>
             @endcan     {{-- END OF `CAN' showAllCaveDetails FEATURES --}}
 
             @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' showAllCaveDetails FEATURES --}}
-                <span id="caveshow-action-gpxdownload" class="icon is-icon-wrapper bi-xl">
-                    <a href="{{ route('varcave.caves.gpx', ['uuid' => $caveObj->uuid ]) }}" class="bi bi-geo-alt-fill"></a>
+                <span id="caveshow-action-gpxdownload" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.dl_gpx') }}">
+                    <a href="{{ route('varcave.caves.gpx', ['uuid' => $caveObj->uuid ]) }}" class="bi bi-geo-alt-fill" ></a>
                 </span>
-                <span id="caveshow-action-setfav" class="icon is-icon-wrapper bi-xl"  >
-                    @if(auth()->user()->isBookmark($caveObj->uuid))
-                        <a class="bi bi-star-fill">
-                            <progress id="progress" class="progress is-small is-primary" max="100" style="display:none">15%</progress>
-                        </a>
-                    @else
-                        <a class="bi bi-star"></a>
+                <span id="caveshow-action-setfav" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.add_favorites') }}">
+                    <div>
+                        @if(auth()->user()->isBookmark($caveObj->uuid))
+                            <a class="bi bi-star-fill"></a>
+                        @else
+                            <a class="bi bi-star"></a>
+                        @endif
                         <progress id="progress" class="progress is-small is-primary" max="100" style="display:none">15%</progress>
-                    @endif
+                    </div>
                     
                 </span>
-                <span id="caveshow-action-pdfdownload" class="icon is-icon-wrapper bi-xl">
+                <span id="caveshow-action-pdfdownload" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.dl_pdf') }}">
                     <a class="bi bi-file-pdf-fill" href="{{  route('varcave.caves.pdf', ['uuid' => $caveObj->uuid]) }}"></a>
                 </span>
                 <span class="mr-4">&nbsp;</span>
@@ -137,6 +158,31 @@
             @endcan    {{-- END OF `CAN' FEATURES --}}
         </ul>
     </div>
+
+    {{-- start of form error message --}}
+    @if (session('error') || $errors->any() || session('success'))
+        <div @class([
+                'notification',
+                'mt-2',
+                'is-danger' => $errors->any() || session('error'),
+                'is-success' => session('success'),
+            ])
+        >
+        <button class="delete notification-delete-button"></button>
+            @if($errors->any())
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            @elseif( session('error') )
+                {{ session('error') }}
+            @else
+                {{ session('success') }}
+            @endif
+        </div>
+    @endif
+    {{-- end of form error message  --}}
 
     <div id="tabs-contents">
         <ul>

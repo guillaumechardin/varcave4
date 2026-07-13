@@ -36,7 +36,7 @@ class Setting extends Model
             'int'    => (int) $value,
             'float'  => (float) $value,
             'bool'   => (bool) $value,
-            //'json'   => json_decode('{"ips":["a", "b", "c"]}',true),
+            //'json'   => json_decode($value,true),
             'datetime' => $value ? Carbon::parse($value) : null,
             default  => $value,
         };

@@ -73,6 +73,9 @@ $(document).ready(function() {
       },
     });
 
+    /**
+     * Send search form with enter key
+     */
     $('#quick-search-value').on('keydown', function (e) {
       if (e.key === 'Enter') {
           e.preventDefault();
@@ -95,8 +98,34 @@ $(document).ready(function() {
       }
       Logger.info('Empty request');
       return false;
-
     })
+
+    /**
+     * Start new/add cave process with modal form
+     * This use the copy modal component
+     */
+    $('#create-cave').on('click', function(e){
+        Logger.debug('Load copy data form');
+        const copyFormContent = $('#copy-modal-template').html();
+       
+        showModal("{{ __('varcave.homepage.create_new_cave') }}", copyFormContent);
+        $('#copy-cave-form').attr('action', "{{ route('varcave.caves.create') }}");
+    });
+
+    /**
+     * close small notification message
+     */
+    $('body').on('click', '.notification-delete-button', function(e){
+      Logger.debug('Hide notification');
+      $(this).parent('div').remove();  
+    });
+    
+  /**
+   * Close/hide selected notification
+   */
+  $('.notification .delete').on('click', function() {
+    $(this).closest('.notification').slideUp(500);
+  });
 
 });
 

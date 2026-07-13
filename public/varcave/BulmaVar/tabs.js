@@ -70,13 +70,16 @@
         this.switchTab($clickedLink);
       });
 
-      const hash = window.location.hash.replace('#', '');
+      const hash = window.location.hash.replace('#tab=', '');
       Logger.debug('hash target: '+hash);
       if (hash) {
-          const $target = $('#'+hash);
           this.goToTabById( hash );
           return //prevent code exec, #tab has precedence
       }
+
+      $(window).on('hashchange', () =>{
+        this.openTabFromHash();
+      });
 
       // Determine which tab to activate initially
       if (this.initialTab) {
@@ -230,6 +233,28 @@
       this.$tabContents.show();
       this.$tabLinks.parent().removeClass('is-active');
     }
+
+    /**
+     * Change tab on hashchange the tab name (html id) must be preceded by #tab=
+     * ie=http://url/page#tab=target-tab
+     */
+    openTabFromHash()
+    {
+      console.log('hash tab change request');
+      const hash = window.location.hash;
+
+      if (!hash.startsWith('#tab=')) {
+        console.log('target tab id not found: ' + hash)
+        return;
+      }
+
+      const tabId = hash.substring(5); // remove "#tab="
+
+      console.log('target tabId='+tabId)
+      //id without #
+      this.goToTabById( tabId );
+    }
+       
   }
 
   // Register the Tabs plugin with BulmaVar
@@ -240,5 +265,8 @@
   } else {
     console.error('BulmaVar.Tabs: BulmaVar core not found. Load bulma-var.js first.');
   }
+
+ 
+  
 
 })(jQuery);

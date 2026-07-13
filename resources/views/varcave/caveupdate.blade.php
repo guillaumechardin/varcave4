@@ -3,13 +3,18 @@
 
 <script>
     const caveUuid = "{{ $caveObj->uuid }}";
-    <x-varcave.caveupdate.caveupdate-js :uuid="$caveObj->uuid"/>
+    <x-varcave.caveupdate.caveupdate-js :uuid="$caveObj->uuid" />
 </script>
 
 <section class="section">
     <section class="hero">
         <div class="hero-body">
-            <p class="title is-italic">{{ __('varcave.cave_update.editCave', ['caveName' => $caveData['attributes']['data']['name'], ]) }}</p>
+            <p class="title is-italic">
+            <a href="{{ route('varcave.caves.show', ['uuid' => $caveObj->uuid]) }}" >
+                <span class="icon mr-2 is-link"><i class="bi bi-arrow-left-square"></i></span>
+                {{ __('varcave.cave_update.editCave', ['caveName' => $caveData['attributes']['data']['name'], ]) }}
+            </a>
+            </p>
         </div>
     </section>
 <section>
@@ -104,7 +109,6 @@
             </li>
         </ul>
     </div>
-
 </section>
 
 @include('varcave.template.footer')

@@ -19,6 +19,49 @@ class Cave extends Model
 
     protected $dates = ['deleted_at'];
 
+    protected $fillable = [
+        'uuid',
+        'name',
+        'addendum',
+        'edit_year',
+        'bibliography',
+        'map_name',
+        'town',
+        'CO2',
+        'access_text',
+        'airflow_date',
+        'explore_date',
+        'description',
+        'document_of_origin',
+        'length',
+        'explorers',
+        'geology',
+        'hydrology',
+        'inventor',
+        'place',
+        'mountain_range',
+        'airflow',
+        'numero_arrondissement',
+        'numero_commune',
+        'numero_departement',
+        'cave_ref',
+        'depth',
+        'max_depth',
+        'area',
+        'topographer',
+        'pollution',
+        'is_location_protected',
+        'coords_GPS_checked',
+        'zone_natura_2000',
+        'anchors',
+        'no_access',
+        'PNR_SB',
+        'cave_system_id',
+        'ENS',
+        'foret_domaniale',
+        'cave_type',
+    ];
+
     //relation to cave_changelog table
     public function changelog(): HasMany
     {

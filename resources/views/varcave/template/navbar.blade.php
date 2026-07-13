@@ -38,7 +38,11 @@
           </a>
           <a class="navbar-item" href="{{ route('varcave.caves.statistics') }}">
             {{ Str::ucfirst( __('varcave.navbar.statistics')) }}
-          </a> 
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="#" id="create-cave">
+            {{ Str::ucfirst( __('varcave.navbar.create_cave')) }}
+          </a>
         </div>
       </div>
 

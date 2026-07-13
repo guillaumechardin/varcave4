@@ -1,7 +1,7 @@
 @props([
     'photos',
 ])
-<h1>photos</h1>
+<p class="title is-5">{{ Str::ucfirst(__('varcave.caveshow.photos')) }}</p>
 <div class="fixed-grid has-4-cols has-2-cols-mobile">
     <div class="grid">
         @foreach ($photos as  $photo)
@@ -13,7 +13,7 @@
                     <p>{{ $photo['file_note'] }}</p>
                 </div>
             </div>
-            @endforeach
+        @endforeach
     </div>
     <script>
         const lightbox_photos = GLightbox({

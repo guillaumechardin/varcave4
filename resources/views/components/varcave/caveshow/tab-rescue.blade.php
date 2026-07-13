@@ -1,7 +1,7 @@
 @props([
     'rescueFiles',
 ])
-<h1>{{ __('varcave.caveshow.rescue_documents') }}</h1>
+<p class="title is-5">{{ __('varcave.caveshow.rescue_documents') }}</p>
 <div class="gallery grid">
     @foreach ($rescueFiles as $key => $doc)
         <div class="cell">
@@ -15,6 +15,6 @@
         </div> 
     @endforeach
     @if(empty($rescueFiles))
-        <div class="has-background-info">{{ __('varcave.caveshow.no_rescue_data')}}</div>
+        <div class="">{{ __('varcave.caveshow.no_rescue_data')}}</div>
     @endif
 </div>
