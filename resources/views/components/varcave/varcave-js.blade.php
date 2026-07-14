@@ -1,5 +1,6 @@
 const generalLogLevel =  "{{ env('LOG_LEVEL') }}" ;
 const caveShowTemplaceUrl = "{{route('varcave.caves.show', '__UUID__')}}";
+var workInProgress = false;
 
 $(document).ready(function() {
   // Check for click events on the navbar burger icon
@@ -131,7 +132,7 @@ $(document).ready(function() {
 
 /**
  * Handle ajax request to server
- * This custom ajax requester use `meta name="viewport" ` from <header> tag
+ * This custom ajax requester use `meta name="csrf-token" ` from <header> tag
 */
 function sendAjaxRequest(url, method, data, onSuccess, onError) {
   $.ajax({
@@ -407,7 +408,7 @@ function clearInputs(items) {
 function showGenericErrorMsg(str){
     msg = {
       message: str,
-      title: 'error',
+      title: '{{ Str::upper(__('varcave.general.error')) }}',
     }
     showMessageBox(msg, 'is-danger', 5000);    
 }
@@ -454,6 +455,25 @@ function getTheme()
   return $('html').attr('data-theme');
 }
 
+/**
+ * small helpers to prevent multi click on links/ajax requests
+ */
+function setWorkInProgress(value = true)
+{
+  workInProgress = value;
+  Logger.debug('workInProgress set to:' + value);
+}
 
-
+/**
+ * small helpers to prevent multi click on links/ajax requests
+ * use setWorkInProgress(Bool)
+ */
+function checkWorkInProgress(setStateInProgress = true)
+{
+  if(workInProgress == true)
+  {
+     throw new Error('There are still some jobs in progress');
+  }
+  return;
+}
 

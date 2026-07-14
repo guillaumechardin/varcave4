@@ -52,6 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/caves/{uuid}/file', [CaveController::class, 'destroyFile'])->whereUuid('uuid')->name('varcave.caves.file.destroy');
     Route::patch('/caves/{uuid}/file', [CaveController::class, 'patchFile'])->whereUuid('uuid')->name('varcave.caves.file.patch');
     Route::get('/cave/{uuid}/staticmap', [CaveController::class, 'getStaticMap'])->whereUuid('uuid')->name('varcave.staticmap');
+    Route::post('/caves/{uuid}/changelog', [CaveController::class, 'createChangelog'])->whereUuid('uuid')->name('varcave.caves.createChangelog');
+    Route::patch('/caves/{uuid}/changelog', [CaveController::class, 'updateChangelog'])->whereUuid('uuid')->name('varcave.caves.updateChangelog');
     
     //PROFILE
     route::get('/profile/eula', [ProfileController::class, 'showEULA'])->name('varcave.profile.eula.show');

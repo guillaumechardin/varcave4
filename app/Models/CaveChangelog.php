@@ -12,7 +12,8 @@ class CaveChangelog extends Model
         'cave_id',
         'modification_note',
         'author',
-        'is_visible',
+        'is_homepage_visible',
+        'is_deleted',
     ];
 
     //relation to cave table
@@ -21,9 +22,11 @@ class CaveChangelog extends Model
         return $this->belongsTo(Cave::class);
     }
 
-    public static function lastestCaveChangeLog(int $count, string $sortOrder = 'desc', string $sortField = 'created_at')
+    public static function lastestCaveChangeLog(int $count, string $sortOrder = 'desc', string $sortField = 'created_at', $onlyHomepageVisible = 1)
     {
         return self::orderBy($sortField, $sortOrder)
+                    ->where('is_deleted', 0)
+                    ->where('is_homepage_visible', $onlyHomepageVisible)
                     ->limit($count)
                     ->get();
     }

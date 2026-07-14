@@ -1,4 +1,5 @@
 var $currentTarget = '';
+var working = false;
 $(document).ready(function(){
 
     $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-cave-info');
@@ -148,18 +149,47 @@ $(document).ready(function(){
      * Add a new change log to cave
      */
     $('#add-change-history').on('click', function(e){
-        Logger.debug('user change file');
+        Logger.debug('user add changelog');
 
-        const url = "{{ route('varcave.caves.updateCaveData', ['uuid' => $uuid]) }}";
+        const url = "{{ route('varcave.caves.createChangelog', ['uuid' => $uuid]) }}";
         var data = {
-            fieldname: $(this).data('fieldname'),
-            value: $(this).val(),
+            modification_note: $('#input-modification-note').val(),
+            is_homepage_visible: $('#input-is-homepage-visible').prop('checked')  ? 1 : 0,
         };
 
-        $(this).after(progressBar);
-        $(this).attr('disabled', true);
-        $currentTarget = $(this);
-        sendAjaxRequest(url, 'post', data, dataUpdateSucceed, dataUpdateFailed) ;
+        $('#checkbox-is-homepage-visible-field').after(progressBar);
+        sendAjaxRequest(url, 'post', data, changelogAddSucceed, coordUpdateFailed) ; //use coordUpdateFailed to displey  error msg
+    });
+
+    /**
+     * Set note to visible/hidden on homepage
+     */
+    $('body').on('click', '.set-note-visibility', function(e){
+        Logger.debug('Change note visibility');
+        checkWorkInProgress();
+        setWorkInProgress();
+        
+        const url = "{{ route('varcave.caves.updateChangelog', ['uuid' => $uuid]) }}";
+        Logger.debug('raw visible:'+$(this).data('visible'));
+        const visible = $(this).data('visible') == 1 ? 0 : 1; //invert 0/1
+
+        Logger.debug('Send visible');
+        Logger.debug(visible);
+        var data = {
+            id: $(this).closest('.changelog-item').data('changelog-id'),
+            is_homepage_visible: visible,
+        };
+
+        $(this).closest('.modification-note-actions').after(progressBar);
+        sendAjaxRequest(url, 'patch', data, changelogUpdateSucceed, coordUpdateFailed) ; //use coordUpdateFailed to displey  error msg
+    })
+
+    /**
+     * Close modal window if user click on "add change log"
+     */
+    $(document).on('click', 'a[href^="#tab="]', function (e) {
+        $modal = $(this).closest('.modal');
+        closeModal( $modal, true );
     });
 
     //start check edit time on startup
@@ -234,7 +264,8 @@ function coordUpdateSucceed(response)
 function coordUpdateFailed(response)
 {
     Logger.debug('Update coord failure');
-    showMessageBox(response);
+    setWorkInProgress(false);
+    showMessageBox(response, 'is-danger', 4500);
     $('.save-progress').remove();
 }
 
@@ -260,25 +291,59 @@ function checkEditDone(){
             if (elapsed >= time) {
                 showModal(
                     '{{ Str::upper(__('varcave.general.reminder')) }}',
-                    '{{ __('varcave.cave_update.add_note_reminder') }}' +
+                    '{{ __('varcave.cave_update.add_changelog_reminder') }}' +
                     '<p>\
                         <a href="#tab=tab-cave-changehistory">\
-                            {{ __('varcave.cave_update.add_edit_note') }}\
+                            {{ __('varcave.cave_update.add_changelog') }}\
                         </a>\
                     <p>'
                 );
 
-                // Facultatif : éviter de réafficher la fenêtre à chaque chargement
+                // prevent next popup to load
                 localStorage.removeItem('editDone');
                 localStorage.removeItem('editDoneTimestamp');
             }
         }
 }
 
-$(document).on('click', 'a[href^="#tab="]', function (e) {
-    $modal = $(this).closest('.modal');
-    closeModal( $modal, true );
-});
+function changelogAddSucceed(response)
+{
+    Logger.info('add log success');
+    showMessageBox(response);
+    
+    $('#changelog-items').prepend(response.data);
+    $('.save-progress').remove();
+    $('#input-add-changelog').val('');
+    $('#checkbox-add-changelog').prop('checked', false);
+}
+
+function changelogUpdateSucceed(response)
+{
+    Logger.info('Update changelog succeed');
+    showMessageBox(response);
+    setWorkInProgress(false);
+
+    $('.save-progress').remove();
+
+    if( response.data.visibility == 1){
+        addClass = 'bi-eye-slash';
+        removeClass = "bi-eye";
+    }else{
+        removeClass = 'bi-eye-slash';
+        addClass = "bi-eye";
+    }
+
+    //change icon state
+    const $icon = $(`.changelog-item[data-changelog-id='${response.data.id}'] .set-note-visibility`);
+    $icon
+    .removeClass(removeClass)
+    .addClass(addClass);
+
+    $icon
+    .data('visible', Number(response.data.visibility));
+    
+    working = false;
+}
 
 const progressBar = '<progress class="progress save-progress is-link mt-2"  max="100">FR saving</progress>';
 

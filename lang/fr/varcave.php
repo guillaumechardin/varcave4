@@ -119,9 +119,13 @@ return [
         'note_updated' => 'Note de fichier enregistrée.',
         'cave_created' => 'Cavité créée avec succès',
         'add_change_log' => 'Ajouter une note de modification',
-        'add_note_reminder' => 'Pensez à mettre a jour l\'historique de modification',
-        'add_edit_note' => 'Ajouter une note de modification',
-
+        'add_changelog_reminder' => 'Pensez à mettre a jour l\'historique de modification',
+        'add_changelog' => 'Ajouter une note de modification',
+        'changelog_added' => 'Note de modification ajoutée',
+        'changelog_is_visible' => 'Visible en page d\'accueil',
+        'show_hide_homepage' => 'Afficher/masquer en page d\'acceuil',
+        'changelog_not_owned' => 'La note de modification spécifié n\'est pas lié à la cavité',
+        'changelog_updated' => 'La note de modification à été modifiée',
         
     ],
 
