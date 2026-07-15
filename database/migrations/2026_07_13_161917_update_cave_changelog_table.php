@@ -12,24 +12,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('cave_changelogs', function (Blueprint $table) {
-            $table->renameColumn('is_visible', 'is_homepage_visible');
-            $table->boolean('is_deleted')->after('is_homepage_visible')->default(0);
-
-            $table->bigInteger('id')
-            ->unsigned()
-            ->autoIncrement()
-            ->first()
-            ->change();
-
-            $table->foreign('cave_id')
-                ->references('id')
-                ->on('caves')
-                ->cascadeOnDelete();
-        });
-
-        
-
         if (Schema::hasTable('cave_changelogs')) {
             $indexExists = DB::select("
                 SELECT COUNT(*) AS count
@@ -46,13 +28,26 @@ return new class extends Migration
             }
         }
 
-        DB::statement("
-            ALTER TABLE `cave_changelogs`
-                MODIFY `cave_id` BIGINT UNSIGNED NOT NULL
-        ");
 
-        
+        Schema::table('cave_changelogs', function (Blueprint $table) {
+            $table->renameColumn('is_visible', 'is_homepage_visible');
+            $table->boolean('is_deleted')->after('is_homepage_visible')->default(0);
 
+            $table->bigInteger('id')
+            ->unsigned()
+            ->autoIncrement()
+            ->first()
+            ->change();
+
+            $table->bigInteger('cave_id')
+            ->unsigned()
+            ->change();
+
+            $table->foreign('cave_id')
+                    ->references('id')
+                    ->on('caves')
+                    ->cascadeOnDelete();
+        });    
     }
 
     /**

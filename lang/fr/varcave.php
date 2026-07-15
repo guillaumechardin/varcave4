@@ -44,6 +44,7 @@ return [
         'create' => 'Créer',
         'add' => 'ajouter',
         'reminder' => 'rappel',
+        'information' => 'information',
         
     ],
 
@@ -126,6 +127,10 @@ return [
         'show_hide_homepage' => 'Afficher/masquer en page d\'acceuil',
         'changelog_not_owned' => 'La note de modification spécifié n\'est pas lié à la cavité',
         'changelog_updated' => 'La note de modification à été modifiée',
+        'add_bibliography' => 'Ajouter un élément de bibliographie',
+        'enable-biblio-delete' => 'Autoriser la suppression de la bibliographie',
+        'nonexistant_bibliography_id' => 'Id bibliographie non existant pour la cavité',
+        'bibliography_updated' => 'Bibliographie mise à jour',
         
     ],
 

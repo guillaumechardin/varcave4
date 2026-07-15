@@ -46,5 +46,16 @@ $(document).ready(function(){
         $('#copy-cave-form').attr('action', "{{ route('varcave.caves.copy', ['uuid' => $uuid]) }}")
     });
     
+    //store bibliography text in clipboard
+    $('.copyable').on('click', function () {
+        const text = $(this).text();
+        navigator.clipboard.writeText(text);
+
+        const msg = {
+            title: "{{ Str::ucfirst(__('varcave.general.information')) }}",
+            message: "{{ __('varcave.caveshow.coord_copied') }}"
+        };
+        showMessageBox(msg, 'is-info', 1000);
+    });
 
 });

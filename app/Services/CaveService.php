@@ -248,6 +248,7 @@ class CaveService
             'string' => (string) trim($value . ' ' . $fieldDef['unit']),
             'number' => trim((int) $value . ' ' . $fieldDef['unit']),
             'delimitedArray' => explode(self::separatorOptions[ Str::lower($key)] ??  self::separatorOptions['default'], $value  ),
+            'json' => json_decode($value),
             default => trim($value),
         };
     }

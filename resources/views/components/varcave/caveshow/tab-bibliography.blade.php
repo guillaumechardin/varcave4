@@ -7,15 +7,18 @@
         @if(empty($bibliography))
             {{ __('varcave.caveshow.nobiblio')}}
         @else
-        @foreach($bibliography as   $item)
-            <div class="control">
-                <div class="tags has-addons">
-                    <a class="tag is-medium">{{ $item }}</a>
-                    {{-- <a class="tag is-delete"></a> --}}
+        <div class="tags are-medium">
+            @foreach($bibliography as $item)
+                <div class="control">
+                    @if($item->url)
+                        <a class="tag is-link" href="{{ $item->url }}" target="_blank">{{ $item->text }}</a>
+                        {{-- <a class="tag is-delete"></a> --}}
+                    @else
+                        <button class="tag copyable">{{ $item->text }}</button>
+                    @endif
                 </div>
-            </div>
-
-        @endforeach
+            @endforeach
+        </div>
         @endif
     </div>
 </div>

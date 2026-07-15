@@ -181,8 +181,104 @@ $(document).ready(function(){
         };
 
         $(this).closest('.modification-note-actions').after(progressBar);
-        sendAjaxRequest(url, 'patch', data, changelogUpdateSucceed, coordUpdateFailed) ; //use coordUpdateFailed to displey  error msg
+        sendAjaxRequest(url, 'patch', data, changelogUpdateSucceed, coordUpdateFailed) ; //use coordUpdateFailed to display error msg
     })
+
+    /**
+     * Enable deletion of bibliography items
+     */
+    $('body').on('change', '#input-enable-biblio-delete', function(e){
+        Logger.info('checked: bibliography delete option');
+        if( $(this).prop('checked') ){
+            $('.tag.is-delete').removeClass('is-hidden');
+        }
+        else{
+           $('.tag.is-delete').addClass('is-hidden');
+        }
+        //$('.tag.is-delete').toggleClass('is-hidden');
+    });
+
+    /**
+     * Show input form to edit bibliography item
+     */
+    $('body').on('click', '.is-tag-data', function(e){
+        Logger.debug('Show selected biblio edit form');
+        $('.tag-edit-form').addClass('is-hidden'); //close all other forms
+        $(this)
+        .closest('.edit-item')
+        .next('.tag-edit-form')
+        .toggleClass('is-hidden');
+    });
+
+    /**
+     * Hide current bibliography edit form
+     */
+    $('body').on('click', '.cancel-item', function(e){
+        $(this)
+        .closest('.tag-edit-form')
+        .toggleClass('is-hidden');
+    });
+
+    /**
+     * Add new bibliography item
+     */
+    $('#add-bibliography-item').on('click', function(e){
+        Logger.info('Add new bibliography');
+
+        checkWorkInProgress();
+        setWorkInProgress();
+
+        $(this).closest('.field.has-addons').after(progressBar);
+
+        var data = {
+            text: $('#input-add-bibliography').val(),
+        };
+
+        const url = "{{ route('varcave.caves.createBibliography', ['uuid' => $uuid]) }}";
+        sendAjaxRequest(url, 'post', data, addBibliographySucceed, coordUpdateFailed); //Handle error message with coordUpdateFailed
+    });
+
+    /**
+     * Send/save the current bibliography edit form
+     */
+    $('body').on('click', '.save-item', function(e){
+        const targetItem = $(this).closest('.tag-edit-form').prev('.edit-item').data('tag-id');
+        Logger.info('Save bibliography: '+targetItem);
+
+        checkWorkInProgress();
+        setWorkInProgress();
+
+        $(this).closest('.tag-edit-form').after(progressBar);
+
+        var data = {
+            id: targetItem,
+            text: $(this).closest('.tag-edit-form').find('.item-text').val(),
+            url: $(this).closest('.tag-edit-form').find('.item-url').val(),
+        };
+
+        const url = "{{ route('varcave.caves.updateBibliography', ['uuid' => $uuid]) }}";
+        sendAjaxRequest(url, 'patch', data, updateBibliographySucceed, coordUpdateFailed);  //Handle error message with coordUpdateFailed
+    });
+
+    /**
+     * Delete selected bibliography item
+     */
+    $('body').on('click', '.tag-delete', function(e){
+        const id = $(this).closest('.edit-item').data('tag-id');
+        Logger.info('Delete bibliography item: ' + id);
+
+        checkWorkInProgress();
+        setWorkInProgress();
+
+        $(this).closest('.edit-item').after(progressBar);
+
+        var data = {
+            id: id,
+        };
+
+        const url = "{{ route('varcave.caves.removeBibliography', ['uuid' => $uuid]) }}";
+        sendAjaxRequest(url, 'delete', data, removeBibliographySucceed, coordUpdateFailed); //Handle error message with coordUpdateFailed
+    });
 
     /**
      * Close modal window if user click on "add change log"
@@ -265,7 +361,7 @@ function coordUpdateFailed(response)
 {
     Logger.debug('Update coord failure');
     setWorkInProgress(false);
-    showMessageBox(response, 'is-danger', 4500);
+    showMessageBox(response, 'is-danger', 5000);
     $('.save-progress').remove();
 }
 
@@ -343,6 +439,58 @@ function changelogUpdateSucceed(response)
     .data('visible', Number(response.data.visibility));
     
     working = false;
+}
+
+function addBibliographySucceed(response)
+{
+    Logger.info('Update bibliography succeed');
+    showMessageBox(response);
+    setWorkInProgress(false);
+
+    $('.save-progress').remove();
+
+    //Add new tag to list
+    $('#biblio-tags').append(response.data);
+    $('#input-add-bibliography').val('');
+
+}
+
+function updateBibliographySucceed(response)
+{
+    Logger.info('Update bibliography succeed');
+    showMessageBox(response);
+    setWorkInProgress(false);
+
+    $('.save-progress').remove();
+
+    //update tag
+    const $item = $('[data-tag-id="' + response.data.id + '"]');
+    
+    $item.find('.is-tag-data').html(response.data.text);
+    if(!response.data.url){
+        $item.find('.is-tag-data').removeClass('is-link');
+    }
+    else{
+        $item.find('.is-tag-data').addClass('is-link');
+    }
+    $('.tag-edit-form').addClass('is-hidden');
+    Logger.info('update done');    
+}
+
+function removeBibliographySucceed(response)
+{
+    Logger.info('Remove bibliography item succeed');
+    showMessageBox(response);
+    setWorkInProgress(false);
+
+    $('.save-progress').remove(); 
+
+    const $item = $('[data-tag-id="' + response.data + '"]');
+    $item.closest('.control').hide('slow');
+    setTimeout(function() { 
+        $item.closest('.control').remove();
+    }, 2000);
+
 }
 
 const progressBar = '<progress class="progress save-progress is-link mt-2"  max="100">FR saving</progress>';

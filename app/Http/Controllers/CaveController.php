@@ -223,8 +223,7 @@ class CaveController extends Controller
             ]
         );
     }
-
-    
+  
     public function quicksearch(Request $request)
     {
         
@@ -1109,5 +1108,190 @@ class CaveController extends Controller
                 $code,
         );
 
+    }
+
+    public function createBibliography(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'text' => ['required', 'string'],
+        ]);
+
+        try
+        {
+            Log::info('Add new cave bibliography item');
+
+            $bibliography = json_decode($cave->bibliography);
+            
+            $item = new \stdClass();
+            $item->id = Str::ulid();
+            $item->text = $validated['text'];
+            $item->url = '';
+
+            $bibliography[] = $item;
+            
+            $cave->bibliography = json_encode($bibliography, JSON_UNESCAPED_UNICODE);
+            $cave->save();
+
+            $html = view(
+                'components.varcave.caveupdate.tab-bibliography-tag-item',
+                compact('item')
+            )->render();
+
+            $success = 'success';
+            $title = Str::ucfirst(__('varcave.general.opSuccess'));
+            $msg = Str::ucfirst(__('varcave.cave_update.bibliography_added'));
+            $data = $html;
+            $code = 200;
+        }
+        catch(Exception $e)
+        {
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = Str::ucfirst(__('varcave.cave_update.save_fail') . '(' . $e->getMessage() . ')');
+            $data = 'null';
+            $code = 500;
+        }
+        
+        return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                $data,
+                $code,
+        );
+    }
+
+    public function updateBibliography(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'id' => ['required', 'string'],
+            'text' => ['required', 'string'],
+            'url' => ['nullable', 'url:http,https'],
+        ]);
+
+        try
+        {
+            Log::info('Update cave bibliography item:' . $validated['id']);
+
+            $bibliography = json_decode($cave->bibliography);
+            
+            //search if bibliography-id exists in json data
+            $index = array_search($validated['id'], array_column($bibliography, 'id'), true);
+
+            Log::debug('Given id is at json index: ' . $index);
+            if ($index == false) {
+                Log::debug('inexistant bibliography id');
+                throw new Exception(__('varcave.cave_update.nonexistant_bibliography_id'));
+            }
+
+            $bibliography[$index] = [
+                'id' => $validated['id'], //should not change :)
+                'text' => $validated['text'],
+                'url' => $validated['url'],
+            ];
+            
+            $cave->bibliography = json_encode($bibliography, JSON_UNESCAPED_UNICODE);
+            $cave->save();
+
+            $success = 'success';
+            $title = Str::ucfirst(__('varcave.general.opSuccess'));
+            $msg = Str::ucfirst(__('varcave.cave_update.bibliography_updated'));
+            $data = $bibliography[$index];
+            $code = 200;
+        }
+        catch(Exception $e)
+        {
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = Str::ucfirst(__('varcave.cave_update.save_fail') . ' (' . $e->getMessage() . ')');
+            $data = 'null';
+            $code = 500;
+        }
+        
+        return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                $data,
+                $code,
+        );
+    }
+
+    public function removeBibliography(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'id' => ['required', 'string'],
+        ]);
+
+        try
+        {
+            Log::info('Delete cave bibliography item:' . $validated['id']);
+
+            $bibliography = json_decode($cave->bibliography);
+            
+            //search if bibliography-id exists in json data
+            $index = array_search($validated['id'], array_column($bibliography, 'id'), true);
+
+            Log::debug('Given id is at json index: ' . $index);
+            if ($index === false) {
+                Log::debug('inexistant bibliography id');
+                throw new Exception(__('varcave.cave_update.nonexistant_bibliography_id'));
+            }
+           
+            unset($bibliography[$index]);
+            $bibliography = array_values($bibliography); //force reindex to prevent json corruption on concurent requests
+            
+            $cave->bibliography = json_encode($bibliography, JSON_UNESCAPED_UNICODE);
+            $cave->save();
+
+            $success = 'success';
+            $title = Str::ucfirst(__('varcave.general.opSuccess'));
+            $msg = Str::ucfirst(__('varcave.cave_update.bibliography_deleted'));
+            $data = $validated['id'];
+            $code = 200;
+        }
+        catch(Exception $e)
+        {
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = Str::ucfirst(__('varcave.cave_update.save_fail') . ' (' . $e->getMessage() . ')');
+            $data = 'null';
+            $code = 500;
+        }
+        
+        return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                $data,
+                $code,
+        );
     }
 }

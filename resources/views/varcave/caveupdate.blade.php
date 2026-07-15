@@ -45,6 +45,14 @@
                 </a>
             </li>
             <li>
+                <a data-tabs-target="tab-cave-bibliography">
+                    <span class="icon is-small">
+                        <i class="bi bi-book" aria-hidden="true"></i>
+                    </span>
+                    <span>{{ Str::ucfirst(__('varcave.caveshow.bibliography')) }}</span>
+                </a>
+            </li>
+            <li>
                 <a data-tabs-target="tab-cave-changehistory">
                     <span class="icon is-small">
                         <i class="bi bi-clock-history" aria-hidden="true"></i>
@@ -99,6 +107,12 @@
             <li>
                 <div id="tab-cave-files" class="tab-content mx-2 mt-2">
                     <x-varcave.caveupdate.tab-files :caveFiles="$caveFiles" :caveFileList="$caveFileList" :fileTypeList="$fileTypeList" :caveUuid="$caveObj->uuid"/>
+                </div>
+            </li>
+
+            <li>
+                <div id="tab-cave-bibliography" class="tab-content mx-2 mt-2">
+                    <x-varcave.caveupdate.tab-bibliography :bibliography="$caveBibliography" />
                 </div>
             </li>
             
