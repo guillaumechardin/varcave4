@@ -59,7 +59,7 @@ return new class extends Migration
                 'firstname' => 'Admin',
                 'lastname' => 'ADMIN',
                 'email' => 'admin@myhost.local',
-                'password' => Hash::make('speleo2025'),
+                'password' => Hash::make('testeur25'),
                 'created_at' => now(),
                 'updated_at' => NULL,
             ],

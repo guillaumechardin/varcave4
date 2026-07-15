@@ -29,7 +29,7 @@ return new class extends Migration
 
         $legacyUsers = DB::table('varcave4_users')
         ->orderBy('indexid', 'asc')
-        ->limit(50)
+        //->limit(50)
         ->get();
         $totalLegacyUsers = count( $legacyUsers->toArray() );
 
