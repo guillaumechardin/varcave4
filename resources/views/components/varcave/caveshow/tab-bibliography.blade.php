@@ -4,7 +4,7 @@
 
 <div class="box">
     <div class="field is-grouped is-grouped-multiline">
-        @if(empty($bibliography))
+        @if(empty($bibliography) || $bibliography == '---') {{-- '---' is rendered by cave service if biblio is empty array --}}
             {{ __('varcave.caveshow.nobiblio')}}
         @else
         <div class="tags are-medium">
