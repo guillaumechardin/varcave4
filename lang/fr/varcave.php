@@ -450,7 +450,15 @@ return [
         'role_del' => 'retirer le rôle',
         'users_mgmt' => 'Gestion des utilisateurs',
         'import_results' => "Utilisateurs  importés avec succès.\n Resultats:\n  Lignes traité: :total\n  Ajouts: :added\n  mis à jour: :updated\n  Non traités: :failed",
-        
+        'accnt_expiration_date' => 'Date d\'expiration des comptes',
+        'import_help' => 'Remplissez le formulaire, sélectionnez un fichier d\'import et valider le formulaire pour ajouter des utilisateurs.',
+        'csv_format' => 'Format du fichier CSV',
+        'no_header' => 'Pas de ligne d\'entête',
+        'csv_encoding' => 'Encodage UTF-8',
+        'field_format' => 'Format des champs',
+        'import_settings' => 'Paramètres d\'import',
+        'select_file' => 'Sélectionnez un fichier',
+
         'table_users' => [
             'username' => 'nom d\'utilisateur',
             'firstname' => 'prénom',

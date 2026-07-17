@@ -102,7 +102,7 @@ class CaveService
     private int $OPTIONS;
 
     private const separatorOptions = [
-        'bibliography' => '/',
+        'bibliography' => '/', //no more used 2026/07/17 replaced by json format
         'default'   => ',',
     ];
 
@@ -232,7 +232,7 @@ class CaveService
         
         //empty val
         if ($value === null || $value === '') {
-            if($fieldDef['data_type'] === 'delimitedArray'){ //return empty array to prevent errors on view
+            if($fieldDef['data_type'] === 'delimitedArray' || $fieldDef['data_type'] === 'json'){ //return empty array to prevent errors on view
                 return [];
             }
             return '---';

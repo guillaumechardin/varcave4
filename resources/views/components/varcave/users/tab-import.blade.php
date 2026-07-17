@@ -2,8 +2,9 @@
     'user_cols',
     'expirationDate'
 ])
+
 <div id="wrapper-users-import">
-    <h1 class="title is-3">Paramètres d'import</h1>
+    <h1 class="title is-3">{{ __('varcave.users.import_settings') }}</h1>
     @if ($errors->import->any())
         <div class="is-background-danger">
             <ul class="has-text-danger">
@@ -20,37 +21,29 @@
                 {{ session('upload-csv-success') }}
             </div>
         </article>
-        {{-- Disabled autoremoval
-        <script>
-            $(document).ready(function(){
-                setTimeout(function() {
-                    $('#upload-csv-success').hide(500, function() {
-                        $(this).remove();
-                    });
-                }, 3000);
-            });
-        </script>
-         --}}
     @endif
 
     <form id="import-data" action="{{ route('varcave.users.import') }}" method="post" enctype="multipart/form-data">
         @csrf
         <div class="field">
-            <label class="label">Sélsctionnez un Fichier</label>
+            <label class="label">{{ __('varcave.users.select_file') }}</label>
             <div class="control">
                 <input id="users-import-file" class="input" type="file"  name="csv-file"/>
             </div>
             <p class="help">
-                Remplissez le formulaire, sélectionnez un fichier d'import et valider le formulaire
-                pour ajouter des utilisateurs.<br/>
-                Format du CSV:<br/>
-                &nbsp;&nbsp;No header line<br/>
-	            &nbsp;&nbsp;format (UTF-8) :    
+                {{ __('varcave.users.import_help') }}
+            
+                {{ __('varcave.users.csv_format') }}
+                <ul class="help">
+                    <li>{{ __('varcave.users.no_header') }}</li>
+                    <li>{{ __('varcave.users.csv_encoding') }}</li>
+                    <li>{{ __('varcave.users.field_format') }}&nbsp;&nbsp;: username;password;firstname;lastname;email;organisation</li>
+                </ul>
             </p>
         </div>
         
         <div class="field">
-            <label class="label">Date d'eXPiration des comptes</label>
+            <label class="label">{{ __('varcave.users.accnt_expiration_date')}}</label>
             <div class="control">
                 <input id="users-import-expiration-datepicker" class="input" name="import-expires-at" type="text" value="{{ $expirationDate}}">
             </div>
@@ -66,12 +59,12 @@
         <div class="field is-grouped">
             <p class="control">
                 <button class="button is-primary">
-                Submit
+                {{ Str::ucfirst(__('varcave.general.send')) }}
                 </button>
             </p>
             <p class="control">
                 <button type="reset" class="button is-light">
-                Cancel
+                {{ Str::ucfirst(__('varcave.general.cancel')) }}
                 </button>
             </p>
         </div>  
