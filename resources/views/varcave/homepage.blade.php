@@ -51,8 +51,8 @@
                   <div class="media-left">
                     <figure class="image is-48x48">
                       <img
-                        src="https://bulma.io/assets/images/placeholders/96x96.png"
-                        alt="Placeholder image"
+                        src="{{ asset('img/logo_cavite_150x150.png') }}"
+                        alt="small cave logo"
                       />
                     </figure>
                   </div>
@@ -78,8 +78,8 @@
               <div class="media-left">
                 <figure class="image is-48x48">
                   <img
-                    src="https://bulma.io/assets/images/placeholders/96x96.png"
-                    alt="Placeholder image"
+                    src="{{ asset('img/logo_cavite_150x150.png') }}"
+                    alt="small cave logo"
                   />
                 </figure>
               </div>

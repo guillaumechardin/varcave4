@@ -22,7 +22,10 @@ Route::group([], function (){
     Route::get('/caves', [CaveController::class, 'search'])->name('varcave.caves.all');
     Route::get('/vm', [CaveController::class, 'vm'])->name('varcave.vm');
     Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');
-    
+    Route::post('/caves/{uuid}/update-request', [CaveController::class, 'emailUpdateRequest'])
+    ->whereUuid('uuid')
+    ->middleware('throttle:20,1')
+    ->name('varcave.caves.emailUpdateRequest');    
     
     //PUBLIC RESOURCES PAGES
     Route::get('/resources/{fileResource}', [FileResourcesController::class, 'get'])->name('varcave.resource.download');

@@ -36,11 +36,9 @@
     <div class="columns is-mobile"> 
         <div class="column is-background-info">
             <div>
-                <a href="#">
-                    <span id="caveshow-action-sendmail" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.informChange') }}" >
-                        <i class="bi bi-envelope-at-fill"></i>
-                    </span>
-                </a>     
+                <button id="caveshow-action-sendmail" class="icon is-icon-wrapper bi-xl " title="{{ __('varcave.caveshow.informChange') }}" >
+                    <i class="bi bi-envelope-at-fill has-text-link"></i>
+                </button>   
             </div>
         </div>
         <div class="column">
@@ -238,5 +236,11 @@
         </ul>
     </div>
 </section>
+
+<template id="tmpl-contact-form">
+    <x-varcave.mail-contact-form 
+        :subject=" __('varcave.caveshow.email_subject',['caveName' => $caveData['attributes']['data']['name'] ])"
+        :messageDfltBody="__('varcave.caveshow.email_body_default_link') . ' ' .  route('varcave.caves.show', ['uuid' => $caveObj->uuid])"/>
+</template>
 
 @include('varcave.template.footer')

@@ -45,7 +45,8 @@ return [
         'add' => 'ajouter',
         'reminder' => 'rappel',
         'information' => 'information',
-        
+        'email_sent' => 'Votre message à été envoyé',
+        'email_not_sent' => 'Votre message n\'a pas été envoyé', 
     ],
 
     'homepage' => [
@@ -96,6 +97,8 @@ return [
         'new_name' => 'Nouveau nom cavité',
         'copy_cave_modal_title' => 'Copie de: :cavename',
         'cave_copy_success' => 'Cavité copiée avec succès',
+        'email_subject' => 'Demande de mise à jour de la cavité: :caveName',
+        'contact_form' => 'Formulaire de contact',
     ],
 
     /**
@@ -367,8 +370,8 @@ return [
         'smtp_max_attach_size_hlp' => "Taille max d'une PJ (en Ko)",
         'smtp_max_attach_global_size_dsp' => "Taille max globale PJ",
         'smtp_max_attach_global_size_hlp' => "Taille max globale des PJ dans un email",
-        'smtp_cave_edit_recipients_dsp' => "Destinataire erreurs cavités",
-        'smtp_cave_edit_recipients_hlp' => "Liste d'adresse email vers lequelles seront envoyés les emails du contact d'erreur cavité",
+        'smtp_cave_update_recipients_dsp' => "Destinataire erreurs cavités",
+        'smtp_cave_update_recipients_hlp' => "Liste d'adresse email vers lequelles seront envoyés les emails du contact d'erreur cavité",
         'smtp_general_inquiry_recipient_dsp' => "Destinataires formulaire de contact",
         'smtp_general_inquiry_recipient_hlp' => "Liste d'adresse email vers lequelles seront envoyés les demandes issues du formulaire de contact",
         'smtp_server_debuglbvl_dsp' => "Niveau de journalisation",
@@ -511,6 +514,27 @@ return [
         'documents'         => 'document généraux',
         'rescue_data'       => 'données secours',
     ],
+
+    'contact_form' => [
+        'enter_name' => 'Indiquez votre nom',
+        'hint_enter_name' => 'Prénom NOM',
+        'email' => 'Votre email',
+        'hint_email' => 'Indiquer un email valide',
+        'invalid_email' => 'L\'email indiqué est invalide',
+        'subject' => 'Objet du message',
+        'hint_subject' => 'Objet de votre message, un lien vers la cavité sera automatiquement ajouté',
+        'message_body' => 'Corps du message',
+        'hint_message_body' => 'Indiquez ici ce que vous souhaitez apporter comme modifications (coordonnées, nom, etc.).',
+        'send_copy' => 'Recevoir une copie du message',
+
+    ],
+
+    'email' => [
+        'caveUpdate' => [
+            'welcomeTxt' => "Bonjour,\nVoici une proposition de modification de cavité par \":name.\"", 
+            'default_link' => 'Lien direct vers la cavité :caveName',
+        ]
+    ]
     
 ];
 

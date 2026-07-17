@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tools;
 use App\Helpers\VarcaveApiResponse;
+use App\Mail\ContactFormMail;
 use App\Models\Cave;
 use App\Models\CaveChangelog;
 use App\Models\CaveCoordinates;
@@ -25,6 +26,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -1293,5 +1295,66 @@ class CaveController extends Controller
                 $data,
                 $code,
         );
+    }
+
+    public function emailUpdateRequest(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+
+        $validated = $request->validate([
+            'name'              => ['required', 'string'],
+            'mail-from'         => ['required', 'email:rfc'],
+            'subject'           => ['required', 'string'],
+            'body'              => ['required', 'string'],
+            'sendCopyToUser'    => ['required', 'boolean'],
+        ]);
+
+        //add some more data for email preparation
+        $validated['caveName'] = $cave->name;
+        $validated['uuid'] = $cave->uuid;
+
+        try
+        {
+            $recipients = json_decode(Setting::get('smtp_cave_update_recipients'));
+            
+            if($validated['sendCopyToUser']){
+                $recipients[] = $validated['mail-from'];
+            }
+
+            Log::info('Send email on cave update request');
+            $mail = new ContactFormMail($validated);
+            Mail::to($recipients)->send($mail);
+
+            $success = 'success';
+            $title = Str::ucfirst(__('varcave.general.opSuccess'));
+            $msg = Str::ucfirst(__('varcave.general.email_sent'));
+            $data = null;
+            $code = 200;
+        }
+        catch(Exception $e)
+        {
+            Log::error("Failure while sending email: \n" .  $e->getmessage());
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = Str::ucfirst(__('varcave.general.email_not_sent') . '  (' . $e->getMessage() . ')');
+            $data = 'null';
+            $code = 500;
+        }
+        
+        return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                $data,
+                $code,
+        );
+
+
     }
 }

@@ -2,6 +2,7 @@
     'caveName',
     'uuid',
 ])
+
 $(document).ready(function(){
     $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-cave-info');
 
@@ -58,4 +59,65 @@ $(document).ready(function(){
         showMessageBox(msg, 'is-info', 1000);
     });
 
+    /**
+     * Load modal contact form 
+     */
+    $('#caveshow-action-sendmail').on('click', function(e){
+        Logger.debug('Load contact form');
+        $bodyContent = $('#tmpl-contact-form').html();
+        showModal("{{ __('varcave.caveshow.contact_form') }}", $bodyContent);
+    });
+
+    /**
+     * Send modal email contact form
+     */
+    $('body').on('click', '#send-contact-form', function(e){
+        Logger.debug('Try to send contact form');
+        $('.not-valid').addClass('is-hidden');
+
+        checkWorkInProgress();
+        setWorkInProgress();
+
+        toggleModalProgress();
+
+        const email = $('#contact-mail-from')[0];
+        if (!email.checkValidity()) {
+            e.preventDefault();
+            setWorkInProgress(false);
+            toggleModalProgress(false);
+
+            $('.not-valid').toggleClass('is-hidden');
+            return;
+        }
+
+        const url = '{{ route('varcave.caves.emailUpdateRequest', ['uuid' => $uuid]) }}';
+
+        const data = {
+            "name": $('#contact-name').val(),
+            "mail-from": $('#contact-mail-from').val(),
+            "subject": $('#contact-msg-subject').val(),
+            "body": $('#contact-msg-body').val(),
+            "sendCopyToUser": Number($('#contact-send-copy-to-user').prop('checked')), //send 1 or 0 instead of str "true"/"false" (for validation)
+        };
+
+        sendAjaxRequest(url, 'post', data , sendMailSucceed, sendMailFailed);
+
+    });
 });
+
+function sendMailSucceed(response)
+{
+    setWorkInProgress(false);
+    toggleModalProgress(false);
+    showMessageBox(response);
+
+    closeModal( $('#modal-message'), true );
+}
+
+function sendMailFailed(response)
+{
+    setWorkInProgress(false);
+    toggleModalProgress(false);
+    showMessageBox(response, 'is-danger', 4500);
+}
+

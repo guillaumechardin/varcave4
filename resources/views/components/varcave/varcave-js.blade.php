@@ -477,3 +477,16 @@ function checkWorkInProgress(setStateInProgress = true)
   return;
 }
 
+/**
+ * Enable/disable fullscreen/modal progress bar 
+ */
+function toggleModalProgress(isActive = true)
+{
+  Logger.debug('Toggle progress bar');
+  if(isActive){
+    $('#modal-progress').removeClass('is-hidden').addClass('is-active');
+  }else{
+    $('#modal-progress').removeClass('is-active').addClass('is-hidden');
+  }
+}
+

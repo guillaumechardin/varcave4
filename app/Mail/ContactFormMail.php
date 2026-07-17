@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use App\Models\Setting;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -12,21 +11,20 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class ResetPassword extends Mailable
+class ContactFormMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public string $tokenExpires = '';
     /**
      * Create a new message instance.
      */
     public function __construct(
-        public String $url,
-        public String $token,
-        public User $user)
+        public array $data,
+    )
     {
-        $this->tokenExpires = config('auth.passwords.'.config('auth.defaults.passwords').'.expire');
+        //   
     }
 
     /**
@@ -34,10 +32,12 @@ class ResetPassword extends Mailable
      */
     public function envelope(): Envelope
     {
+        Log::debug(__METHOD__ . ' called.');
+        
         return new Envelope(
             from: new Address(Setting::get('smtp_sender')),
-            to: $this->user->email,
-            subject: __('reset-password.subject') .  ' ' . env('APP_NAME'),
+            replyTo: [ new Address($this->data['mail-from'])],
+            subject: $this->data['subject'],
         );
     }
 
@@ -47,8 +47,7 @@ class ResetPassword extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.reset-password',
-            //text: 'mail.reset-password-txt',  //a simpler txt version
+            view: 'mail.caveUpdate',
         );
     }
 
