@@ -526,7 +526,7 @@ return [
     'contact_form' => [
         'enter_name' => 'Indiquez votre nom',
         'hint_enter_name' => 'Prénom NOM',
-        'email' => 'Votre email',
+        'email' => 'Votre adresse email',
         'hint_email' => 'Indiquer un email valide',
         'invalid_email' => 'L\'email indiqué est invalide',
         'subject' => 'Objet du message',
