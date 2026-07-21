@@ -16,6 +16,13 @@ $(document).ready(function (){
         $('#eula-editor').trumbowyg('html', eulaContent);
         $('#eula-id').val(eulaId);
 
+        $('#form-save').prop('disabled', false);
+        $('#eula-editor').prop('disabled', false);
+        $('#eula-editor').trumbowyg('enable');
+
+        let url = "{{ route('varcave.eula.update', ['eula' => '_ID_']) }}";
+        url = url.replace('_ID_', eulaId);
+        $('#eula-form').attr('action', url);
     });
 
     $('#eula-editor').removeClass('is-hidden')

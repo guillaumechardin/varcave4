@@ -16,37 +16,49 @@
         <x-varcave.admin-eula-js />
     </script>
 
-    @if(session('error'))
+    @if (session('success'))
+        <div class="notification is-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
         <div class="notification is-danger">
             {{ session('error') }}
         </div>
     @endif
 
-    <form action="{{ route('varcave.eula.update') }}" method="post" id="eula-form">
+    @if ($errors->any())
+        <div class="notification is-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="#" method="post" id="eula-form">
         @method('put')
 
 
         <div class="field">
-            <label class="label">FR lang</label>
+            <label class="label">{{ __('varcave.eula.language')}}</label>
             <div class="control">
                 <div class="select">
                     <select id="eula-select-lang">
-                        <option value="null" @selected(app()->getLocale() == '')>--SELECT EULA--</option>
+                        <option value="null" selected disabled>--{{ __('varcave.eula.select_eula')}}--</option>
                     @foreach($eulas as $eula)
                         <option value="{{ $eula->lang }}">{{ $eula->lang }}</option>
                     @endforeach
-                    @if(session('error'))
-
-                    @endif
                     </select>
                 </div>
             </div>
         </div>
         <div class="field">
             <div class="control">
-                <label class="label">FR Contenu EULA</label>
+                <label class="label">{{ __('varcave.eula.eula_text')}}</label>
                 <div style="max-width:75%">
-                    <textarea id="eula-editor" name="eula-content" form="eula-form"  class="is-hidden">
+                    <textarea disabled id="eula-editor" name="eula-content" form="eula-form"  class="is-hidden">
                     </textarea>
                 </div>
             </div>
@@ -54,7 +66,7 @@
             
         <div class="field">
             <div class="control"> 
-                <button class="button is-primary">{{ Str::ucfirst(__('varcave.general.save')) }}</button>
+                <button id="form-save" class="button is-primary" disabled>{{ Str::ucfirst(__('varcave.general.save')) }}</button>
             </div>
         </div>
         <input id="eula-id" type="hidden" name="eula-id" value="@old(session('eula-id'))"/>

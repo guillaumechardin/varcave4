@@ -25,7 +25,7 @@
         </div>
     @endif
 
-    <div class="box">
+    <div class="box as-text-white">
         <div class="content">
             {!! $eula->content !!}
         </div>

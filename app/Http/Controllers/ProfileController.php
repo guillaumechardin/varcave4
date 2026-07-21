@@ -163,7 +163,7 @@ class ProfileController extends Controller
     public function showEULA(Request $request)
     {
        Log::debug(__METHOD__ . ' called.');
-       $eula_localized_content = DB::table('eula')
+       $eula_localized_content = DB::table('eulas')
         ->where('lang', App::getLocale())
         ->first();
 

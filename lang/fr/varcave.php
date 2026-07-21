@@ -539,6 +539,7 @@ return [
         'message_body' => 'Corps du message',
         'hint_message_body' => 'Indiquez ici ce que vous souhaitez apporter comme modifications (coordonnées, nom, etc.).',
         'send_copy' => 'Recevoir une copie du message',
+        'eula_text' => 'Texte de la charte',
 
     ],
 
@@ -551,6 +552,9 @@ return [
 
     'eula' => [
         'edit_eula_title' => 'Modification de la charte d\'utilisation',
+        'eula_saved' => 'Charte d\'utilisation enregistrée',
+        'select_eula' => 'Sélectionnez une charte',
+        'language' => 'Langage',
     ],
     
 ];

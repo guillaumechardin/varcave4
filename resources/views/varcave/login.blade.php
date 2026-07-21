@@ -6,7 +6,7 @@
       <div class="column is-one-third">
 
         <div class="notification is-warning">
-          Si vous fédéré et qu'il s'agit de votre premiere connexion, vous devez utiliser votre date de naissance comme mot de passe
+          Si vous êtes fédéré et qu'il s'agit de votre premiere connexion, vous devez utiliser votre date de naissance comme mot de passe
           au format JJMMAAAA, votre nom d'utilisateur est votre numéro de licence.
         </div>
 
