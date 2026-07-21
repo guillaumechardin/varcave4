@@ -2,8 +2,10 @@ $(document).ready(function (){
     
     editor = $('#eula-editor').trumbowyg({
         lang: '{{ app()->getLocale() }}',
-        //semantic: true,
-        resetCss: true,
+        semantic: true,
+        resetCss:true,
+        removeformatPasted: true,
+
     });
 
     $('#eula-select-lang').on('change', function(e){
