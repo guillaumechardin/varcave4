@@ -38,7 +38,7 @@
     @endif
 
     <form action="#" method="post" id="eula-form">
-        @method('put')
+        @method('patch')
 
 
         <div class="field">

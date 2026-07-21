@@ -10,6 +10,10 @@ class PageField extends Model
     protected $fillable = ['page_key', 'field_id', 'section_key', 'sort_order'];
 
     public $fields = [];
+    
+    protected $casts = [
+      'is_visible' => 'boolean',
+    ];
 
     public function __construct (){
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\CaveController;
 use App\Http\Controllers\EulaController;
 use App\Http\Controllers\FileResourcesController;
 use App\Http\Controllers\HomepageController;
+use App\Http\Controllers\PageFieldsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StaticMapController;
@@ -98,7 +99,13 @@ Route::middleware(['auth', 'can:admin-access'])->group(function () {
 
     //EULA
     Route::get('/admin/eula', [EulaController::class, 'show'])->name('varcave.eula.show');
-    Route::put('/admin/eula/{eula}', [EulaController::class, 'update'])->name('varcave.eula.update');    
+    Route::patch('/admin/eula/{eula}', [EulaController::class, 'update'])->name('varcave.eula.update');
+
+    //PAGE FIELDS
+    Route::get('/admin/pagefields', [PageFieldsController::class, 'show'])->name('varcave.pagefield.show');
+    Route::patch('/admin/pagefields', [PageFieldsController::class, 'reorder'])->name('varcave.pagefield.reorder');
+    Route::patch('/admin/pagefields/{pagefield}', [PageFieldsController::class, 'update'])->name('varcave.pagefield.update');
+    
    
 });
 

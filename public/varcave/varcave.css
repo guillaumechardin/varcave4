@@ -101,3 +101,11 @@
   cursor: pointer;
 }
 
+
+/**
+ * css for pageFields
+ */
+.ui-state-highlight { height: 2.5em; line-height: 2.5em; }
+.cell .sort-handle {cursor: grab;}
+.cell .sort-handle:active { cursor: grabbing;}
+/** End css for pageFields **/

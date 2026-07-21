@@ -4,14 +4,14 @@
 <link rel="stylesheet" href="/lib/glightbox/3.3.0/dist/css/glightbox.css" />
 <script src="/lib/glightbox/3.3.0/dist/js/glightbox.min.js"></script>
 <script>
-    <x-varcave.caveshow.caveshow-js :caveName="$caveData['attributes']['data']['name']" :uuid="$caveObj->uuid" />
+    <x-varcave.caveshow.caveshow-js :caveName="$caveName" :uuid="$caveObj->uuid" />
     const caveUuid = "{{ $caveObj->uuid }}";
 </script>
 
 <section class="section">
     <section class="hero">
         <div class="hero-body">
-            <p class="title">{{ $caveData['attributes']['data']['name'] }}</p>
+            <p class="title">{{ $caveName}}</p>
         </div>
     </section>
     {{-- small notifications for cave restricted details --}}
@@ -239,7 +239,7 @@
 
 <template id="tmpl-contact-form">
     <x-varcave.mail-contact-form 
-        :subject=" __('varcave.caveshow.email_subject',['caveName' => $caveData['attributes']['data']['name'] ])"
+        :subject=" __('varcave.caveshow.email_subject',['caveName' => $caveName ])"
         :messageDfltBody="__('varcave.caveshow.email_body_default_link') . ' ' .  route('varcave.caves.show', ['uuid' => $caveObj->uuid])"/>
 </template>
 

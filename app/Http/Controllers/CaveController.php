@@ -111,8 +111,9 @@ class CaveController extends Controller
 
         return view('varcave.caveshowv4',
             [
-                'pageTitle' => $caveData['attributes']['data']['name'],
+                'pageTitle' => $cave->name,
                 'caveObj' => $cave,
+                'caveName' => $cave->name,
                 'caveData' => $caveData,
                 'caveDocsPhotos' => $caveDocsPhotos,
                 'caveDocsFiles' => $caveDocsFiles,

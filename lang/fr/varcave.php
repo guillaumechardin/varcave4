@@ -174,6 +174,7 @@ return [
         'files' => 'fichiers',
         'create_cave' => 'Créer une cavité',
         'eula_edit' => 'Modif charte utilisation',
+        'pagefields' => 'Gestion aff. des champs'
     ],
 
     /**
@@ -214,6 +215,7 @@ return [
     ],
 
     'table_cave' => [
+        'uuid' => 'UUID',
         'name' => "Nom",
         'addendum' => "Additif",
         'annex' => "Annexe",
@@ -554,6 +556,13 @@ return [
         'select_eula' => 'Sélectionnez une charte',
         'language' => 'Langage',
         'eula_text' => 'Texte de la charte',
+    ],
+
+    'page_fields' => 
+    [
+        'title' => 'Gestion de l\'affichage des champs',
+        'visiblity_updated' => 'Visibilité du champ mis à jour',
+        'sort_order_updated' => 'Ordre des champs enregistré',
     ],
     
 ];

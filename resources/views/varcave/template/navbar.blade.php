@@ -84,6 +84,11 @@
             <a class="navbar-item" href="{{ route('varcave.eula.show') }}">
               {{ Str::ucfirst( __('varcave.navbar.eula_edit')) }}
             </a>
+
+            <hr class="navbar-divider">
+            <a class="navbar-item" href="{{ route('varcave.pagefield.show') }}">
+              {{ Str::ucfirst( __('varcave.navbar.pagefields')) }}
+            </a>
           </div>
         </div>
       @endcan

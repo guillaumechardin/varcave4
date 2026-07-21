@@ -264,8 +264,7 @@ function showMessageBox(response, statusClass = "is-success", duration = 3000){
 
   const res = response?.responseJSON ?? response;
 
-  Logger.debug('message:');
-  Logger.debug(res.message);
+  Logger.debug('message: '+res.message);
 
   $("#varcave-message-box").removeClass('is-hidden  is-success  is-warning  is-danger');
 
@@ -490,3 +489,63 @@ function toggleModalProgress(isActive = true)
   }
 }
 
+
+/**
+ * Display a progress bar next to the specified element.
+ *
+ * @param {jQuery|HTMLElement} element
+ * @param {string} position "before" or "after"
+ * @returns {boolean}
+ */
+function showProgressBar(element, position = 'after')
+{
+    const $el = $(element);
+
+    if ($el.length === 0) {
+        Logger.error('showProgressBar(): invalid element');
+        return false;
+    }
+
+    hideProgressBar($el);
+
+    const progressBar = $('#progress-bar-tmpl').html();
+
+    if (!progressBar) {
+        Logger.error('Progress bar template not found');
+        return false;
+    }
+
+    if (position === 'before') {
+        $el.before(progressBar);
+    } else {
+        $el.after(progressBar);
+    }
+
+    return true;
+}
+
+/**
+ * Remove the progress bar associated with the specified element.
+ *
+ * @param {jQuery|HTMLElement|null} element
+ * @returns {boolean}
+ */
+function hideProgressBar(element = null)
+{
+    if (element === null) {
+        $('.save-progress-bar').remove();
+        return true;
+    }
+
+    const $el = $(element);
+
+    if ($el.length === 0) {
+        Logger.error('hideProgressBar(): invalid element');
+        return false;
+    }
+
+    $el.prev('.save-progress-bar').remove();
+    $el.next('.save-progress-bar').remove();
+
+    return true;
+}
