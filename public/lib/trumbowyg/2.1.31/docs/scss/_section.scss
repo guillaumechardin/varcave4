@@ -1,0 +1,46 @@
+@use "variables";
+
+.section {
+    position: relative;
+    padding-bottom: 100px;
+
+    &-primary {
+        color: variables.$primary-color-dark;
+        background: linear-gradient(to bottom left, variables.$primary-color, variables.$primary-color-light);
+
+        .section-title {
+            color: variables.$white;
+        }
+
+        a {
+            color: variables.$white;
+        }
+    }
+
+    &-secondary {
+        background: variables.$grey;
+    }
+
+    h4 {
+        font-weight: 400;
+        color: variables.$text-color;
+        font-size: 28px;
+        padding-top: 80px;
+    }
+}
+
+.section-title {
+    text-align: center;
+    font-family: variables.$panton;
+    font-size: 100px;
+    color: variables.$primary-color;
+    padding-top: 100px;
+    padding-bottom: 30px;
+}
+
+.section-subtitle {
+    margin-top: -22px;
+    font-size: 23px;
+    color: variables.$text-color;
+    font-weight: 400;
+}

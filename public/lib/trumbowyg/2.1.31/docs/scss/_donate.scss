@@ -1,0 +1,51 @@
+@use "variables";
+
+.donate-container {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+
+    .donate-description {
+        width: 100%;
+        padding: 30px 50px 50px;
+        background: variables.$grey;
+        border-top-left-radius: variables.$radius;
+        border-top-right-radius: variables.$radius;
+    }
+
+    .donate-footer {
+        text-align: center;
+        padding: 50px 0;
+        background: variables.$primary-color linear-gradient(to bottom left, variables.$primary-color, variables.$primary-color-light);
+        border-bottom-left-radius: variables.$radius;
+        border-bottom-right-radius: variables.$radius;
+    }
+
+    .donate-beer {
+        position: absolute;
+        left: -190px;
+        bottom: -30px;
+        width: 250px;
+    }
+
+    .button {
+        color: variables.$white;
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+            background: variables.$white;
+            color: variables.$primary-color;
+        }
+    }
+}
+
+.sponsors-container {
+    margin: 150px 0 0;
+    text-align: center;
+
+    a {
+        padding: 0 20px;
+    }
+}

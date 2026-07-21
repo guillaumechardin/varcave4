@@ -2,7 +2,7 @@
 @include('varcave.template.navbar')
 <script>
 $(document).ready(function(){
-    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-import');
+    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-users');
 });
 </script>
 <section class="section">

@@ -64,7 +64,8 @@ class UserController extends Controller
                 'lastname' => 'string', 
                 'email' => 'email', 
                 'caving_group' => 'string', 
-                'eula_accepted' => 'bool', 
+                'eula_accepted' => 'bool',
+                'is_diabled' => 'bool',
                 'password' => 'string', 
             ],
         ]);
@@ -142,6 +143,13 @@ class UserController extends Controller
             $input['expires_at'] = null; //force null value if empty string
         }
 
+        if (isset($input['is_disabled']) && $input['is_disabled'] === 'on') {
+            $input['is_disabled'] = true;
+        }
+        else{
+            $input['is_disabled'] = false;
+        } 
+
         if (isset($input['eula_accepted']) && $input['eula_accepted'] === 'on') {
             $input['eula_accepted'] = true;
         }
@@ -155,6 +163,7 @@ class UserController extends Controller
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'is_disabled' => 'nullable',
             'expires_at' => ['nullable', 'date_format:d/m/Y'], // only accept jj/mm/aaaa
             'password' => 'nullable|string|min:8',
             'caving_group' => 'nullable|string|max:255',
@@ -178,6 +187,7 @@ class UserController extends Controller
         $user->email = $validated['email'];
         $user->expires_at = $validated['expires_at'];
         $user->caving_group = $validated['caving_group'];
+        $user->is_disabled = $validated['is_disabled'];
 
         if($validated['eula_accepted'] && !$user->eula_accepted){ //update only if user have never accepted
             $user->eula_accepted = $validated['eula_accepted'];

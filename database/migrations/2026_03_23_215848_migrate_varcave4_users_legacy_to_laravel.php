@@ -29,7 +29,11 @@ return new class extends Migration
 
         $legacyUsers = DB::table('varcave4_users')
         ->orderBy('indexid', 'asc')
-        //->limit(50)
+        /*
+        ->where('username', 
+            'NOT REGEXP',
+            '^[A-Z][0-9]{2}-[0-9]{3}-[0-9]{3}$') // seulement les non licenciés/fédérés
+        */
         ->get();
         $totalLegacyUsers = count( $legacyUsers->toArray() );
 
@@ -42,7 +46,6 @@ return new class extends Migration
             $newDbUserExists = DB::table('users')
                 ->where('username', $userLegacy->username)
                 ->exists();
-            $plainRandPassword = Str::random(16);
 
             if($newDbUserExists)
             {
@@ -58,9 +61,9 @@ return new class extends Migration
                 'firstname' => $userLegacy->firstname,
                 'lastname' => $userLegacy->lastname,
                 'email' => $userLegacy->emailaddr,
-                'password' => $plainRandPassword, //Hash::make($plainPassword);
-                'eula_accepted' => $userLegacy->EULA_accepted,
-                'eula_accepted_at' => $userLegacy->EULA_read_on ? Carbon::parse($userLegacy->EULA_read_on) : null,
+                'password' => $userLegacy->password, //Hash::make($plainPassword);
+                'eula_accepted' => 0,
+                'eula_accepted_at' => null,
                 'expires_at' => $userLegacy->expire ? Carbon::parse($userLegacy->expire) : null,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -88,7 +91,7 @@ return new class extends Migration
         });
         
         
-        
+        //migrate home announcement creator fields
         $ids = [];
 
         $jplLegacy = DB::table('varcave4_users')->where('username', 'jpl')->value('indexid');

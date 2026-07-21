@@ -3,11 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Notifications\Notifiable;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Notifications\ResetPasswordNotification;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
@@ -156,6 +157,46 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->hasRole('admin');
+    }
+
+
+    /**
+     * Check whether the user is allowed to authenticate.
+     *
+     * This method performs various account status checks:
+     * - account expiration date
+     * - account disabled status
+     * - other authentication constraints can be added here
+     *
+     * Return values:
+     * - true  : authentication is allowed
+     * - string: authentication is denied; the string contains the user-facing error message
+     *
+     * @return bool|string
+     */
+    public function canAuthenticate()
+    {
+        Log::debug(__METHOD__ . ' called.');
+        
+        //check if account disabled
+        if ($this->is_disabled == false) {
+            Log::debug('Account NOT disabled');
+        }
+        else{
+            Log::warning('Account IS disabled');
+            return __('varcave.login.account_disabled');
+        }
+
+        //check account expiration date
+        if (!$this->expires_at || Carbon::parse($this->expires_at)->isFuture()) {
+            Log::debug('Account DOES NOT expired');
+        }
+        else{
+            Log::warning('Account IS expired');
+            return __('varcave.login.account_expired');
+        }
+
+        return true; //user is allowed to authenticate
     }
 
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CaveController;
+use App\Http\Controllers\EulaController;
 use App\Http\Controllers\FileResourcesController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
@@ -24,7 +25,7 @@ Route::group([], function (){
     Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');
     Route::post('/caves/{uuid}/update-request', [CaveController::class, 'emailUpdateRequest'])
     ->whereUuid('uuid')
-    ->middleware('throttle:20,1')
+    ->middleware('throttle:3,5')
     ->name('varcave.caves.emailUpdateRequest');    
     
     //PUBLIC RESOURCES PAGES
@@ -76,20 +77,29 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'can:admin-access'])->group(function () {
+    //SETTINGS
     Route::get('/admin/settings', [SettingController::class, 'show'])->name('varcave.admin-settings');
+    Route::patch('/admin/settings/{setting}', [SettingController::class, 'update'])->name('varcave.admin-settings-update');
+
     Route::get('/admin/supportinfo', [SettingController::class, 'supportinfo'])->name('varcave.support-info');
+    
+    //USER MGMT
     Route::get('/admin/users', [UserController::class, 'index'])->name('varcave.users.index');
     Route::get('/admin/users/{user}', [UserController::class, 'getUserModalForm'])->name('varcave.users.user-modal-form');
-    Route::get('/admin/users/roles/{user}', [UserController::class, 'getRoleModalForm'])->name('varcave.users.role');
+    Route::put('/admin/users/{user}', [UserController::class, 'save'])->name('varcave.users.save');
+    Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('varcave.users.delete');
 
+    //USERS MASS IMPORT
     Route::post('/admin/users/import', [UserController::class, 'import'])->name('varcave.users.import');
     
-    Route::patch('/admin/settings/{setting}', [SettingController::class, 'update'])->name('varcave.admin-settings-update');
-    
-    Route::put('/admin/users/{user}', [UserController::class, 'save'])->name('varcave.users.save');
+    //USER ROLES MGMT
+    Route::get('/admin/users/roles/{user}', [UserController::class, 'getRoleModalForm'])->name('varcave.users.role');
     Route::put('/admin/users/roles/{user}', [UserController::class, 'roleSave'])->name('varcave.users.role-save');
 
-    Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('varcave.users.delete');
+    //EULA
+    Route::get('/admin/eula', [EulaController::class, 'show'])->name('varcave.eula.show');
+    Route::put('/admin/eula/{eula}', [EulaController::class, 'update'])->name('varcave.eula.update');    
+   
 });
 
 

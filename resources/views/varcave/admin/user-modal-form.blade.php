@@ -36,6 +36,16 @@
         </div>
 
         <div class="field">
+            <label class="label">{{ Str::ucfirst( __('varcave.users.table_users.is_disabled')) }}</label>
+            <div class="control">
+                <label class="checkbox">
+                    <input name="is_disabled" type="checkbox" @checked($user->is_disabled)>
+                    {{ Str::ucfirst( __('varcave.users.disable_account')) }}
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
             <label class="label">{{ Str::ucfirst( __('varcave.users.table_users.expires_at')) }}</label>
             <div class="control">
                 <input id="expiration-datepicker" class="input" name="expires_at" type="text" value="{{ $user->expires_at ? \Carbon\Carbon::parse($user->expires_at)->format('d/m/Y') : null }}">

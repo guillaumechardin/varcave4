@@ -145,7 +145,9 @@ return [
         'loginFormUser'  => 'Nom d\'utilisateur',
         'loginFormPwd'  => 'Mot de passe',
         'login' => 'Se connecter',
-        'forgotten' => 'Mot de passe oublié.'
+        'forgotten' => 'Mot de passe oublié.',
+        'account_expired' => 'Le compte a expiré',
+        'account_disabled' => 'Le compte est désactivé',
     ],
 
     /**
@@ -171,6 +173,7 @@ return [
         'resources' => 'ressources',
         'files' => 'fichiers',
         'create_cave' => 'Créer une cavité',
+        'eula_edit' => 'Modif charte utilisation',
     ],
 
     /**
@@ -458,6 +461,7 @@ return [
         'field_format' => 'Format des champs',
         'import_settings' => 'Paramètres d\'import',
         'select_file' => 'Sélectionnez un fichier',
+        'disable_account' => 'Désactiver le compte',
 
         'table_users' => [
             'username' => 'nom d\'utilisateur',
@@ -466,6 +470,7 @@ return [
             'email' => 'adresse email',
             'caving_group' => 'club',
             'password' => 'mot de passe',
+            'is_disabled' => 'Désactivation du compte',
             'expires_at' => 'date d\'expiration',
             'eula_accepted' => 'Charte d\'utilisation acceptée',
         ],
@@ -542,7 +547,11 @@ return [
             'welcomeTxt' => "Bonjour,\nVoici une proposition de modification de cavité par \":name.\"", 
             'default_link' => 'Lien direct vers la cavité :caveName',
         ]
-    ]
+    ],
+
+    'eula' => [
+        'edit_eula_title' => 'Modification de la charte d\'utilisation',
+    ],
     
 ];
 

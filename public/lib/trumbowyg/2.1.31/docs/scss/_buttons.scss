@@ -1,0 +1,41 @@
+@use "variables";
+
+.button {
+    display: inline-block;
+    position: relative;
+    width: 250px;
+    border: 2px solid transparent;
+    margin: 0 auto;
+    padding: 23px 30px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.2;
+    text-decoration: none;
+    border-radius: 50px;
+    text-align: center;
+    transition: color variables.$transition-duration, background-color variables.$transition-duration;
+
+    &-primary {
+        background: variables.$primary-color;
+    }
+
+    &-secondary {
+        background: variables.$secondary-color;
+    }
+
+    &-ghost {
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    &:not(:last-child) {
+        margin-right: 20px;
+    }
+}
+
+.button:hover,
+.button:focus {
+    background: #fff;
+    color: variables.$primary-color;
+    outline: none;
+}
