@@ -24,6 +24,10 @@ class HandleDisclaimer
             return $next($request);
         }
 
+        if ($request->routeIs('logout')) {
+            return $next($request);
+        }
+
         //present eula to user if general configuration is set AND user has not yet accepted eula
         if (Setting::get('user_must_accept_EULA') && !$user->eula_accepted ) {
             if (!$request->routeIs('varcave.profile.eula*')) {
