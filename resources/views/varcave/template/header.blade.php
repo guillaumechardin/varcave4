@@ -20,6 +20,8 @@
         {{ config('app.name') }}
       @endif
     </title>
+    <link rel="icon" type="image/png" href="/img/logo_cavite_64x64.png">
+
     <link rel="stylesheet" href="/lib/bulma/1.0.4/css/bulma.min.css">
     <link rel="stylesheet" href="/varcave/varcave.css" />
 
