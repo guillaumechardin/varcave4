@@ -411,7 +411,8 @@ class CaveController extends Controller
 
         return view('varcave.caveupdate',
         [
-            'pageTitle' => $caveData['attributes']['data']['name'],
+            'pageTitle' => $cave->name,
+            'caveName' => $cave->name,
             'caveObj' => $cave,
             'caveData' => $caveData,
             'caveDescription' => $caveDescription ?? '',

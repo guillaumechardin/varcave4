@@ -563,6 +563,8 @@ return [
         'title' => 'Gestion de l\'affichage des champs',
         'visiblity_updated' => 'Visibilité du champ mis à jour',
         'sort_order_updated' => 'Ordre des champs enregistré',
+        'page_choice' => 'Sélection de la page à éditer',
+        'field_page' => 'Champs de la page: :pagename',
     ],
     
 ];

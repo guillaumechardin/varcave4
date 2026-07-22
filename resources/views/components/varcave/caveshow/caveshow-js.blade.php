@@ -43,7 +43,7 @@ $(document).ready(function(){
         Logger.debug('Load copy data form');
         const copyFormContent = $('#copy-modal-template').html();
         
-        showModal("{{ __('varcave.caveshow.copy_cave_modal_title', ['cavename' => $caveName ]) }}", copyFormContent);
+        showModal("{{ trim(__('varcave.caveshow.copy_cave_modal_title', ['cavename' => $caveName ])) }}", copyFormContent);
         $('#copy-cave-form').attr('action', "{{ route('varcave.caves.copy', ['uuid' => $uuid]) }}")
     });
     

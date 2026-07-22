@@ -34,7 +34,7 @@
     @endif
 
     <div class="field">
-        <label class="label"> FR Subject</label>
+        <label class="label">{{__('varcave.page_fields.page_choice') }}</label>
         <div class="control">
             <div class="select">
                 <select id="select-pagename">
@@ -53,7 +53,7 @@
                 'is-hidden' => !$loop->first
             ])
         >
-            <h1 class="title is-5">fr Champs page ['{{ $pageName }}']</h1>
+            <h1 class="title is-5">{{ __('varcave.page_fields.field_page', ['pagename' => $pageName]) }}</h1>
             <div class="fixed-grid has-2-cols-mobile has-5-cols-desktop">
                 <div class="grid grid-vertical" id="sortable-{{ $pageName }}">
                         @foreach ($pageField as  $pf)
@@ -88,7 +88,7 @@
         </div>
     @endforeach
 
-    <button id="save" class="button is-link">Save</button>
+    <button id="save" class="button is-link">{{ Str::ucfirst(__('varcave.general.save')) }}</button>
     <style>
         
 

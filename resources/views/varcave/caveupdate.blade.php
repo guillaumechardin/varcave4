@@ -12,7 +12,7 @@
             <p class="title is-italic">
             <a href="{{ route('varcave.caves.show', ['uuid' => $caveObj->uuid]) }}" >
                 <span class="icon mr-2 is-link"><i class="bi bi-arrow-left-square"></i></span>
-                {{ __('varcave.cave_update.editCave', ['caveName' => $caveData['attributes']['data']['name'], ]) }}
+                {{ __('varcave.cave_update.editCave', ['caveName' => $caveName, ]) }}
             </a>
             </p>
         </div>

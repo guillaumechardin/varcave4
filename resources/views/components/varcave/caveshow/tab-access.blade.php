@@ -1,5 +1,6 @@
 @props([
     'caveData',
+    'caveName',
     'caveAccess',
     'caveCoords',
     'crs',
@@ -131,8 +132,8 @@
 
             </script>
             <script>
-                var cave = @json($caveData['data'], JSON_PRETTY_PRINT);
                 
+                var caveName = "{!! $caveName !!}";
                 var nearCavesData = @json($caveCoords['near_caves'], JSON_PRETTY_PRINT);
                 var caveCoordinates = @json($caveCoords['entrance'], JSON_PRETTY_PRINT);
                 const baseCaveRouteURL = "{{ route('varcave.caves.show', ['_uuid_']) }}";
@@ -168,11 +169,11 @@
                     var caveFeature = new ol.Feature({
                         geometry: new ol.geom.Point(ol.proj.fromLonLat([caveCoord.lon, caveCoord.lat]))
                     });
-                    caveFeature.set("name", cave.name.value);
+                    caveFeature.set("name", caveName);
                     caveFeature.set("main", "main");
                     caveFeature.set("url", 'none');
                     caveFeature.setStyle(caveStyle.clone());
-                    caveFeature.getStyle().getText().setText(cave.name.value);
+                    caveFeature.getStyle().getText().setText(caveName);
                     caveFeatures_a.push(caveFeature);
                 }
                 Logger.debug('Current cave features detail:');

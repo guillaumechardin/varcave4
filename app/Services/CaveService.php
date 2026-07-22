@@ -202,33 +202,58 @@ class CaveService
         );
 
         $this->caveViewReadyData = array();
-        foreach ($caveData as $key => $value)
+        
+        //reorder caveData from model sorting order
+        foreach ($pageModel as $key => $modelData)
         {
             $list_values = null;
-            if($pageModel[$key]['storage_type'] === 'list') {
-                $listValues = ListValue::whereIn('list_name', [ $pageModel[$key]['storage_target'] ])->get()->toArray();
+            if($modelData['storage_type'] === 'list') {
+                $listValues = ListValue::whereIn('list_name', [ $modelData['storage_target'] ])->get()->toArray();
+                
                 $list = array();
                 foreach( $listValues as $listItem){
                     $list[ $listItem['value'] ] = __($listItem['i18n_key']);
                     //$list[ $listItem['value'] ] = $listItem['value'];
                 }
                 $list_values = $list;
-            } 
-
-            
-            $this->caveViewReadyData[$key] = $this->formatValue($value, $key, $pageModel[$key], $list_values);
+            }
+            $this->caveViewReadyData[$key] = $this->formatValue($caveData[$key], $key, $modelData, $list_values);
 
             if ($list_values === null) {
                 //unset($this->caveViewReadyData[$key]['list_values']);
             }
         }
+
+        /** OLD STYLE ORDERING TO BE REMOVED
+            foreach ($caveData as $key => $value)
+            {
+                $list_values = null;
+                if($pageModel[$key]['storage_type'] === 'list') {
+                    $listValues = ListValue::whereIn('list_name', [ $pageModel[$key]['storage_target'] ])->get()->toArray();
+                    $list = array();
+                    foreach( $listValues as $listItem){
+                        $list[ $listItem['value'] ] = __($listItem['i18n_key']);
+                        //$list[ $listItem['value'] ] = $listItem['value'];
+                    }
+                    $list_values = $list;
+                } 
+
+                
+                $this->caveViewReadyData[$key] = $this->formatValue($value, $key, $pageModel[$key], $list_values);
+
+                if ($list_values === null) {
+                    //unset($this->caveViewReadyData[$key]['list_values']);
+                }
+            }
+        */
         
     }
 
-    public static function formatValue(mixed $value, string $key, array $fieldDef, $listValues): mixed
+    public static function formatValue(mixed $value, string $key, array $fieldDef, ?array $listValues): mixed
     {
         Log::debug(__METHOD__ . ' called.');
         Log::debug('  format data: ' . $key . ' as: ' . $fieldDef['data_type']);
+        
         
         //empty val
         if ($value === null || $value === '') {
@@ -236,6 +261,14 @@ class CaveService
                 return [];
             }
             return '---';
+        }
+
+        //send back right value element from list
+        if($fieldDef['storage_type'] == 'list'){
+            if(!array_key_exists($value, $fieldDef['list_values'])){
+                throw new \InvalidArgumentException('Incorrect value: ' . $value . ' . Does not exist in field definition data_type');
+            }
+            return $fieldDef['list_values'][$value];
         }
 
         //all other type of data
