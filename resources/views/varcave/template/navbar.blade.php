@@ -93,6 +93,21 @@
         </div>
       @endcan
       {{-- END admin navbar content --}}
+
+      {{-- MORE NAVBAR MENU --}}
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          {{ Str::ucfirst( __('varcave.navbar.more_menu')) }}
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="{{ route('varcave.about.show') }}">
+            {{ Str::ucfirst( __('varcave.navbar.about_page')) }}
+          </a>
+        </div>
+      </div>
+
+      {{-- END MORE NAVBAR MENU --}}
       
     </div>
     

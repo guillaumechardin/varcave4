@@ -174,7 +174,9 @@ return [
         'files' => 'fichiers',
         'create_cave' => 'Créer une cavité',
         'eula_edit' => 'Modif charte utilisation',
-        'pagefields' => 'Gestion aff. des champs'
+        'pagefields' => 'Gestion aff. des champs',
+        'more_menu' => 'divers',
+        'about_page' => 'a propos de ce site',
     ],
 
     /**

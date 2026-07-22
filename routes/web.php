@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutPageController;
 use App\Http\Controllers\CaveController;
 use App\Http\Controllers\EulaController;
 use App\Http\Controllers\FileResourcesController;
@@ -37,6 +38,8 @@ Route::group([], function (){
     Route::post('/guest/theme', [ProfileController::class, 'storeTheme'])->name('varcave.guest.theme.store');
 
     Route::get('/statistics', [CaveController::class, 'viewStats'])->name('varcave.caves.statistics');
+
+    Route::get('/about', [AboutPageController::class, 'show'])->name('varcave.about.show');
     
 });
 
