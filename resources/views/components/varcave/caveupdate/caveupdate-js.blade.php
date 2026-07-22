@@ -338,7 +338,7 @@ function coordDestroySucceed(response)
     $('.save-progress').remove();
 
     //remove coord set
-    $('div.coord-wrapper[data-coord-id="' + response.data + '"]').slideUp(800, function () {
+    $('li.coord-wrapper[data-coord-id="' + response.data + '"]').slideUp(800, function () {
         $(this).remove();
     });
 }
