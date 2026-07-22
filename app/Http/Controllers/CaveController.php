@@ -219,6 +219,7 @@ class CaveController extends Controller
 
         return view('varcave.cavesearch',
             [
+                'pageTitle' => Str::ucfirst(__('varcave.searchPage.title')),
                 "searchFormFields" => $pmSearchForm ?? null,
                 "datatablesFields" => $pmDatatablesTable ?? null,
                 'datatablesLang' => $datatablesLang,

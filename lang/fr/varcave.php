@@ -568,6 +568,9 @@ return [
         'page_choice' => 'Sélection de la page à éditer',
         'field_page' => 'Champs de la page: :pagename',
     ],
-    
+        
+    'about_page' => [
+        'title' => 'A propos de ce site',
+    ],
 ];
 

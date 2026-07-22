@@ -25,7 +25,8 @@ class AboutPageController extends Controller
         }
         
         return view('varcave.aboutPage', [
-            'aboutContent'  => $htmlContent,
+        'pageTitle' => __('varcave.about_page.title'),
+        'aboutContent'  => $htmlContent,
         ]);
 
     }
