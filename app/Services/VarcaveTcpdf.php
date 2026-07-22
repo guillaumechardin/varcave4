@@ -644,7 +644,13 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$font = $this->font->getCurrentFont();
 		$this->currentY += $font['ascent'] * 0.1;
         
-		$str = implode("\n", $this->cave['bibliography']['data']['bibliography']);        
+		//dd( (array)$this->cave['bibliography']['data']['bibliography']);
+		$bibData = array();
+		foreach($this->cave['bibliography']['data']['bibliography'] as $b)
+		{
+			$bibData[] = $b->text;
+		}
+		$str = implode("\n", $bibData);        
 
         $this->addTextCellXY(
             $str,
