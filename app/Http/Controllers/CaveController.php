@@ -257,7 +257,8 @@ class CaveController extends Controller
         
         $cs = new CaveService($cave, $request->user(), CaveService::ADD_COORDS);
         
-        $gpxFile = $gpxService->createGPX( array($cs->renderForPage($pageMain))  );
+        $caveName = $cave->name;
+        $gpxFile = $gpxService->createGPX( array($cs->renderForPage($pageMain)), $caveName);
 
         return response($gpxFile, 200)
             ->header('Content-Type', 'application/xml')

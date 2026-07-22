@@ -18,7 +18,7 @@ use App\Models\Cave;
  * 
  * This service uses the phpGPX library to create GPX files.
  * It can handle a single Cave or multiple Caves.
- */
+ */ 
 class GpxService
 {
     protected $config;
@@ -40,7 +40,7 @@ class GpxService
      * @param bool $useCaveRefAsPointName Use cave reference instead of name for waypoints
      * @return string GPX XML content
      */
-    public function createGPX(array $caves,  bool $useCaveRefAsPointName = false): string
+    public function createGPX(array $caves, string $caveName, bool $useCaveRefAsPointName = false ): string
     {
         Log::debug(__METHOD__ . ' start GPX creation process');
         $gpxFile = new GpxFile();
@@ -55,20 +55,21 @@ class GpxService
 
             if (empty($coordinates))
             {
-                Log::error('No coordinates found for cave' . $caveData['name']);
+                Log::error('No coordinates found for cave' . $caveName);
                 continue;
             }
 
             // Create metadata for the GPX file
             $gpxFile->metadata = new Metadata();
-            $gpxFile->metadata->description = $this->config['httpdomain'] . '/' . $this->config['httpwebroot'];
+            $gpxFile->metadata->description = env('APP_NAME', '');
 
             $link = new Link();
-            $link->href = $this->config['httpdomain'] . '/' . $this->config['httpwebroot'];
+           // $link->href = $this->config['httpdomain'] . '/' . $this->config['httpwebroot'];
+            $link->href = route('varcave.homepage');
             $gpxFile->metadata->links[] = $link;
 
             // Waypoint naming
-            $namePrefix = $useCaveRefAsPointName ? $caveData['caveRef'] : $caveData['name'];
+            $namePrefix = $useCaveRefAsPointName ? $caveData['caveRef'] : $caveName;
             $multipleCoords = count($coordinates) > 1;
 
             $i = 1;
