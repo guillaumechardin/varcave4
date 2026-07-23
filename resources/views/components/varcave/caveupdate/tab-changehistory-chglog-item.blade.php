@@ -13,7 +13,12 @@
         {{ $change->modification_note }}
     </span>
     <span class="modification-note-actions">
-        <i class="bi bi-trash has-text-warning ml-3 is-icon-disabled " title="{{ Str::ucfirst(__('varcave.general.delete')) }}"></i>
+        <button>
+            <i  class="bi bi-trash has-text-warning ml-3 " 
+                title="{{ Str::ucfirst(__('varcave.general.delete')) }}"
+            >
+            </i>
+        </button>
     
         <button>
             <i
@@ -24,7 +29,12 @@
                     'bi-eye' => ! $change->is_homepage_visible,
                     'bi-eye-slash' => $change->is_homepage_visible,
                 ])
-                title="{{ Str::ucfirst(__('varcave.cave_update.show_hide_homepage')) }}"
+                title=
+                    @if($change->is_homepage_visible)
+                        "{{  Str::ucfirst(__('varcave.cave_update.show_on_homepage')) }}"
+                    @else
+                        "{{  Str::ucfirst(__('varcave.cave_update.hide_on_homepage')) }}"
+                    @endif
                 data-visible="{{ (int)$change->is_homepage_visible }}"
             >
             </i>

@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/cave/{uuid}/staticmap', [CaveController::class, 'getStaticMap'])->whereUuid('uuid')->name('varcave.staticmap');
     Route::post('/caves/{uuid}/changelog', [CaveController::class, 'createChangelog'])->whereUuid('uuid')->name('varcave.caves.createChangelog');
     Route::patch('/caves/{uuid}/changelog', [CaveController::class, 'updateChangelog'])->whereUuid('uuid')->name('varcave.caves.updateChangelog');
+    Route::delete('/caves/{uuid}/changelog', [CaveController::class, 'destroyChangelog'])->whereUuid('uuid')->name('varcave.caves.destroyChangelog');
     Route::post('/caves/{uuid}/bibliography', [CaveController::class, 'createBibliography'])->whereUuid('uuid')->name('varcave.caves.createBibliography');
     Route::patch('/caves/{uuid}/bibliography', [CaveController::class, 'updateBibliography'])->whereUuid('uuid')->name('varcave.caves.updateBibliography');
     Route::delete('/caves/{uuid}/bibliography', [CaveController::class, 'removeBibliography'])->whereUuid('uuid')->name('varcave.caves.removeBibliography');

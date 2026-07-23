@@ -1085,10 +1085,16 @@ class CaveController extends Controller
             
             $changelog->is_homepage_visible = $validated['is_homepage_visible'];
             $changelog->save();
+            if($changelog->is_homepage_visible){
+                $title = __('varcave.cave_update.hide_on_homepage');
+            }else{
+                $title = __('varcave.cave_update.show_on_homepage');
+            }
 
             $response = [
                 'id' => $changelog->id,
                 'visibility' => $changelog->is_homepage_visible,
+                'title' => $title,
             ];
 
             $success = 'success';
@@ -1102,6 +1108,65 @@ class CaveController extends Controller
             $success = 'fail';
             $title = Str::ucfirst(__('varcave.general.opFailed'));
             $msg = Str::ucfirst(__('varcave.cave_update.save_fail') . '(' . $e->getMessage() . ')');
+            $data = 'null';
+            $code = 500;
+        }
+        
+        return VarcaveApiResponse::ajaxResponse(
+                $success,
+                $title,
+                $msg,
+                $data,
+                $code,
+        );
+
+    }
+
+    public function destroyChangelog(string $uuid, Request $request)
+    {
+        Log::debug(__METHOD__ . ' called.');
+        $cave = Cave::getByuuid($uuid);
+  
+        if(!$cave)
+        {
+            abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
+        }
+        Gate::authorize('updateCave', $cave);
+
+        $validated = $request->validate([
+            'id' => ['required', 'exists:cave_changelogs,id'],
+        ]);
+
+        try
+        {
+            $changelog = $cave->changelog()
+            ->where('id', $validated['id'])
+            ->first();
+
+            if (!$changelog) {
+                Log::error('Changelog is not owned by cave');
+
+                Throw new Exception( __('varcave.cave_update.changelog_not_owned'));
+            }
+            Log::info('Update cave changelog');
+            
+
+            $response = [
+                'id' => $changelog->id,
+            ];
+            $changelog->delete();
+
+            $success = 'success';
+            $title = Str::ucfirst(__('varcave.general.opSuccess'));
+            $msg = Str::ucfirst(__('varcave.cave_update.changelog_deleted'));
+            $data = $response;
+            $code = 200;
+        }
+        catch(Exception $e)
+        {
+            $success = 'fail';
+            $title = Str::ucfirst(__('varcave.general.opFailed'));
+            $msg = '(' . $e->getMessage() . ')';
             $data = 'null';
             $code = 500;
         }

@@ -185,6 +185,28 @@ $(document).ready(function(){
     })
 
     /**
+     * Delete selected modification note
+     */
+    $('.changelog-item .bi-trash').on('click', function () {
+        Logger.debug('Delete modification note');
+        const item = $(this).closest('.changelog-item');
+        const id = item.data('changelog-id');
+
+        checkWorkInProgress();
+        setWorkInProgress();
+        showProgressBar(item);
+
+        var data = {
+            id: id,
+        };
+
+        const url = "{{ route('varcave.caves.destroyChangelog', ['uuid' => $uuid]) }}";
+        
+        
+        sendAjaxRequest(url, 'delete', data, deletelogUpdateSucceed, coordUpdateFailed) ; //use coordUpdateFailed to display error msg
+    });
+
+    /**
      * Enable deletion of bibliography items
      */
     $('body').on('change', '#input-enable-biblio-delete', function(e){
@@ -292,6 +314,7 @@ $(document).ready(function(){
     initEditDone()
     setInterval(checkEditDone, 5 * 1000);
 
+    
 });
 
 function dataUpdateSucceed(response)
@@ -429,6 +452,7 @@ function changelogUpdateSucceed(response)
         addClass = "bi-eye";
     }
 
+
     //change icon state
     const $icon = $(`.changelog-item[data-changelog-id='${response.data.id}'] .set-note-visibility`);
     $icon
@@ -437,8 +461,21 @@ function changelogUpdateSucceed(response)
 
     $icon
     .data('visible', Number(response.data.visibility));
+
+    $icon.attr('title', response.data.title);
+}
+
+function deletelogUpdateSucceed(response)
+{
+    Logger.info('add log success');
+    showMessageBox(response);
+    hideProgressBar();
     
-    working = false;
+    $('div[data-changelog-id="' + response.data.id + '"]')
+    .fadeOut(500, function () {
+        $(this).remove();
+    });
+
 }
 
 function addBibliographySucceed(response)
