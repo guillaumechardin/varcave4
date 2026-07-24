@@ -105,7 +105,11 @@
 /**
  * css for pageFields
  */
-.ui-state-highlight { height: 2.5em; line-height: 2.5em; }
-.cell .sort-handle {cursor: grab;}
-.cell .sort-handle:active { cursor: grabbing;}
-/** End css for pageFields **/
+.sortable-ghost {
+    /*border: 2px dashed hsl(348, 86%, 61%);*/
+    background-color: grey;
+}
+
+.sortable-handle {
+	cursor: grab;
+}

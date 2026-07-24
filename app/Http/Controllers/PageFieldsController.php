@@ -80,7 +80,7 @@ class PageFieldsController extends Controller
     public function update(PageField $pagefield, Request $request): JsonResponse
     {
         Log::debug(__METHOD__ . ' called.');
-        
+        // !!!!! TODO SOME VALIDATION !!!!!!
         try{
             $pagefield->is_visible = !$pagefield->is_visible ;
             $pagefield->save();
@@ -88,6 +88,11 @@ class PageFieldsController extends Controller
             $html['fieldId'] = $pagefield->id;
             $html['is_visible'] = $pagefield->is_visible;
             $html['page_key'] = $pagefield->page_key;
+            if($pagefield->is_visible){
+                $html['title'] = __('varcave.page_fields.hide_field');
+            }else{
+                $html['title'] = __('varcave.page_fields.show_field');
+            }
 
             $success = 'success';
             $title = Str::ucfirst(__('varcave.general.opSuccess'));

@@ -7,7 +7,10 @@ $(document).ready(function (){
     pagesName.forEach(function(pagename) {
         Logger.debug( $( "#sortable-"+pagename ));
         $( "#sortable-"+pagename ).sortable({
-            placeholder: "ui-state-highlight"
+            animation: 200,
+            ghostClass: "sortable-ghost",  // Class name for the drop placeholder
+	        handle: ".sortable-handle",
+            dataIdAttr: 'data-field-id',
         });
     });
     
@@ -32,7 +35,9 @@ $(document).ready(function (){
         let targetPage = $('#select-pagename').val();
 
         //get elements data
-        var sortedIDs = $( "#sortable-"+targetPage ).sortable( "toArray", {attribute: "data-field-id" } );
+        var sortedIDs = $( "#sortable-"+targetPage ).sortable( "toArray" );
+        console.log(sortedIDs);
+        
         let sortedFields = Array();
         sortedIDs.forEach(function(fieldId, index) {
             sortedFields.push({
@@ -78,16 +83,20 @@ function updatePageFieldSuccess(response)
     //change icon
     let $cell = $('div[data-field-id="' + response.data.fieldId + '"]');
     let $elIcon = $cell.find('.toggle-visibility');
-    let $elField = $cell.find('.sort-handle');
+    let $elField = $cell.find('.sortable-handle');
     $elIcon.removeClass('bi-eye bi-eye-slash');
     $elField.removeClass('is-info is-warning');
 
     if(response.data.is_visible == 1){
+        Logger.debug('is visible');
         $elIcon.addClass('bi-eye-slash');
+        $elIcon.attr('title', response.data.title);
         $elField.addClass('is-info');
     }else{
+        Logger.debug('is NOT visible');
         $cell.appendTo('#sortable-'+response.data.page_key);
         $elIcon.addClass('bi-eye');
+        $elIcon.attr('title', response.data.title);
         $elField.addClass('is-warning');
     }
 }

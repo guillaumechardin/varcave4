@@ -12,6 +12,9 @@
         <x-varcave.admin-pageFields-js :pagesName="$pagesName" />
     </script>
 
+    <script src="/lib/SortableJS/1.15.7/Sortable.min.js"></script>
+    <script src="/lib/SortableJS/jquery-sortablejs-1.0.0/jquery-sortable.js"></script>
+
     @if (session('success'))
         <div class="notification is-success">
             {{ session('success') }}
@@ -61,12 +64,15 @@
                                 <div class="control">
                                     <div class="tags has-addons">
                                         <i @class([
+                                            'bi',
+                                            'bi-arrows-move',
                                             'tag',
-                                            'sort-handle',
+                                            'sortable-handle',
                                             'is-medium',
                                             'is-info' => $pf['is_visible'],
                                             'is-warning' => !$pf['is_visible'],
-                                        ])>
+                                            ])
+                                        >
                                             {{ $pf['i18n_name'] }}
                                         </i>
                                         <i @class([
@@ -77,7 +83,13 @@
                                             'is-icon-clickable',
                                             'bi-eye' => !$pf['is_visible'],
                                             'bi-eye-slash' => $pf['is_visible'],
-                                        ])>
+                                            ])
+                                            @if($pf['is_visible'])
+                                                title="{{ __('varcave.page_fields.hide_field') }}"
+                                            @else
+                                                title="{{ __('varcave.page_fields.show_field') }}"
+                                            @endif
+                                        >
                                         </i>
                                     </div>
                                 </div>
