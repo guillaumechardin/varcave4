@@ -41,6 +41,8 @@ return new class extends Migration
         echo "\n";
         echo 'nombre de users :' . count($legacyUsers->toArray())."\n";
 
+        $userRole = DB::table('users')->where('name', 'user')->firstOrFail();
+
         foreach ($legacyUsers as $userLegacy) {
             //simple synchronisation between old and new database
             $newDbUserExists = DB::table('users')
@@ -69,10 +71,11 @@ return new class extends Migration
                 'updated_at' => now(),
             ]);
             
+            
             //add user as a simple user
             DB::table('role_user')->insert([
                 'user_id' => $insertId,
-                'role_id' => 1, //should be `user`
+                'role_id' => $userRole->id, //should be `user`
             ]);
 
             $i++;
