@@ -12,7 +12,7 @@
         <x-varcave.admin-pageFields-js :pagesName="$pagesName" />
     </script>
 
-    <script src="/lib/SortableJS/1.15.7/Sortable.min.js"></script>
+    <script src="/lib/SortableJS/1.15.7/sortable.min.js"></script>
     <script src="/lib/SortableJS/jquery-sortablejs-1.0.0/jquery-sortable.js"></script>
 
     @if (session('success'))

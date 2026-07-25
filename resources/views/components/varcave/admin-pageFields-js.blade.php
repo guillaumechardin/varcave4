@@ -10,7 +10,7 @@ $(document).ready(function (){
             animation: 200,
             ghostClass: "sortable-ghost",  // Class name for the drop placeholder
 	        handle: ".sortable-handle",
-            dataIdAttr: 'data-field-id',
+            dataIdAttr: "data-field-id",
         });
     });
     
