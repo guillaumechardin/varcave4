@@ -25,7 +25,7 @@ class MigrateLegacyUserPassword
         )->first();
 
         if ($user && $this->isSha256($user->password)) {
-            Log::info('Try password migration');
+            Log::info('Try password migration for user: [\'' . $user->username . '\']');
             if (hash('sha256', $request->password) == $user->password) {
                 $user->password = Hash::make($request->password);
                 $user->save();
