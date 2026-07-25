@@ -12,8 +12,8 @@
         <x-varcave.admin-pageFields-js :pagesName="$pagesName" />
     </script>
 
-    <script src="/lib/s_ortableJS/1.15.7/Sortable.min.js"></script>
-    <script src="/lib/s_ortableJS/jquery-sortablejs-1.0.0/jquery-sortable.js"></script>
+    <script src="/lib/sortableJS/1.15.7/Sortable.min.js"></script>
+    <script src="/lib/sortableJS/jquery-sortablejs-1.0.0/jquery-sortable.js"></script>
 
     @if (session('success'))
         <div class="notification is-success">
