@@ -254,16 +254,15 @@ class CaveController extends Controller
             abort(404, Str::ucfirst( __('varcave.general.caveNotFound') ) ); 
         }
        
-        $pageMain = new Page()->setPageModelFor('display', 'main', true);
-        
+        $pageMain = new Page()->setPageModelFor('gpx-build', 'main', true);        
         $cs = new CaveService($cave, $request->user(), CaveService::ADD_COORDS);
-        
-        $caveName = $cave->name;
-        $gpxFile = $gpxService->createGPX( array($cs->renderForPage($pageMain)), $caveName);
 
+        $gpxFile = $gpxService->createGPX( array( $cs->renderForPage($pageMain)) );
+
+        $filename = Str::limit( Str::slug($cave->name), 40, '') . '.gpx';
         return response($gpxFile, 200)
             ->header('Content-Type', 'application/xml')
-            ->header('Content-Disposition', 'attachment; filename="' . Str::limit( Str::slug($cave->name), 40, '') . '.gpx"');
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     public function getPdf(string $uuid, Request $request)
@@ -317,7 +316,7 @@ class CaveController extends Controller
             fileOptions: $fileOptions,
         );
         $pdf->build($caveData);
-        $pdf->render();
+        $pdf->render('mycaveFilename.pdf');
     }
 
     public function viewStats(Request $request)

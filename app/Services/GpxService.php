@@ -40,7 +40,7 @@ class GpxService
      * @param bool $useCaveRefAsPointName Use cave reference instead of name for waypoints
      * @return string GPX XML content
      */
-    public function createGPX(array $caves, string $caveName = 'TO BE REMOVED', bool $useCaveRefAsPointName = false ): string
+    public function createGPX(array $caves,/* string $caveName = 'TO BE REMOVED',*/ bool $useCaveRefAsPointName = false ): string
     {
         Log::debug(__METHOD__ . ' start GPX creation process');
         $gpxFile = new GpxFile();
