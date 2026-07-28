@@ -223,7 +223,7 @@
                     ],
                     view: new ol.View({
                         center: ol.proj.fromLonLat([{{ $caveCoords['entrance'][0]['lon'] . ',' . $caveCoords['entrance'][0]['lat'] }} ]),
-                        zoom: 16
+                        zoom: {{ \app\models\Setting::get('ol_zoom_map_lvl', 5) }}
                     })
                 });
 

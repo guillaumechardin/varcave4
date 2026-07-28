@@ -55,7 +55,7 @@ return [
         'connectinfo' => 'Connectez vous accédez à plus d\'options',
         'homeAnnouncements' => 'Actualités',
         'lastCavesUpdates' => 'Dernières nouveautés',
-        'featuredCave' => 'Cavité du jour',
+        'featuredCave' => 'Cavité mise en avant',
         'create_new_cave' => 'Création de cavité',
     ],
 
@@ -345,9 +345,12 @@ return [
         'adminIP_hlp' => "Liste des adresses IP utilisées par les administrateurs du site pour exclure des stats",
         'noAccessDisclaimer_dsp' => "Avertissement `inaccessible`",
         'noAccessDisclaimer_hlp' => "Avertissement affiché lorsque la cavité est inaccessible",
-        
+        'location_protected_message_dsp' => 'Avertissement cavité protégée',
+        'location_protected_message_hlp' => 'Avertissement affiché lorsque la cavité est déclarée avec accès protégé',
         'footerMsg_dsp' => "Message bas de page",
         'footerMsg_hlp' => "Message situé en bas de chaque page web",
+        'pdf_author_dsp' => 'Auteur PDF', 
+        'pdf_author_hlp' => 'Information indiquée dans les métadonnées des fiches de cavité PDF',
         
         'excludedcopyfields_dsp' => "Champs exclus",
         'excludedcopyfields_hlp' => "Champs exclus lors d'une copie de cavité",
@@ -399,8 +402,8 @@ return [
         'pdf_map_zoom_hlp' => 'Niveau de zoom utilisé pour la génération des mini carte sur les PDF',
         'pdf_map_cache_delay_dsp' => 'Delai d\'expiration cache mini cartes',
         'pdf_map_cache_delay_hlp' => 'Delai d\'expiration du cache  des mini cartes (en heures) pour les PDF',
-        'pdf_file_cache_delay_dsp' => 'Delai d\'expiration cache fichiers PDF',
-        'pdf_file_cache_delay_hlp' => 'Delai d\'expiration de la mise en cache des fichiers PDF pour les fiches de cavité (en heures)',
+        'pdf_file_cache_delay_dsp' => '*NON-UTILISE* Delai d\'expiration cache fichiers PDF',
+        'pdf_file_cache_delay_hlp' => '*NON-UTILISE* Delai d\'expiration de la mise en cache des fichiers PDF pour les fiches de cavité (en heures)',
         'pdf_minimap_service_dsp'  => 'Choix source mini carte',
         'pdf_minimap_service_hlp' => 'Sélection de la source pour les croquis d\'accès affiché dans les PDF',
         
