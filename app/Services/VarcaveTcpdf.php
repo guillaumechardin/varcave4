@@ -379,9 +379,9 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->setColor();
 		
 		$description = $this->getTextLine(
-				__('varcave.pdf.access'),
-				8,
-				$this->currentY,
+			__('varcave.pdf.access'),
+			8,
+			$this->currentY,
 		);
 		$this->page->addContent($description);
 
@@ -410,6 +410,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$mini_map = $this->image->add($mapfile);
 		$mini_map_out = $this->image->getSetImage($mini_map, 12, $this->currentY, 60, 45, $page['height']);
 		$this->page->addContent($mini_map_out);
+		$yAfterMiniMap = $this->currentY + 45;
 
 		//add coordinates
 		$this->setFont(size: self::sizeL);
@@ -490,7 +491,10 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		);
 		$this->page->addContent($accessTxt);
 		$cellMetrics = $this->getLastCellBBox();
-		$this->currentY += $cellMetrics['h'] + $font['descent'] * -2.2; //descent is neg
+		
+		//set Y under cave maps
+		//$this->currentY += $cellMetrics['h'] + $font['descent'] * -2.2; //descent is neg
+		$this->currentY = $yAfterMiniMap + 8;
 	}
 
 	/**
@@ -565,10 +569,10 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
                 $ratio_width  = $max_width  / $image_width_mm;
                 $ratio_height = $max_height / $image_height_mm;
 
-                // on prend le plus petit ratio (le plus contraignant)
+                // Keep lesser ratio
                 $scale = min($ratio_width, $ratio_height);
 
-                // application du scale (homothétie)
+                // Scaling
                 $final_width_mm  = $image_width_mm * $scale;
                 $final_height_mm = $image_height_mm * $scale;
             }
@@ -584,7 +588,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		if(empty($this->cave['bibliography']['data']['bibliography']) ){
 			return;
 		}
-
+		
         $margins = $this->getMargins();
         $page = $this->page->getPage();
         $availableH = $page['height'] - $margins['top'] - $margins['bottom'] - $this->currentY;
@@ -615,12 +619,13 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		//$this->currentY += $font['ascent'];
 		
 		$sectionTitle = $this->getTextLine(
-				$this->cave['bibliography']['model']['bibliography']['i18n_label'],
-				$margins['left'],
-				$this->currentY,
-				0, //justify text if this text width set. 0 = no justify
+			$this->cave['bibliography']['model']['bibliography']['i18n_label'],
+			8,
+			$this->currentY,
+			0, //justify text if this text width set. 0 = no justify
 		);
 		$this->page->addContent($sectionTitle, -1);
+	
 		//draw small outline
 		$lineStyle = $this->getLineStyle([
 			'lineWidth' => 0.4,
@@ -696,9 +701,9 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->setColor();
 		
 		$description = $this->getTextLine(
-				$this->cave['description']['model']['description']['i18n_label'],
-				8,
-				$this->currentY,
+			$this->cave['description']['model']['description']['i18n_label'],
+			8,
+			$this->currentY,
 		);
 		$this->page->addContent($description);
 
