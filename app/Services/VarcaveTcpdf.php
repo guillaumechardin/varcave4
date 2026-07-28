@@ -331,7 +331,8 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 				
 				//check if multilined data do not overflow over next title 
 				if ($this->currentY < ($this->currentY + $yOffset)){
-					$this->currentY += $yOffset + ($font['ascent'] * 0.5);
+					//overflow
+					$this->currentY += $yOffset + ($font['ascent'] * 0.3);
 				}
 				else{
 					$this->currentY += $font['ascent'];
