@@ -63,6 +63,7 @@ return [
      * Cave page
      */
     'caveshow' => [
+        'pagetitle' => 'Détails de la cavité: :cavename',
         'caveFound' => 'cavité trouvée',
         'caveNotFound' => 'cavité non trouvée',
         'informations' => 'informations',
