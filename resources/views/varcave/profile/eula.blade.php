@@ -45,7 +45,7 @@
         
         <div class="field">
             <div class="control">
-                <button class="button is-link">{{ Str::ucfirst( __('varcave.general.send')) }}</button>
+                <button class="button is-link">{{ Str::ucfirst( __('varcave.eula.accept')) }}</button>
             </div>
         </div>
     </form>

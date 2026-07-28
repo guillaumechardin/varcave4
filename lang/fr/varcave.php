@@ -570,6 +570,7 @@ return [
         'select_eula' => 'Sélectionnez une charte',
         'language' => 'Langage',
         'eula_text' => 'Texte de la charte',
+        'accept' => 'Accepter',
     ],
 
     'page_fields' => 
