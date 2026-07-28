@@ -316,7 +316,7 @@ class CaveController extends Controller
             fileOptions: $fileOptions,
         );
         $pdf->build($caveData);
-        $pdf->render('mycaveFilename.pdf');
+        $pdf->render(false);
     }
 
     public function viewStats(Request $request)

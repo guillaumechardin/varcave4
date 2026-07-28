@@ -532,6 +532,7 @@ return [
         'speleometry' => 'Spéléométrie',
         'access' => 'Information d\'accès',
         'coordinates' => 'Coordonnées',
+        'pdf_subject' => 'Informations hors ligne de la cavité',
     ],
 
     'cave_files' => [

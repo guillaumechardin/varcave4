@@ -122,13 +122,11 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->setKeywords(Setting::get('keywords')); // *** must be from db
 		
 		//specific cave details
-		$this->setSubject('cavité $cave'); // *** to be fixed
-		$this->setTitle('$cave');// *** to be fixed
-		
-		
+		$this->setSubject( __('varcave.pdf.pdf_subject') );
+		$this->setTitle($this->cavedata['name']);
 
 		//set filename from cave name	
-		$this->setPDFFilename(Str::slug($this->cave['raw']['name'] . '.pdf') );
+		$this->setPDFFilename(Str::slug($this->cave['raw']['name']) . '.pdf' );
 
 		// Insert font before addPage() so page context has a valid current font.
 		$this->font->insert($this->pon, $this->getDefaultFont(), '', 9);
@@ -744,17 +742,13 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 	/**
 	 * Force pdf download 
 	 */
-    public function render($filename = null)
+    public function render($forceDownload = true)
     {
-		$rawpdf = $this->getOutPDFString();
-        if(!$filename)
-        {
+        if(!$forceDownload){
+            $this->renderPDF($this->getOutPDFString());
+        }else{
 			//force pdf download with specidif filename
-            $this->renderPDF($rawpdf);;
-        }
-        else
-        {
-            $this->downloadPDF($rawpdf);
+            $this->downloadPDF($this->getOutPDFString());
         }
     }
 
