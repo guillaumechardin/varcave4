@@ -1,7 +1,7 @@
  @props([
     'caveMaps',
  ])
- <div class="gallery grid">
+ <div class="gallery grid has-4-cols has-2-cols-mobile">
     @foreach ($caveMaps as  $map)
         <div class="cell">
             <a href="{{ asset('storage/'.$map['file_path']) }}" class="glightbox" data-glightbox="gallery1">

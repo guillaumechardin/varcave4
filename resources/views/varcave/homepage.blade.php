@@ -8,11 +8,14 @@
         {{ __('varcave.homepage.hometext') }}
       </h1>
       <p class="subtitle">
-       {{ $settings->get('legal_notice') }}
+        {{ $settings->get('legal_notice') }}
+      </p>
+      <p class="subtitle">
+        {{ __('varcave.homepage.current_cave_count', ['count' => $caveCount]) }}
       </p>
       <p>
         @guest
-        {{ __('varcave.homepage.connectinfo') }}
+          {{ __('varcave.homepage.connectinfo') }}
         @endguest
       </p>
     </div>

@@ -33,7 +33,7 @@
         </div>
     @endif
 
-    <div class="columns is-mobile"> 
+    <div class="columns is-mobile">
         <div class="column is-background-info is-flex">
             <span>
                 <button id="caveshow-action-sendmail" class="icon is-icon-wrapper bi-xl " title="{{ __('varcave.caveshow.informChange') }}" >

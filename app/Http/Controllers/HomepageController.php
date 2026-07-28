@@ -9,6 +9,7 @@ use App\Models\FeaturedCave;
 use App\Models\HomeAnnouncement;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class HomepageController extends Controller
@@ -46,12 +47,14 @@ class HomepageController extends Controller
         
         //get FeaturedCave details
         $featuredCave = Cave::with('caveFiles')->find($lastFeaturedCave->cave_id);
-         
+        $caveCount = Cave::all()->count();
+
         return view('varcave.homepage', [
             'pageTitle' => __('varcave.homepage.title'),
             'homeAnnouncements' => $homeAnnouncements,
             'caveChangelogs' => $caveChangelogs,
             'featuredCave' => $featuredCave, 
+            'caveCount' => $caveCount,
         ]);
     }
 }

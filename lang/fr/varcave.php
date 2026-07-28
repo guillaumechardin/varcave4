@@ -57,6 +57,7 @@ return [
         'lastCavesUpdates' => 'Dernières nouveautés',
         'featuredCave' => 'Cavité mise en avant',
         'create_new_cave' => 'Création de cavité',
+        'current_cave_count' => 'La base de données contient à ce jour :count cavités',
     ],
 
     /**
