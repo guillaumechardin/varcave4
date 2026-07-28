@@ -34,17 +34,12 @@
     @endif
 
     <div class="columns is-mobile"> 
-        <div class="column is-background-info">
-            <div>
+        <div class="column is-background-info is-flex">
+            <span>
                 <button id="caveshow-action-sendmail" class="icon is-icon-wrapper bi-xl " title="{{ __('varcave.caveshow.informChange') }}" >
                     <i class="bi bi-envelope-at-fill has-text-link"></i>
                 </button>   
-            </div>
-        </div>
-        <div class="column">
-            &nbsp;
-        </div>
-        <div class="column is-background-info is-flex is-justify-content-flex-end">
+            </span>
             @can('updateCave', $caveObj)     {{-- START OF `CAN' showAllCaveDetails FEATURES --}}
                 <span id="caveshow-action-copy" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.copy_cave') }}">
                     <a href="#" class="bi bi-copy"></a>
