@@ -37,9 +37,15 @@ class CaveStat extends Model
             ] //values on creation
         );
 
+        $clientIP = request()->ip();
+        $adminIP = json_decode(Setting::get('adminIP'));
         if ($user) {
             // user logged in
             Log::debug('Update cave stats as authenticated');
+            if( $user->hasRole('admin') ||  in_array($clientIP, $adminIP) ){
+                Log::debug('No stats added, is admin or ip excluded');
+                return ;
+            }
             DB::table('cave_stats')
             ->where('cave_id', $cave->id)
             ->increment('auth_views', 1, ['updated_at' => now() ]);
