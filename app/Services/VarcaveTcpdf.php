@@ -418,17 +418,17 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$x = 76;
 		$this->currentY += 5;
 
+		$coordSystemPref = Setting::get('pdf_coords_system');
+		$coordSystem = CoordinateSystemHandler::findOrFail($coordSystemPref);
+		
 		$coord = $this->getTextLine(
-				__('varcave.pdf.coordinates'). ': ',
+				__('varcave.pdf.coordinates') . ' ('. $coordSystem->epsg_name . '): ',
 				$x,
 				$this->currentY,
 			);
 		$this->page->addContent($coord);
 		
 		$this->currentY += $font['descent'] * -2.5; //descent is neg
-
-		$coordSystemPref = Setting::get('pdf_coords_system');
-		$coordSystem = CoordinateSystemHandler::findOrFail($coordSystemPref);
 
 		$proj4 = new Proj4php();
 		//default projection as points stored in db
@@ -495,91 +495,6 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		//set Y under cave maps
 		//$this->currentY += $cellMetrics['h'] + $font['descent'] * -2.2; //descent is neg
 		$this->currentY = $yAfterMiniMap + 8;
-	}
-
-	/**
-	 * Add cave map on current page at defined position, Landscape or Portrait orientation on page is automatic
-	 */
-	private function addCaveMap(): void
-	{
-		if(! isset($this->cave['caveFiles']['cave_maps'])){
-			Log::warning('no cave maps for this cave');
-			return;
-		}
-        foreach($this->cave['caveFiles']['cave_maps'] as $file){
-			$caveMap = $file['file_path'];
-			//$this->addCaveMap($f, 12, 12);
-		
-            $caveMap = Storage::disk('public')->path($caveMap); 
-            if(! file_exists($caveMap)){
-                throw new RuntimeException('Cave map file does not exists [' . $caveMap . ']');
-            }
-
-            [$width, $height] = getimagesize($caveMap);
-            if ($height > $width) {
-                $orientation = 'P';
-            } else {
-                $orientation = 'L';
-            }
-
-            $img = $this->image->add($caveMap);
-
-            //try to do the best to fit image on page
-            $page = $this->page->getPage();
-            $isImagePortait = true;
-
-            $margins = $this->getMargins();
-        
-            $this->addPage([
-                'orientation' => $orientation,
-                'format' => 'A4',
-                'margin' => [
-                    'CT' => $this->margins['top'],
-                    'PR' => $this->margins['right'],
-                    'CB' => $this->margins['bottom'],
-                    'PL' => $this->margins['left'],
-                    'HB' => $this->margins['header_bottom'],
-                    'FT' => $this->margins['footer_top'],
-                ],
-            ]);
-
-            $page = $this->page->getPage();
-            $margins = $this->getMargins();
-
-            $image_width_mm = $this->pxToMm($width);
-            $image_height_mm = $this->pxToMm($height);
-
-            $max_width = $page['width'] - $margins['right'] - $margins['left'];
-            $max_height = $page['height'] - $margins['top'] - $margins['bottom'];
-
-            /**
-             * Resize image if needed
-             */
-            $image_width_mm  = $this->pxToMm($width);
-            $image_height_mm = $this->pxToMm($height);
-
-            // Default, no scaling
-            $final_width_mm  = $image_width_mm;
-            $final_height_mm = $image_height_mm;
-
-            // Scale image if either side is more that total usable space
-            if ($image_width_mm > $max_width || $image_height_mm > $max_height) {
-
-                // facteur de réduction selon largeur et hauteur
-                $ratio_width  = $max_width  / $image_width_mm;
-                $ratio_height = $max_height / $image_height_mm;
-
-                // Keep lesser ratio
-                $scale = min($ratio_width, $ratio_height);
-
-                // Scaling
-                $final_width_mm  = $image_width_mm * $scale;
-                $final_height_mm = $image_height_mm * $scale;
-            }
-
-            $caveMap_out = $this->image->getSetImage($img, $this->margins['left'], $this->margins['header_bottom'], $final_width_mm, $final_height_mm, $page['height']);
-            $this->page->addContent($caveMap_out);
-        }
 	}
 
 	private function addBibliography():void
@@ -727,7 +642,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 
 		$this->addTextCellXY(
 			$this->cave['description']['data']['description'],
-			$page['pid'],
+			-1,
 			$this->margins['left'],
 			$this->currentY,
 			190,
@@ -738,6 +653,91 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$cellMetrics = $this->getLastCellBBox();
 		$this->currentY += $cellMetrics['h'] + $font['height'] * 0.7; //descent is neg
     }
+
+	/**
+	 * Add cave map on current page at defined position, Landscape or Portrait orientation on page is automatic
+	 */
+	private function addCaveMap(): void
+	{
+		if(! isset($this->cave['caveFiles']['cave_maps'])){
+			Log::warning('no cave maps for this cave');
+			return;
+		}
+        foreach($this->cave['caveFiles']['cave_maps'] as $file){
+			$caveMap = $file['file_path'];
+			//$this->addCaveMap($f, 12, 12);
+		
+            $caveMap = Storage::disk('public')->path($caveMap); 
+            if(! file_exists($caveMap)){
+                throw new RuntimeException('Cave map file does not exists [' . $caveMap . ']');
+            }
+
+            [$width, $height] = getimagesize($caveMap);
+            if ($height > $width) {
+                $orientation = 'P';
+            } else {
+                $orientation = 'L';
+            }
+
+            $img = $this->image->add($caveMap);
+
+            //try to do the best to fit image on page
+            $page = $this->page->getPage();
+            $isImagePortait = true;
+
+            $margins = $this->getMargins();
+        
+            $this->addPage([
+                'orientation' => $orientation,
+                'format' => 'A4',
+                'margin' => [
+                    'CT' => $this->margins['top'],
+                    'PR' => $this->margins['right'],
+                    'CB' => $this->margins['bottom'],
+                    'PL' => $this->margins['left'],
+                    'HB' => $this->margins['header_bottom'],
+                    'FT' => $this->margins['footer_top'],
+                ],
+            ]);
+
+            $page = $this->page->getPage();
+            $margins = $this->getMargins();
+
+            $image_width_mm = $this->pxToMm($width);
+            $image_height_mm = $this->pxToMm($height);
+
+            $max_width = $page['width'] - $margins['right'] - $margins['left'];
+            $max_height = $page['height'] - $margins['top'] - $margins['bottom'];
+
+            /**
+             * Resize image if needed
+             */
+            $image_width_mm  = $this->pxToMm($width);
+            $image_height_mm = $this->pxToMm($height);
+
+            // Default, no scaling
+            $final_width_mm  = $image_width_mm;
+            $final_height_mm = $image_height_mm;
+
+            // Scale image if either side is more that total usable space
+            if ($image_width_mm > $max_width || $image_height_mm > $max_height) {
+
+                // facteur de réduction selon largeur et hauteur
+                $ratio_width  = $max_width  / $image_width_mm;
+                $ratio_height = $max_height / $image_height_mm;
+
+                // Keep lesser ratio
+                $scale = min($ratio_width, $ratio_height);
+
+                // Scaling
+                $final_width_mm  = $image_width_mm * $scale;
+                $final_height_mm = $image_height_mm * $scale;
+            }
+
+            $caveMap_out = $this->image->getSetImage($img, $this->margins['left'], $this->margins['header_bottom'], $final_width_mm, $final_height_mm, $page['height']);
+            $this->page->addContent($caveMap_out);
+        }
+	}
 
 	function pxToMm(int $px, int $dpi = 96): float
 	{
