@@ -21,6 +21,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'username',
         'name',
         'email',
         'password',
@@ -64,8 +65,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
-
-
     public function sendPasswordResetNotification($token)
     {
         $ip = request()?->ip();
@@ -85,6 +84,7 @@ class User extends Authenticatable
         $userRoles = $this->getRoles();
 
         Log::debug(__METHOD__ . ' called.', [
+            'userid' => $this->id,
             'Roles to check' => $roles,
             'RequireAll' => $requireAll,
             //'Current user roles' => implode(',', $userRoles) ,

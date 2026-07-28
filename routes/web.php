@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Route;
  **  Varcave public  routes **
  */
 Route::group([], function (){
-    
     Route::get('/', [HomepageController::class, 'show'])->name('varcave.homepage');
     
     //CAVES PUBLIC PAGES
@@ -79,6 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/resource', [FileResourcesController::class, 'store'])->name('varcave.resource.store');
     Route::patch('/resource/{fileResource}', [FileResourcesController::class, 'update'])->name('varcave.resource.update');
     Route::delete('/resource/{fileResource}', [FileResourcesController::class, 'destroy'])->name('varcave.resource.delete');
+    Route::post('/resource/buildgpx', [FileResourcesController::class, 'buildGpxFullData'])->name('varcave.resources.buildgpxdata');
 });
 
 Route::middleware(['auth', 'can:admin-access'])->group(function () {

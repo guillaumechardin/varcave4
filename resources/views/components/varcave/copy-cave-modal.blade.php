@@ -7,9 +7,8 @@
     </div>
     <div class="field">
         <label class="label">{{ __('varcave.caveshow.new_ref') }}</label>
-            <div class="control">
-                <input class="input" type="text" name="new-ref" value="{{ old('new-ref') }}" placeholder="{{ __('varcave.caveshow.copy_ref_hint')}}">
-            </div>
+        <div class="control">
+            <input class="input" type="text" name="new-ref" value="{{ old('new-ref') }}" placeholder="{{ __('varcave.caveshow.copy_ref_hint')}}">
         </div>
     </div>
     

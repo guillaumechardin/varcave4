@@ -27,8 +27,8 @@ class GpxService
     {
         // Example config, adjust as needed
         $this->config = [
-            'httpdomain'   => config('app.url'),
-            'httpwebroot'  => 'caves',
+            //'httpdomain'   => config('app.url'),
+            //'httpwebroot'  => 'caves',
             'include_GPX_details' => true,
         ];
     }
@@ -40,7 +40,7 @@ class GpxService
      * @param bool $useCaveRefAsPointName Use cave reference instead of name for waypoints
      * @return string GPX XML content
      */
-    public function createGPX(array $caves, string $caveName, bool $useCaveRefAsPointName = false ): string
+    public function createGPX(array $caves, string $caveName = 'TO BE REMOVED', bool $useCaveRefAsPointName = false ): string
     {
         Log::debug(__METHOD__ . ' start GPX creation process');
         $gpxFile = new GpxFile();
@@ -52,10 +52,10 @@ class GpxService
                 Log::error("Empty Cave element, skiping");
                 continue;
             }
-
+            
             if (empty($coordinates))
             {
-                Log::error('No coordinates found for cave' . $caveName);
+                Log::error('No coordinates found for cave' . $cave['attributes']['data']['name']);
                 continue;
             }
 
@@ -69,7 +69,7 @@ class GpxService
             $gpxFile->metadata->links[] = $link;
 
             // Waypoint naming
-            $namePrefix = $useCaveRefAsPointName ? $caveData['caveRef'] : $caveName;
+            $namePrefix = $useCaveRefAsPointName ? $caveData['caveRef'] : $cave['attributes']['data']['name'];
             $multipleCoords = count($coordinates) > 1;
 
             $i = 1;

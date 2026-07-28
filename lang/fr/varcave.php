@@ -452,7 +452,7 @@ return [
         'unlock_delete' => 'déverrouiller la suppression',
         'no_expiry' => 'pas d\'expiration',
         'change_pwd' => 'modification du mot de passe',
-        'role_saved' => ':username : les rôle sont enregistrés',
+        'role_saved' => ':username : les rôles sont enregistrés',
         'choose_role_add' => 'Choisir les rôles à ajouter',
         'choose_role_del' => 'Choisir des rôles à retirer',
         'role_add' => 'ajouter le rôle',
@@ -490,10 +490,10 @@ return [
 
     ],
     'resources' => [
-        'page_title' => 'Fichiers / ressources',
-        'pageTitle' => 'Fichiers ressources',
-        'files' => 'Fichiers',
-        'add_file' => 'Ajouter un nouveau fichier',
+        'page_title' => 'Documents / ressources',
+        'pageTitle' => 'Documents et ressources',
+        'documents' => 'documents',
+        'add_file' => 'Ajouter un nouveau document',
         'file_title' => 'Nom/titre du fichier',
         'file_title_phldr' => 'Nom du  fichier à partager',
         'create_group' => 'Créer nouveau groupe',
@@ -506,12 +506,20 @@ return [
         'add_rem_group' => 'SELECT/REMOVE GROUP',
         'description' => 'description',
         'rights_mgt' => 'Gestion des droits',
-        'show_more' => 'Cliquez pour développer/ajouter',
+        'sort_order' => 'Ordre de tri',
+        // 28/07/2026 'show_more' => 'Cliquez pour développer/ajouter',
+        'confirm-delete' => 'Voulez vous supprimer ce fichier',
+        'start_build_gpx_file' => 'Générer le GPX',
+        'gpx_file_description' => 'Cavités du Var au format GPX',
+        'create_file' => 'Ajout document',
+        'build_gpx' => 'Génération GPX',
+
+
     ],
 
     'roles' => [
             'admin' => 'Administrateur',
-            'users' => 'Utilisateurs du site',
+            'user' => 'Utilisateurs du site',
             'public' => '',
             'cave-editor' => '',
             'announcement-editor' => '',

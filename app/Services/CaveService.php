@@ -3,19 +3,20 @@
 namespace App\Services;
 
 use App\Models\Cave;
-use App\Models\User;
-use App\Models\Page;
-use Illuminate\Http\Request;
-use App\Models\Field;
-use App\Models\Setting;
-use App\Models\CaveFile;
-use App\Models\ListValue;
-use Illuminate\Support\Str;
 use App\Models\CaveCoordinates;
+use App\Models\CaveFile;
+use App\Models\Field;
+use App\Models\ListValue;
+use App\Models\Page;
+use App\Models\Setting;
+use App\Models\User;
 use App\ViewModels\CaveViewModel;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 
 /**
@@ -133,8 +134,9 @@ class CaveService
             //add ccoordinates to results
             if($this->OPTIONS & self::ADD_COORDS)
             {
+                Log::debug('add coords to cave dataset');
                 $this->outputRaw['coordinates'] = array(); 
-                $caveCoordinates = CaveCoordinates::get($this->cave->uuid, $this->user);
+                $caveCoordinates = CaveCoordinates::get($this->cave->uuid, $this->user); //should use Eloquent relation 
 
                 $this->outputRaw['coordinates']['near_caves'] = null;
                 if($this->OPTIONS & self::ADD_NEAR_CAVES)

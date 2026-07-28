@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-documents');
+    
     $('body').on('click', '.show-admin-tools', function(e){
         Logger.debug('clicked');
         $(this).next('.admin-tools-wrapper').toggleClass('is-hidden is-active');
@@ -23,11 +25,13 @@ $(document).ready(function(){
         Logger.debug('load file: '+fileName);
     });
 
-    $('.show-add-res-wrapper').on('click', function(e){
-        Logger.debug('add clicked');
-        $('#add-res-wrapper').toggleClass('is-hidden is-active');
-        $(this).find('span i').toggleClass('bi-chevron-down bi-chevron-up');
-    });
+    /** DISABLED 08/07/2026
+        $('.show-add-res-wrapper').on('click', function(e){
+            Logger.debug('add clicked');
+            $('#add-res-wrapper').toggleClass('is-hidden is-active');
+            $(this).find('span i').toggleClass('bi-chevron-down bi-chevron-up');
+        });
+    */
 
     $('.delete-file').on('click', function (e) {
         e.preventDefault();        
@@ -43,8 +47,26 @@ $(document).ready(function(){
         sendAjaxRequest(url, 'delete', 'none', 'redirect', fileDeleteFail);
     });
 
-    function fileDeleteFail(response)
-    {   
-        showMessageBox(response, "is-warning");
-    }
-})
+    $('#start-build-gpx').on('click', function(e){
+        Logger.debug('Start build gpx process')
+        const url = "{{ route('varcave.resources.buildgpxdata') }}";
+        $('#start-build-gpx').prop('disabled', true);
+        $('#progress-build-gpx').toggleClass('is-hidden');
+        
+        sendAjaxRequest(url, 'post', 'null', 'redirect', buildFail);
+    });
+    
+});
+
+function fileDeleteFail(response)
+{   
+    showMessageBox(response, "is-warning");
+}
+
+function buildFail(response)
+{   
+    $('#start-build-gpx').prop('disabled', false);
+    Logger.debug('build fails');
+    $('#progress-build-gpx').toggleClass('is-hidden');
+    showMessageBox(response, "is-warning");
+}
