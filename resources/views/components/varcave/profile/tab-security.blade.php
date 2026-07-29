@@ -13,7 +13,7 @@
                 {{ Str::ucfirst( __('varcave.profile.your_roles')) }}
             </div>
             @foreach($roles as $role)
-                <span class="tag is-info">{{ __('varcave.roles.'.$role) }}</span>
+                <span class="tag is-info">{{ empty(__('varcave.roles.' . $role)) ? $role : __('varcave.roles.' . $role) }}</span>
             @endforeach
         </div>    
     </div>
