@@ -14,6 +14,7 @@ class Setting extends Model
         'type',
         'category',
         'is_advanced_option',
+        'legacy_mtime',
     ];
 
 

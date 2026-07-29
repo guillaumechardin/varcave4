@@ -12,6 +12,7 @@ $(document).ready(function($){
     const urlParams = new URLSearchParams(window.location.search);
     Logger.debug('url params:');
     Logger.debug(urlParams);
+    
     if (urlParams.has('quicksearch')) {
         if(urlParams.get('value_name') != ''){
             $('#cavesearch-tabs').bulmaVar('Tabs', 'goToTabById', 'tab-search-results');
@@ -32,11 +33,8 @@ $(document).ready(function($){
         
         var formData = getFilteredFormData($('#search-form'));
         
-        
         formData = $.param(formData);
-        Logger.debug(formData);
-        
-        
+        Logger.debug(formData);        
 
         $('#cavesearch-tabs').bulmaVar(
             'Tabs',
@@ -154,21 +152,22 @@ $(document).ready(function($){
                     @endforeach
                     {data: 'uuid', visible: false}, //order must respect <table> structure uuid is at end
                 ],
-                pageLength: 5,                   // nombre de lignes par défaut
+                pageLength: {{ $UserPreference::get('datatables_max_items', 'datatables_max_items') }}, //default nbr line shown
                 layout: {
                     topStart: { 
                         pageLength: {
-                            menu: [5, 10, 15, 20],
-                            pageLength: 5,
+                            @php
+                                $menu = array_map('intval', json_decode($settings->get('datatables_items_selector'), true));
+                                sort($menu, SORT_NUMERIC);
+                            @endphp
+                            menu: @json($menu),
                         }
                     },
                     top: null, //'info', 
                     topEnd: null, 
                     bottomStart: {
                         info: {
-                            text: 'Affiche les cavités _START_ à _END_ sur un total de _TOTAL_ ',
-                            //postfix: 'All records shown are derived from real information.'
-                            search: ' - filtré sur  _MAX_ enregistremnts'
+                            text: '{{ __('varcave.searchPage.datatables.info') }}',
                         },
                     },
                     bottom: null

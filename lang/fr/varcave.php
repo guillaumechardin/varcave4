@@ -291,16 +291,16 @@ return [
             
                 "decimal"=>        "",
                 "emptyTable"=>    "Pas de données disponible",
-                "info"=>          "Showing _START_ to _END_ of _TOTAL_ entries",
-                "infoEmpty"=>      "Showing 0 to 0 of 0 entries",
-                "infoFiltered"=>   "(filtered from _MAX_ total entries)",
+                "info"=>          'Affiche les cavités _START_ à _END_ sur un total de _TOTAL_ ',//"Showing _START_ to _END_ of _TOTAL_ entries",
+                "infoEmpty"=>      'Affiche 0 à 0 de 0 enregistrements', //"Showing 0 to 0 of 0 entries",
+                "infoFiltered"=>   "(filtré sur _MAX_ enregistrements )",//"(filtered from _MAX_ total entries)",
                 "infoPostFix"=>    "",
                 "thousands"=>      ",",
-                "lengthMenu"=>    "Show _MENU_ entries",
+                "lengthMenu"=>    'Afficher _MENU_ enregistrements', //"Show _MENU_ entries",
                 "loadingRecords"=> "Chargement des enregistrements...",
                 "processing"=>     "Chargement...",
-                "search"=>         "Search:",
-                "zeroRecords"=>    "No matching records found",
+                "search"=>         "Recherche:",
+                "zeroRecords"=>    'Aucun enregistrement trouvé',//"No matching records found",
                 "paginate"=> [
                     "first"=>      "Premier",
                     "last"=>       "Dernier",
@@ -308,8 +308,8 @@ return [
                     "previous"=>   "Précédent"
                 ],
                 "aria"=> [
-                    "orderable"=>  "Order by this column",
-                    "orderableReverse"=> "Reverse order this column"
+                    "orderable"=>  'Trier sur cette colonne',//"Order by this column",
+                    "orderableReverse"=> 'Inverser l\'ordre de cette colonne',//"Reverse order this column"
                 ],
             
         ],
@@ -352,7 +352,11 @@ return [
         'footerMsg_hlp' => "Message situé en bas de chaque page web",
         'pdf_author_dsp' => 'Auteur PDF', 
         'pdf_author_hlp' => 'Information indiquée dans les métadonnées des fiches de cavité PDF',
-        
+        'datatables_items_selector_dsp' => 'Sélection entrée datatable',
+        'datatables_items_selector_hlp' => 'Cette option défini les options sélectionnable dans les tableaux de données (recherche cavité, utilisateurs, etc.)',
+        'datatables_max_items_dsp' => 'Nombre d\'éléments par tableau',
+        'datatables_max_items_hlp' => 'Précise le nombre d\'éléments affiché dans les tableau de recherche, il est recommandé que ce soit une valeur de datatables_items_selector (avancé)',
+
         'excludedcopyfields_dsp' => "Champs exclus",
         'excludedcopyfields_hlp' => "Champs exclus lors d'une copie de cavité",
         
@@ -473,6 +477,10 @@ return [
         'import_settings' => 'Paramètres d\'import',
         'select_file' => 'Sélectionnez un fichier',
         'disable_account' => 'Désactiver le compte',
+        'datatables' => [
+            'info' => 'Affiche les utilisateurs _START_ à _END_ sur un total de _TOTAL_',
+            'search' => ' - filtrés sur  _MAX_',
+        ],
 
         'table_users' => [
             'username' => 'nom d\'utilisateur',

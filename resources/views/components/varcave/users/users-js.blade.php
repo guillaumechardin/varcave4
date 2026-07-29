@@ -28,11 +28,15 @@ $(document).ready(function(){
                 }
             }
         ],
-        pageLength: {{ \App\Services\UserPreferenceService::get('datatables_max_items', 'datatables_max_items') }},  // default number line
+        pageLength: {{ $UserPreference::get('datatables_max_items', 'datatables_max_items') }},  // default number lines
         layout: {
             topStart: { 
                 pageLength: {
-                    menu: {{ $settings->get('datatables_items_selector') }},
+                    @php
+                        $menu = array_map('intval', json_decode($settings->get('datatables_items_selector'), true));
+                        sort($menu, SORT_NUMERIC);
+                    @endphp
+                    menu: @json($menu),
                 }
             },
             top: null, //'info', 
@@ -44,9 +48,8 @@ $(document).ready(function(){
             
             bottomStart: {
                 info: {
-                    text: 'Affiche les utilisateurs _START_ à _END_ sur un total de _TOTAL_ ',
-                    //postfix: 'All records shown are derived from real information.'
-                    search: ' - filtré sur  _MAX_ enregistremnts'
+                    text: '{{ __('varcave.users.datatables.info') }}',
+                    search: '{{ __('varcave.users.datatables.search') }}'
                 },
             },
             bottom: null
