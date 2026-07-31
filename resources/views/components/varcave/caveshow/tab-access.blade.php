@@ -141,7 +141,7 @@
                 // Reusable style
                 var caveStyle = new ol.style.Style({
                     image: new ol.style.Icon({
-                        src: "/img/marker_green_64.png",
+                        src: "/img/marker_03fc84_64.png",
                         anchor: [0.5, 1],
                         scale: 0.5
                     }),
@@ -156,7 +156,7 @@
                             width: 0.5
                         }),
                         backgroundFill: new ol.style.Fill({
-                            color: "#22B14C"
+                            color: "#03fc84"
                         }),
                         padding: [3, 3, 3, 3],
                         offsetY: -24,
@@ -191,8 +191,8 @@
                     
                     nearCaveFeature.setStyle(caveStyle.clone());
                     nearCaveFeature.getStyle().getText().setText(nearCaveData.name);
-                    nearCaveFeature.getStyle().getImage().setSrc("/img/marker_blue_64.png");
-                    nearCaveFeature.getStyle().getText().getBackgroundFill().setColor("#4258ff");  // a essayer #66d1ff
+                    nearCaveFeature.getStyle().getImage().setSrc("/img/marker_is-info_209cee_64.png");
+                    nearCaveFeature.getStyle().getText().getBackgroundFill().setColor("#209cee");  // a essayer #66d1ff
                     nearCaveFeatures_a.push(nearCaveFeature);
                 }
                 Logger.debug('Closest caves features detail:');
