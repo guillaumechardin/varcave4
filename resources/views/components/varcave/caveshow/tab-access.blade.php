@@ -191,8 +191,8 @@
                     
                     nearCaveFeature.setStyle(caveStyle.clone());
                     nearCaveFeature.getStyle().getText().setText(nearCaveData.name);
-                    nearCaveFeature.getStyle().getImage().setSrc("/img/marker_is-info_209cee_64.png");
-                    nearCaveFeature.getStyle().getText().getBackgroundFill().setColor("#209cee");  // a essayer #66d1ff
+                    nearCaveFeature.getStyle().getImage().setSrc("/img/marker_is-info_66d1ff_64.png");
+                    nearCaveFeature.getStyle().getText().getBackgroundFill().setColor("#66d1ff");  // a essayer #66d1ff
                     nearCaveFeatures_a.push(nearCaveFeature);
                 }
                 Logger.debug('Closest caves features detail:');
