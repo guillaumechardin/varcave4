@@ -33,13 +33,17 @@
         </div>
     @endif
 
-    <div class="columns is-mobile">
-        <div class="column is-background-info is-flex">
-            <span>
+    <div class="columns is-mobile is-vcentered is-gapless">
+
+        <div class="column is-one-third">
+            <span class="">
                 <button id="caveshow-action-sendmail" class="icon is-icon-wrapper bi-xl " title="{{ __('varcave.caveshow.informChange') }}" >
                     <i class="bi bi-envelope-at-fill has-text-link"></i>
                 </button>   
             </span>
+        </div>
+
+        <div class="column has-text-right">
             @can('updateCave', $caveObj)     {{-- START OF `CAN' showAllCaveDetails FEATURES --}}
                 <span id="caveshow-action-copy" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.copy_cave') }}">
                     <a href="#" class="bi bi-copy"></a>
@@ -62,13 +66,12 @@
                         @endif
                         <progress id="progress" class="progress is-small is-primary" max="100" style="display:none">15%</progress>
                     </div>
-                    
                 </span>
                 <span id="caveshow-action-pdfdownload" class="icon is-icon-wrapper bi-xl" title="{{ __('varcave.caveshow.dl_pdf') }}">
                     <a class="bi bi-file-pdf-fill" href="{{  route('varcave.caves.pdf', ['uuid' => $caveObj->uuid]) }}"></a>
                 </span>
                 <span class="mr-4">&nbsp;</span>
-            @endcan     {{-- END OF `CAN' showAllCaveDetails FEATURES --}}
+            @endcan
         </div>
     </div>
     <div id="caveshow-tabs" class="tabs is-toggle is-toggle-rounded is-centered is-fullwidth" data-bulma="tabs">
