@@ -422,14 +422,46 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$coordSystemPref = Setting::get('pdf_coords_system');
 		$coordSystem = CoordinateSystemHandler::findOrFail($coordSystemPref);
 		
-		$coord = $this->getTextLine(
+		$coordTitle = $this->getTextLine(
 				__('varcave.pdf.coordinates') . ' ('. $coordSystem->epsg_name . '): ',
 				$x,
 				$this->currentY,
 			);
-		$this->page->addContent($coord);
+		$this->page->addContent($coordTitle);
 		
-		$this->currentY += $font['descent'] * -2.5; //descent is neg
+		
+
+		//small warning, cave cannot be reached
+		if((bool) $this->cave['raw']['no_access']){
+			//smaller margin, text is  self::sizeS
+			$this->currentY += $font['descent'] * -0.5;
+			$x = 76;
+			$this->setFont(size: self::sizeS);
+			$this->setColor('red');
+			$font = $this->font->getCurrentFont();
+
+			$accessTxt = $this->getTextCell(
+				Setting::get('no_access_message'),
+				$x,
+				$this->currentY,
+				90,
+				halign: 'L',
+				drawcell : true,
+				styles: ['all'=> $this->getLineStyle(['fillColor' => '#ffbb00'])],
+			);
+			$this->page->addContent($accessTxt);
+			$cellMetrics = $this->getLastCellBBox();
+			
+			//set Y under title
+			$this->currentY += $cellMetrics['h'] + $font['descent'] * -3;
+			$this->setColor(); //to black
+			
+			
+		}else{
+			$this->currentY += $font['descent'] * -2.5; //descent is neg
+		}
+		//end warning block
+		
 
 		$proj4 = new Proj4php();
 		//default projection as points stored in db
@@ -493,9 +525,11 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->page->addContent($accessTxt);
 		$cellMetrics = $this->getLastCellBBox();
 		
-		//set Y under cave maps
-		//$this->currentY += $cellMetrics['h'] + $font['descent'] * -2.2; //descent is neg
-		$this->currentY = $yAfterMiniMap + 8;
+		//set Y after paragraph or set it after minimap to prevent accessTxt to overflow on description or bivliography
+		$this->currentY += $cellMetrics['h'] + $font['descent'] * -2.2; //descent is neg
+		if($this->currentY <= ($yAfterMiniMap + 9) ){
+			$this->currentY = $yAfterMiniMap + 9; //after minimal, else we keep the lower text end
+		}
 	}
 
 	private function addBibliography():void
