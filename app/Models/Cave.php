@@ -87,6 +87,12 @@ class Cave extends Model
         return $this->hasOne(CaveStat::class);
     }
 
+    //relation to cave_systems
+    public function caveSystem()
+    {
+        return $this->belongsTo(CaveSystem::class);
+    }
+
     public function getViewCount()
     {   
         Log::debug(__METHOD__ . ' called.');

@@ -79,12 +79,14 @@ class CaveService
     public const ADD_FILES              = 0x4;
     public const ADD_CHANGELOG          = 0x6;
     public const ADD_ACCESS             = 0x7;
+    public const ADD_CAVE_SYSTEM        = 0x8;
     //public const ADD_CAVEMAPS_ONLY      = 0x7; // to be implemented
     public const ADD_ALL        =     self::ADD_COORDS
                                     | self::ADD_NEAR_CAVES
                                     | self::ADD_FILES
                                     | self::ADD_CHANGELOG
-                                    | self::ADD_ACCESS;
+                                    | self::ADD_ACCESS
+                                    | self::ADD_CAVE_SYSTEM;
 
 
     public const OUTPUT_ARRAY = 0;
@@ -167,6 +169,10 @@ class CaveService
             if($this->OPTIONS & self::ADD_ACCESS){
                 //add access_txt to results
                 $this->outputRaw['accessTxt'] = $this->cave->access_text;
+            }
+
+            if($this->OPTIONS & self::ADD_CAVE_SYSTEM){
+                $this->outputRaw['attributes']['data']['cave_system'] = '!!cavesystem!!';
             }
         }
         //add changelog
