@@ -84,23 +84,8 @@
                     <span>{{ Str::ucfirst(__('varcave.caveshow.informations')) }}</span>
                 </a>
             </li>
-            <li>
-                <a data-tabs-target="tab-cave-changehistory">
-                    <span class="icon is-small">
-                        <i class="bi bi-clock-history" aria-hidden="true"></i>
-                    </span>
-                    <span>{{ Str::ucfirst(__('varcave.caveshow.change_history')) }}</span>
-                </a>
-            </li>
-            @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}} 
-                <li>
-                    <a  data-tabs-target="tab-cave-description">
-                        <span class="icon is-small">
-                            <i class="bi bi-blockquote-left" aria-hidden="true"></i>
-                        </span>
-                        <span>{{ Str::ucfirst(__('varcave.caveshow.description')) }}</span>
-                    </a>
-                </li>
+            
+            @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}}
                 <li>
                     <a  data-tabs-target="tab-cave-access">
                         <span class="icon is-small">
@@ -109,6 +94,14 @@
                         <span>{{ Str::ucfirst(__('varcave.caveshow.access')) }}</span>
                     </a>
                 </li>
+                <li>
+                    <a  data-tabs-target="tab-cave-description">
+                        <span class="icon is-small">
+                            <i class="bi bi-blockquote-left" aria-hidden="true"></i>
+                        </span>
+                        <span>{{ Str::ucfirst(__('varcave.caveshow.description')) }}</span>
+                    </a>
+                </li>   
                 <li>
                     <a data-tabs-target="tab-cave-maps">
                         <span class="icon is-small">
@@ -126,14 +119,6 @@
                     </a>
                 </li>
                 <li>
-                    <a data-tabs-target="tab-bibliography">
-                        <span class="icon is-small">
-                            <i class="bi bi-book" aria-hidden="true"></i>
-                        </span>
-                        <span>{{ Str::ucfirst(__('varcave.caveshow.bibliography')) }}</span>
-                    </a>
-                </li>
-                <li>
                     <a data-tabs-target="tab-documents">
                         <span class="icon is-small">
                             <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i>
@@ -142,16 +127,32 @@
                     </a>
                 </li>
                 @can('showRescueInfo', $caveObj)
+                    <li>
+                        <a data-tabs-target="tab-rescue-info">
+                            <span class="icon is-small">
+                                <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i>
+                            </span>
+                            <span>{{ Str::ucfirst(__('varcave.caveshow.rescue_info')) }}</span>
+                        </a>
+                    </li>
+                @endcan
                 <li>
-                    <a data-tabs-target="tab-rescue-info">
+                    <a data-tabs-target="tab-bibliography">
                         <span class="icon is-small">
-                            <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i>
+                            <i class="bi bi-book" aria-hidden="true"></i>
                         </span>
-                        <span>{{ Str::ucfirst(__('varcave.caveshow.rescue_info')) }}</span>
+                        <span>{{ Str::ucfirst(__('varcave.caveshow.bibliography')) }}</span>
                     </a>
                 </li>
-                @endcan
             @endcan    {{-- END OF `CAN' FEATURES --}}
+            <li>
+                <a data-tabs-target="tab-cave-changehistory">
+                    <span class="icon is-small">
+                        <i class="bi bi-clock-history" aria-hidden="true"></i>
+                    </span>
+                    <span>{{ Str::ucfirst(__('varcave.caveshow.change_history')) }}</span>
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -187,22 +188,18 @@
                         <x-varcave.caveshow.tab-cave-info :caveData="$caveData"/>
                 </div>
             </li>
-            <li>
-                <div id="tab-cave-changehistory" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveshow.tab-changehistory :changeHistory="$changeHistory" />
-                </div>
-            </li>
             @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}} 
-                <li>
-                    <div id="tab-cave-description" class="tab-content mx-2 mt-2">
-                            <x-varcave.caveshow.tab-description :caveDescription="$caveDescription['attributes']" />
-                    </div>
-                </li>
                 <li>
                     <div id="tab-cave-access" class="tab-content mx-2 mt-2">
                             <x-varcave.caveshow.tab-access :caveAccess="$caveAccess['attributes']" :caveCoords="$caveData['coordinates']" :caveName="$caveName" :crs="$crs"/>
                     </div>
                 </li>
+                <li>
+                    <div id="tab-cave-description" class="tab-content mx-2 mt-2">
+                            <x-varcave.caveshow.tab-description :caveDescription="$caveDescription['attributes']" />
+                    </div>
+                </li>
+                
                 <li>
                     <div id="tab-cave-maps" class="tab-content mx-2 mt-2">
                             <x-varcave.caveshow.tab-cave-maps :caveMaps="$caveDescription['caveFiles']['cave_maps'] ?? []"/>
@@ -214,23 +211,30 @@
                     </div>
                 </li>
                 <li>
-                    <div id="tab-bibliography" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveshow.tab-bibliography :bibliography="$caveBibliography['attributes']['data']['bibliography']" />
-                    </div>
-                </li>
-                <li>
                     <div id="tab-documents" class="tab-content mx-2 mt-2">
                         <x-varcave.caveshow.tab-documents :caveDocsFiles="$caveDocsFiles" :caveDocsPhotos="$caveDocsPhotos"/>
                     </div>
                 </li>
                 @can('showRescueInfo', $caveObj)
+                    <li>
+                        <div id="tab-rescue-info" class="tab-content mx-2 mt-2">
+                            <x-varcave.caveshow.tab-rescue :rescueFiles="$rescueFiles"/>
+                        </div>
+                    </li>
+                @endcan
                 <li>
-                    <div id="tab-rescue-info" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveshow.tab-rescue :rescueFiles="$rescueFiles"/>
+                    <div id="tab-bibliography" class="tab-content mx-2 mt-2">
+                        <x-varcave.caveshow.tab-bibliography :bibliography="$caveBibliography['attributes']['data']['bibliography']" />
                     </div>
                 </li>
-                @endcan
-            @endcan  {{-- END OF CAN FEATURES --}} 
+            @endcan  {{-- END OF CAN FEATURES --}}
+            {{-- PUBLIC MENUS --}}
+            <li>
+                <div id="tab-cave-changehistory" class="tab-content mx-2 mt-2">
+                        <x-varcave.caveshow.tab-changehistory :changeHistory="$changeHistory" />
+                </div>
+            </li>
+            {{-- END PUBLIC MENUS --}}
         </ul>
     </div>
 </section>
