@@ -10,6 +10,15 @@ use phpDocumentor\Reflection\Types\Boolean;
 
 class ListValue extends Model
 {
+    protected $fillable = [
+        'list_name',
+        'value',
+        'i18n_key',
+        'sort_order',
+        'is_active',
+        'created_at',
+        'updated_at',
+    ];
     public static function getByListName(string $name, bool $asArray = true) :array|Collection
     {
         Log::debug(__METHOD__ . ' called.');

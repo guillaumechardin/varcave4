@@ -31,6 +31,7 @@ return [
         'unauthorized' => 'vous n\'êtes pas autorisé à accéder à cette page',
         'fileNotFound' => 'fichier non trouvé',
         'none' => 'Aucun',
+        'undefined' => 'Non défini',
         'ok' => 'ok',
         'change' => 'changer',
         'caveNotFound' => 'cavité non trouvée',
@@ -265,9 +266,10 @@ return [
         'ENS' => "Espace Naturel Sensible",
         'foret_domaniale' => "Forêt domaniale",
         'cave_type' => "Type cavité",
-        'cave_type_lst0' => "AUTRE",
-        'cave_type_lst1' => "GROTTE",
-        'cave_type_lst2' => "AVEN",
+        'cave_type_list' => [
+            'type1' => "GROTTE",
+            'type2' => "AVEN",
+        ],
         'files' => "Fichiers",
         'biologyDocuments' => "Documents biospeleo",
         'documents' => "Documents",
@@ -282,7 +284,13 @@ return [
             'high' => "FORTE",
         ],
         'cave_system_id' => 'Réseau',
-
+        'cave_class' => 'Classe de cavité',
+        'cave_class_list' => [
+            'class1' => 'Classe 1',
+            'class2' => 'Classe 2',
+            'class3' => 'Classe 3',
+            'class4' => 'Classe 4',
+        ],
     ],
 
     'searchPage' => [

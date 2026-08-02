@@ -20,7 +20,7 @@
                                             @foreach($modelData['list_values'] as $key => $listName)
                                                 <option 
                                                     value="{{ $key }}"
-                                                    @selected( (int)$caveData['attributes']['data'][$fieldName] == $key)
+                                                    @selected( $caveObj->{$fieldName} == $key)
                                                 >
                                                     {{ $listName }}
                                                 </option>

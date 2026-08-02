@@ -36,6 +36,7 @@
         </select>
 
         <select name="{{ $valueName }}">
+            <option value=""></option>
             @foreach($field['list_values'] as $id => $value) 
                 <option value="{{$id}}">
                     {{ $value }} 

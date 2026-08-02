@@ -1,5 +1,6 @@
 @props([
     'caveData',
+    'caveObj',
 ])
 
 <div class="box">
@@ -10,7 +11,7 @@
                     <p class="title is-5"> {{ Str::ucfirst($modelData['i18n_label']) }}&nbsp;: </p>
                     @if($modelData['storage_type'] === 'list')
                         
-                        <p class="subtitle is-6">{{ Str::upper($modelData['list_values'][ (int)$caveData['attributes']['data'][$fieldName] ]) }}</p> 
+                        <p class="subtitle is-6">{{ Str::upper($modelData['list_values'][ $caveObj->{$fieldName} ]) }}</p> 
                     @else
                         <p class="subtitle is-6">{{ Str::ucfirst($caveData['attributes']['data'][$fieldName]) }}</p>
                     @endif
