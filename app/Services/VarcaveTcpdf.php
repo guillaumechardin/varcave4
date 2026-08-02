@@ -245,6 +245,34 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$cellMetrics = $this->getLastCellBBox();
 
 		$this->currentY += $cellMetrics['h'] ;
+
+		//add QR code with to cave url
+		$barcodePosX = 185;
+		$barcodePosY = 6;
+		$barcodeWidth = 15;
+		$barcodeHeight = 15;
+		$barcodeStyle = [
+			'lineWidth' => 0,
+			'lineCap' => 'butt',
+			'lineJoin' => 'miter',
+			'dashArray' => [],
+			'dashPhase' => 0,
+			'lineColor' => 'black',
+			'fillColor' => 'black',
+		];
+
+		$this->page->addContent(
+			$this->getBarcode(
+				'QRCODE',
+				route('varcave.caves.show', ['uuid' => $this->cave['raw']['uuid'] ]),
+				$barcodePosX,
+				$barcodePosY,
+				$barcodeWidth,
+				$barcodeHeight,
+				//[0, 0, 0, 0],
+				//$barcodeStyle,
+			)
+        );
 	}
 		
 	private function addMainSection(): void
