@@ -29,7 +29,21 @@
             </option>
             @endforeach
         </select>
+    @elseif($field['storage_type'] === 'relation')
+        <select name="{{ $typeName }}">
+            <option value="=" @selected($currentType === '=' || !$currentType)>=</option>
+            {{-- <option value="NOTEQUAL">≠</option> --}}
+        </select>
+
+        <select name="{{ $valueName }}">
+            @foreach($field['list_values'] as $id => $value) 
+                <option value="{{$id}}">
+                    {{ $value }} 
+                </option>
+            @endforeach
+        </select>
     @else
+
     @switch($field['data_type'])
 
         {{-- STRING --}}

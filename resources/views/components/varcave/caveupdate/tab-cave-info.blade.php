@@ -38,6 +38,21 @@
                                     
                                 @elseif($modelData['data_type'] == 'number')
                                     <input class="cave-setting input" data-fieldname="{{ $fieldName }}" type="number" value="{{ $caveObj->$fieldName }}"/>
+                                
+                                @elseif($modelData['storage_type'] == 'relation') 
+                                    <div class="select">
+                                        <select class="cave-setting" data-fieldname="{{ $fieldName }}">
+                                            @foreach($modelData['list_values'] as $key => $listName)
+                                                <option 
+                                                    value="{{ $key }}"
+                                                    @selected( (int)$caveData['attributes']['data'][$fieldName] == $key)
+                                                >
+                                                    {{ $listName }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
 
                                 @else {{--  text input type --}}
                                     <input class="cave-setting input" data-fieldname="{{ $fieldName }}" type="text"  value="{{ Str::ucfirst($caveData['attributes']['data'][$fieldName]) }}"/>

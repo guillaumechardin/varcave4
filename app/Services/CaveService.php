@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Cave;
 use App\Models\CaveCoordinates;
 use App\Models\CaveFile;
+use App\Models\CaveSystem;
 use App\Models\Field;
 use App\Models\ListValue;
 use App\Models\Page;
@@ -79,12 +80,14 @@ class CaveService
     public const ADD_FILES              = 0x4;
     public const ADD_CHANGELOG          = 0x6;
     public const ADD_ACCESS             = 0x7;
+    public const ADD_CAVE_SYSTEM        = 0x8;
     //public const ADD_CAVEMAPS_ONLY      = 0x7; // to be implemented
     public const ADD_ALL        =     self::ADD_COORDS
                                     | self::ADD_NEAR_CAVES
                                     | self::ADD_FILES
                                     | self::ADD_CHANGELOG
-                                    | self::ADD_ACCESS;
+                                    | self::ADD_ACCESS
+                                    | self::ADD_CAVE_SYSTEM;
 
 
     public const OUTPUT_ARRAY = 0;
@@ -103,7 +106,6 @@ class CaveService
     private int $OPTIONS;
 
     private const separatorOptions = [
-        'bibliography' => '/', //no more used 2026/07/17 replaced by json format
         'default'   => ',',
     ];
 
@@ -129,6 +131,8 @@ class CaveService
         
         $allowedKeys = $this->fields->pluck('key')->toArray();
         $this->outputRaw['attributes'] = $this->cave->only($allowedKeys);
+        
+
         //return more data to authenticated users
         if (Gate::allows('showAllCaveDetails', $this->cave) ) {
             //add ccoordinates to results
@@ -210,54 +214,35 @@ class CaveService
         {
             $list_values = null;
             if($modelData['storage_type'] === 'list') {
+                //fetch list data
                 $listValues = ListValue::whereIn('list_name', [ $modelData['storage_target'] ])->get()->toArray();
                 
                 $list = array();
                 foreach( $listValues as $listItem){
                     $list[ $listItem['value'] ] = __($listItem['i18n_key']);
-                    //$list[ $listItem['value'] ] = $listItem['value'];
                 }
                 $list_values = $list;
             }
+  
+            //relation is defined by [CaveRelation].[targetData]
+            //ie CaveSystem.name  or SensorData.value
+            
+            
             $this->caveViewReadyData[$key] = $this->formatValue($caveData[$key], $key, $modelData, $list_values);
-
+            
             if ($list_values === null) {
                 //unset($this->caveViewReadyData[$key]['list_values']);
             }
-        }
-
-        /** OLD STYLE ORDERING TO BE REMOVED
-            foreach ($caveData as $key => $value)
-            {
-                $list_values = null;
-                if($pageModel[$key]['storage_type'] === 'list') {
-                    $listValues = ListValue::whereIn('list_name', [ $pageModel[$key]['storage_target'] ])->get()->toArray();
-                    $list = array();
-                    foreach( $listValues as $listItem){
-                        $list[ $listItem['value'] ] = __($listItem['i18n_key']);
-                        //$list[ $listItem['value'] ] = $listItem['value'];
-                    }
-                    $list_values = $list;
-                } 
-
-                
-                $this->caveViewReadyData[$key] = $this->formatValue($value, $key, $pageModel[$key], $list_values);
-
-                if ($list_values === null) {
-                    //unset($this->caveViewReadyData[$key]['list_values']);
-                }
-            }
-        */
-        
+        } 
     }
 
-    public static function formatValue(mixed $value, string $key, array $fieldDef, ?array $listValues): mixed
+    public function formatValue(mixed $value, string $key, array $fieldDef, ?array $listValues = null): mixed
     {
         Log::debug(__METHOD__ . ' called.');
         Log::debug('  format data: ' . $key . ' as: ' . $fieldDef['data_type']);
         
         
-        //empty val
+        //Handle empty values
         if ($value === null || $value === '') {
             if($fieldDef['data_type'] === 'delimitedArray' || $fieldDef['data_type'] === 'json'){ //return empty array to prevent errors on view
                 return [];
@@ -265,8 +250,8 @@ class CaveService
             return '---';
         }
 
-        //send back right value element from list
-        if($fieldDef['storage_type'] == 'list'){
+        //get value element for lists and `relation` type items
+        if($fieldDef['storage_type'] == 'list' || $fieldDef['storage_type'] === 'relation'){
             if(!array_key_exists($value, $fieldDef['list_values'])){
                 throw new \InvalidArgumentException('Incorrect value: ' . $value . ' . Does not exist in field definition data_type');
             }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PageField extends Model
 {
-    protected $fillable = ['page_key', 'field_id', 'section_key', 'sort_order'];
+    protected $fillable = ['page_key', 'field_id', 'section_key', 'is_visible', 'sort_order'];
 
     public $fields = [];
     

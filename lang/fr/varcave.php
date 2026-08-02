@@ -101,6 +101,7 @@ return [
         'cave_copy_success' => 'Cavité copiée avec succès',
         'email_subject' => 'Demande de mise à jour de la cavité: :caveName',
         'contact_form' => 'Formulaire de contact',
+        'cave_system' => 'Réseau',
     ],
 
     /**
@@ -280,6 +281,7 @@ return [
             'medium' => "MOYENNE",
             'high' => "FORTE",
         ],
+        'cave_system_id' => 'Réseau',
 
     ],
 
