@@ -281,6 +281,7 @@ return [
             'medium' => "MOYENNE",
             'high' => "FORTE",
         ],
+        'cave_system_id' => 'Réseau',
 
     ],
 

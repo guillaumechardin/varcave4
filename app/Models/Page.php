@@ -124,6 +124,27 @@ class Page extends Model
                 }
                $currentmodelFields[ $value['field']['key'] ]['list_values'] = $lists;
             }
+
+            if($value['field']['storage_type'] === 'relation'){
+
+                $rel = explode('.', $value['field']['storage_target']) ;
+                $table = trim($rel[0]);
+                $target = trim($rel[1]);
+                
+                if (count($rel) !== 2 || empty($table) || empty($target)) {
+                    throw new \InvalidArgumentException(
+                        'Invalid storage_target [' . $value['field']['storage_target'] . '] Expected format: Model.field'
+                    );
+                }
+                
+                $modelData = resolve('App\Models\\'.$table)::all()->select(['id', $target]);
+
+                $lists = array();
+                foreach( $modelData as $listItem){
+                    $lists[$listItem['id']] = $listItem[$target];
+                }
+               $currentmodelFields[ $value['field']['key'] ]['list_values'] = $lists;
+            }
         }
         
         //add Uuid 

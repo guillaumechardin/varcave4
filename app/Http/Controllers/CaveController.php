@@ -142,7 +142,7 @@ class CaveController extends Controller
         //fetch cols for datatables results only, must be present for view form construction
         $pageDatatable = new Page();
         $pmDatatablesTable = $pageDatatable->setPageModelFor('searchResultsColumns', 'main', true)->getModelFields();
-
+        
         $datatablesLang = json_encode(__('varcave.searchPage.datatables'), JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE) ;
         
         //Reply to a user search request Form
@@ -171,9 +171,10 @@ class CaveController extends Controller
                     if ($value !== null && $value !== '') {
                         switch ($type) {
                             case 'LIKE': $query->where($field, 'like', "%$value%"); break;
-                            case '=': $query->where($field, $value); break;
                             case 'NOTEQUAL': $query->where($field, '!=', $value); break;
                             case '>': case '<': case '>=': case '<=': $query->where($field, $type, $value); break;
+                            case '=':
+                            default: $query->where($field, $value); //defaults to equal 
                         }
                     }
                 }
@@ -199,9 +200,9 @@ class CaveController extends Controller
             $cs = new CaveService($caveObj, $request->user(), true);
             foreach ($cavesSrch as $cave) {
                 $_cave = array();
+                //quick format data
                 foreach($pmDatatablesTable as $key => $field){
-                    $_cave[$key] = $cs->formatValue($cave->{$key}, $key, $field, $field );
-
+                    $_cave[$key] = $cs->formatValue($cave->{$key}, $key, $field );
                 }
                 $caves[] = $_cave;
             }
@@ -220,8 +221,8 @@ class CaveController extends Controller
         return view('varcave.cavesearch',
             [
                 'pageTitle' => Str::ucfirst(__('varcave.searchPage.title')),
-                "searchFormFields" => $pmSearchForm ?? null,
-                "datatablesFields" => $pmDatatablesTable ?? null,
+                'searchFormFields' => $pmSearchForm ?? null,
+                'datatablesFields' => $pmDatatablesTable ?? null,
                 'datatablesLang' => $datatablesLang,
                 'request' => $request,
             ]
@@ -409,7 +410,7 @@ class CaveController extends Controller
                 }
             }
         }
-
+        
         return view('varcave.caveupdate',
         [
             'pageTitle' => $cave->name,
@@ -463,13 +464,13 @@ class CaveController extends Controller
             default:
                 $dataType = 'string';
         }
-        
+
         $validated = $request->validate([
             'fieldname' => ['required', 'string'],
             'value' => ['required', $dataType],
         ]);
 
-        Log::info('Update cave '. $validated['fieldname'] . ' with value: '. Str::limit($validated['value'], 15));
+        Log::info('Update cave ' . $cave->uuid . ' : '. $validated['fieldname'] . ' with value: '. Str::limit($validated['value'], 15));
         try
         {
             $f = $validated['fieldname'];
