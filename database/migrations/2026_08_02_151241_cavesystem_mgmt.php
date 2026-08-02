@@ -32,7 +32,7 @@ return new class extends Migration
             ],
             [
                 'key' => 'cave_system_id',
-                'data_type ' => 'string',
+                'data_type ' => 'number',
                 'unit' => null,
                 'storage_target' => 'CaveSystem.name',
                 'storage_type' => 'relation',

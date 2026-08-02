@@ -441,7 +441,7 @@ class CaveController extends Controller
         //permit access to users with roles
         Gate::authorize('updateCave', $cave); 
 
-        $type = Field::where('key', $request->fieldname)->sole('data_type');
+        $type = Field::where('key', $request->fieldname)->sole(['data_type', 'storage_type']);
 
         //re-affect right validation rule
         switch($type->data_type){
@@ -468,7 +468,12 @@ class CaveController extends Controller
         $validated = $request->validate([
             'fieldname' => ['required', 'string'],
             'value' => ['required', $dataType],
-        ]);
+        ]);        
+        
+        //special case storage_type = relation; check if relation must be lost
+        if($type->storage_type == 'relation' && $validated['value'] == '-1'){
+            $validated['value'] = null;
+        }
 
         Log::info('Update cave ' . $cave->uuid . ' : '. $validated['fieldname'] . ' with value: '. Str::limit($validated['value'], 15));
         try
