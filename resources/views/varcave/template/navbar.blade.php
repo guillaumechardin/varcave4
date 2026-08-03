@@ -165,7 +165,7 @@
       @endguest
       @auth
       <div class="navbar-item has-dropdown is-hoverable mr-2">
-        <a class="navbar-link">{{ Auth::user()->firstname }}</a>
+        <a class="navbar-link">{{ Auth::user()->firstname . ' ' . Str::upper(Auth::user()->lastname) }}</a>
         <div class="navbar-dropdown is-right">
           <a class="navbar-item" href="{{ route('varcave.profile') }}"> {{__('varcave.navbar.account')}} </a>
           <!-- <a class="navbar-item" id="varcave-logout" data-target-url="{{ route('logout') }}" data-csrf-token="{{ csrf_token() }}" href="#logout"> {{__('varcave.navbar.logout')}} </a> -->
