@@ -113,3 +113,19 @@
 .sortable-handle {
 	cursor: grab;
 }
+
+
+/*
+ * force tag wrap for mobile only (bibliography), prevent text overflow outside screen
+ */
+@media screen and (max-width: 768px) {
+  .force-tags-wrap {
+      min-width: 0;
+  }
+
+  .force-tag-wrap {
+      white-space: normal;
+      height: auto;
+      overflow-wrap: anywhere;
+  }
+}
