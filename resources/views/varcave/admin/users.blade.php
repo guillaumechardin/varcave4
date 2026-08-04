@@ -39,7 +39,7 @@ $(document).ready(function(){
                     <script src="/lib/DataTables/datatables.min.js"></script>
                     <link   href="/lib/DataTables/datatables.min.css" rel="stylesheet">
                     <script>
-                        <x-varcave.users.users-js :users="$users" :datatablesLang="$datatablesLang" :user_cols="$user_cols" />
+                        <x-varcave.users.users-js :users="$users" :datatablesLang="$datatablesLang" :user_cols="$user_cols" :datatablesListSelector="$datatablesListSelector" />
                     </script>
                     <x-varcave.users.tab-users :user_cols="$user_cols"/>
                 </div>

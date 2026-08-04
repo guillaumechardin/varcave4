@@ -86,15 +86,13 @@ class GpxService
                 $point->longitude = $long;
                 $point->elevation = $elev;
 
-                // Description with link
-                //
-                //$description = $url;
-
+                // Description and link
                 $url = route('varcave.caves.show', ['uuid' => $caveData['uuid'] ]);
-                $description = "Infos:\n";
+                $description = '';
 
-                if ($this->config['include_GPX_details'])
+                if (UserPreferenceService::get('include_GPX_details'))
                 {
+                    $description = "Infos:\n";
                     $description .= "\nLength: " . $caveData['length'];
                     $description .= "\nMax Depth: " . $caveData['max_depth'];
                     //$hasPhotos = $cave->hasPhotos() ? 'Yes' : 'No';

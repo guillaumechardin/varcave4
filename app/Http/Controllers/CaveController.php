@@ -218,6 +218,8 @@ class CaveController extends Controller
             ); 
         }
 
+        $datatablesListSelector = ListValue::getListValues('setting.datatables_items_selector');
+
         return view('varcave.cavesearch',
             [
                 'pageTitle' => Str::ucfirst(__('varcave.searchPage.title')),
@@ -225,6 +227,7 @@ class CaveController extends Controller
                 'datatablesFields' => $pmDatatablesTable ?? null,
                 'datatablesLang' => $datatablesLang,
                 'request' => $request,
+                'datatablesListSelector' => $datatablesListSelector,
             ]
         );
     }

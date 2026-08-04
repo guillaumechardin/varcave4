@@ -8,8 +8,14 @@
 <section class="section">
     <section class="hero">
         <div class="hero-body">
-            <p class="title">Hello {{$user->firstname }}</p>
-            <p class="subtitle">Paramètres et sécurité du compte</p>
+            <p class="title">
+                {{ 
+                    __('varcave.profile.hello_user', [
+                        'firstname' => $user->firstname,
+                        'lastname' => '',
+                    ])
+                }}</p>
+            <p class="subtitle">{{ __('varcave.profile.page_subtitle') }}</p>
 
             @if (session('status') === 'password-updated')
                 <script>
@@ -65,7 +71,7 @@
         <ul>
             <li>
                 <div id="tab-settings" class="tab-content mx-2 mt-2">
-                    <x-varcave.profile.tab-settings />
+                    <x-varcave.profile.tab-settings :userSettings="$userSettings" :availableSettings="$availableSettings" :listsDetails="$listsDetails"/>
                 </div>
             </li>
             <li>

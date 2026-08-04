@@ -14,7 +14,7 @@
             <script>
                 <x-varcave.admin-settings-js />
             </script>
-            
+
             @foreach($stdSettings as $categoryName => $sCategory)
                 <div class="box ">
                     <h5 class="title is-5">{{ Str::ucfirst( __('varcave.settings.category_name.'. $categoryName)) }}</h5>
@@ -39,7 +39,7 @@
                                     </button>
                                 </div>
                             </div>
-                            @php( $select = json_decode( $s->value) )
+                            @php( $select = $settings->getValue($s->name) )
                             <div class="field has-addons">
                                 <div class="select is-multiple">
                                     <select id="settingid-{{ $s->id }}" multiple>
@@ -119,6 +119,8 @@
                                             </span>
                                         </button>
                                     </div>
+                                    
+
                                 @else {{-- Very long text --}}
                                     <div class="control">
                                         <textarea id="settingid-{{ $s->id }}"  rows="6" cols="40" class="textarea" placeholder="">{{ $s->value }}</textarea>
@@ -132,7 +134,20 @@
                                     </div>
 
                                 @endif
+                            
+                                @if (in_array($s->name, $settings->getValue('user_overridable_settings')) )
+                                <div class="field is-advanced-opt is-hiddenn ml-4">
+                                    <div class="control">
+                                        <label class="checkbox">
+                                            <input type="checkbox" class="set-opt-overridable" data-target-setting="{{ $s->id }}" value="{{ $s->is_user_overridable }}" @checked($s->is_user_overridable)>
+                                            <span>user overridable</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                @endif
                             </div>
+                            
+                            
                         @endswitch
                         </div> {{-- end $s->name section --}}
                     @endforeach

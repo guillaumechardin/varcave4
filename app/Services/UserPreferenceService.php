@@ -6,13 +6,16 @@ use Illuminate\Support\Facades\Auth;
 
 class UserPreferenceService
 {
-    public static function get(string $key, string $defaultSetting)
+    public static function get(string $key)
     {
         $user = Auth::user();
-        if ($user && isset($user->{$key})) {
-            return $user->{$key};
+        $userPrefs = $user->preferences;
+        
+        if ($user && isset($userPrefs[$key])) {
+            return $userPrefs[$key];
         }
+        
         $globalSetting = new SettingsService();
-        return $globalSetting->get($defaultSetting);
+        return $globalSetting->get($key);
     }
 }

@@ -189,6 +189,7 @@ return [
      * My profile strings
      */
     'profile' => [
+        'page_title' => 'Gestion de mon compte',
         'hello_user' => 'Bonjour :firstname :lastname',
         'current-password' => 'Mot de passe actuel',
         'new-password' => 'Nouveau mot de passe',
@@ -208,6 +209,7 @@ return [
         'accept_terms' => 'J\'accepte les terme de la charte',
         'eula_was_accepted_at' => 'Vous avez accepté la charte d\'utilisation le:',
         'eula_not_yet_accepted' => 'Vous n\'avez pas encore accepté la charte d\'utilisation.',
+        'page_subtitle' => 'Paramètres et sécurité du compte',
 
     ],
 
@@ -371,7 +373,7 @@ return [
         'excludedcopyfields_hlp' => "Champs exclus lors d'une copie de cavité",
         
         'ol_zoom_map_lvl_dsp' => "Niveau de zoom carte openLayers",
-        'ol_zoom_map_lvl_hlp' => "Défini le niveau de zoom par défaut lors de l'utilisation des API openlayers sur la page de cavité",
+        'ol_zoom_map_lvl_hlp' => "Défini le niveau de zoom par défaut lors de l'utilisation des API openlayers sur la page de cavité (valeur entre 1 et 16)",
         'use_geoapi_dyn_map_img_pdf_dsp' => "Utiliser les geo API pour les PDF *unused*",
         'use_geoapi_dyn_map_img_pdf_hlp' => "Utilise les geo API API pour afficher les croquis de repérage dans les PDF",
         'static_map_service_url_dsp' => "Url static map *unused*",
@@ -414,7 +416,7 @@ return [
         'pdf_coords_system_dsp' => "Système de coordonnées dans les PDF",
         'pdf_coords_system_hlp' => "Système de coordonnées utilisé pour l'affichage des coordonnées dans les fichiers PDF",
         'pdf_map_zoom_dsp' => 'Niveau de zoom carte (pdf)',
-        'pdf_map_zoom_hlp' => 'Niveau de zoom utilisé pour la génération des mini carte sur les PDF',
+        'pdf_map_zoom_hlp' => 'Niveau de zoom utilisé pour la génération des mini carte sur les PDF (valeur entre 1 et 16)',
         'pdf_map_cache_delay_dsp' => 'Delai d\'expiration cache mini cartes',
         'pdf_map_cache_delay_hlp' => 'Delai d\'expiration du cache  des mini cartes (en heures) pour les PDF',
         'pdf_file_cache_delay_dsp' => '*NON-UTILISE* Delai d\'expiration cache fichiers PDF',
@@ -443,6 +445,9 @@ return [
         
         'featured_caves_delay_dsp' => 'Délai cavité mises en avant',
         'featured_caves_delay_hlp' => 'Délai maximum de changement de la cavité mise en avant en page d\'accueil (en secondes)',
+
+        'user_overridable_settings_dsp' => 'Variable utilisateur modifiables',
+        'user_overridable_settings_hlp' => 'Diverses variables du site que les utilisateurs peuvent adapter suivant leurs envies',
 
         'category_name' => [
             'captcha' => 'google CAPTCHA',

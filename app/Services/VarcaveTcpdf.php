@@ -447,7 +447,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$x = 76;
 		$this->currentY += 5;
 
-		$coordSystemPref = Setting::get('pdf_coords_system');
+		$coordSystemPref = UserPreferenceService::get('pdf_coords_system');
 		$coordSystem = CoordinateSystemHandler::findOrFail($coordSystemPref);
 		
 		$coordTitle = $this->getTextLine(

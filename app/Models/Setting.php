@@ -15,6 +15,7 @@ class Setting extends Model
         'category',
         'is_advanced_option',
         'legacy_mtime',
+        'is_user_overridable',
     ];
 
 
@@ -31,20 +32,22 @@ class Setting extends Model
     /**
      * Accès à la valeur correctement castée selon le type.
      */
-    public function getValueAttribute($value)
+    public static function getValue(string $key)
     {
-        return match($this->type) {
-            'int'    => (int) $value,
-            'float'  => (float) $value,
-            'bool'   => (bool) $value,
-            //'json'   => json_decode($value,true),
-            'datetime' => $value ? Carbon::parse($value) : null,
-            default  => $value,
+        $setting = self::where('name', $key)->firstOrFail();
+
+        return match($setting->type) {
+            'int'    => (int) $setting->value,
+            'float'  => (float) $setting->value,
+            'bool'   => (bool) $setting->value,
+            'json'   => json_decode($setting->value, true),
+            'datetime' => $setting->value ? Carbon::parse($setting->value) : null,
+            default  => $setting->value, //string 
         };
     }
 
     /**
-     * Mutateur pour setter automatiquement le value selon le type
+     * setter automatique selon le type
      */
     public function setValueAttribute($val)
     {

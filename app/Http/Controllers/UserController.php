@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\VarcaveApiResponse;
+use App\Models\ListValue;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
@@ -32,6 +33,8 @@ class UserController extends Controller
 
         $expirationDate = Carbon::now()->addYear()->setMonth(1)->setDay(31)->startOfDay()->format('d/m/Y');
 
+        $datatablesListSelector = ListValue::getListValues('setting.datatables_items_selector');
+        
         return view('varcave.admin.users',
             [
                 'users' => $users,
@@ -39,6 +42,7 @@ class UserController extends Controller
                 'datatablesLang' => $datatablesLang,
                 'roles' => $roles,
                 'expirationDate' => $expirationDate,
+                'datatablesListSelector' => $datatablesListSelector,
             ]
         );
     }

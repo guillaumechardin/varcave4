@@ -11,7 +11,7 @@
     </section>
 
     <script>
-        <x-varcave.search.search-js :datatablesFields="$datatablesFields" :datatablesLang="$datatablesLang"  />
+        <x-varcave.search.search-js :datatablesFields="$datatablesFields" :datatablesLang="$datatablesLang" :datatablesListSelector="$datatablesListSelector" />
     </script>
     
 

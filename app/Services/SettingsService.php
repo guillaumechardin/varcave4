@@ -33,7 +33,13 @@ class SettingsService
     {
         return $this->settings[$name] ?? $default;
     }
+    
+    public function getValue(string $name)
+    {
+        return Setting::getValue($name);
+    }
 
+    /* NOT USED 03/08/2026
     public function set(string $name, $value): void
     {
         Setting::updateOrCreate(['name' => $name], ['value' => $value]);
@@ -41,4 +47,5 @@ class SettingsService
         $this->settings[$name] = $value;
         Cache::put('settings.all', $this->settings, 3600);
     }
+    */
 }

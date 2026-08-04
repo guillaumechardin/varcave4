@@ -31,6 +31,27 @@ $(document).ready(function (){
         
     });
 
+    $('.set-opt-overridable').on('click', function(){
+        const targetId = $(this).data('target-setting');
+        var url = "{{ route('varcave.admin-settings.update-overridable', ['_ID_']) }}";
+        url = url.replace('_ID_', targetId);
+
+        Logger.debug("write id: "+url);
+
+        const data = {
+            is_overridable: $(this).is(':checked') ? 1 : 0,
+        };
+
+        checkWorkInProgress();
+        setWorkInProgress();
+        $('.set-opt-overridable').prop('disabled', true);
+
+        showProgressBar($(this).siblings('span'));
+        
+        sendAjaxRequest(url, 'PATCH', data, saveSettingSuccess, saveSettingFail);
+
+    });
+
     //disable while page load
     $('.toggle-adv-opt').prop('disabled', false);
 
@@ -64,6 +85,9 @@ $(document).ready(function (){
 
 
 function saveSettingSuccess(response){
+    hideProgressBar();
+    setWorkInProgress(false);
+    $('.set-opt-overridable').prop('disabled', false);
     showMessageBox(response);
     console.log(response);
 }
@@ -71,4 +95,13 @@ function saveSettingSuccess(response){
 function saveSettingFail(response){
     showMessageBox(response, "is-danger");
 }
+
+function saveOverridableFail(response){
+    hideProgressBar();
+    setWorkInProgress(false);
+    $('.set-opt-overridable').prop('disabled', false);
+    ('input[data-target-setting="' + response.data.id + '"]').prop('checked', Number(response.data.value) === 1);
+    showMessageBox(response, "is-danger");
+}
+
 

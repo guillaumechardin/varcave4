@@ -67,9 +67,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/caves/{uuid}/bibliography', [CaveController::class, 'removeBibliography'])->whereUuid('uuid')->name('varcave.caves.removeBibliography');
     
     //PROFILE
-    route::get('/profile/eula', [ProfileController::class, 'showEULA'])->name('varcave.profile.eula.show');
+    
     Route::get('/profile', [ProfileController::class, 'show'])->name('varcave.profile');
+    route::get('/profile/eula', [ProfileController::class, 'showEULA'])->name('varcave.profile.eula.show');
     Route::patch('/profile/eula', [ProfileController::class, 'updateEULA'])->name('varcave.profile.eula.update');
+    Route::patch('/profile/setting', [ProfileController::class, 'updateSetting'])->name('varcave.profile.updateSetting');
     Route::delete('/profile/bookmark/{bookmark}', [ProfileController::class, 'deleteBookmark'])->name('varcave.profile.bookmark.delete');
     Route::post('/profile/theme', [ProfileController::class, 'storeTheme'])->name('varcave.profile.theme.store');
     Route::post('/profile/bookmark', [ProfileController::class, 'storeBookmark'])->name('varcave.profile.bookmark.store');
@@ -84,7 +86,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'can:admin-access'])->group(function () {
     //SETTINGS
     Route::get('/admin/settings', [SettingController::class, 'show'])->name('varcave.admin-settings');
-    Route::patch('/admin/settings/{setting}', [SettingController::class, 'update'])->name('varcave.admin-settings-update');
+    Route::patch('/admin/settings/{setting}', [SettingController::class, 'updateValue'])->name('varcave.admin-settings-update');
+    Route::patch('/admin/settings/overridable/{setting}', [SettingController::class, 'updateOverridable'])->name('varcave.admin-settings.update-overridable');
 
     Route::get('/admin/supportinfo', [SettingController::class, 'supportinfo'])->name('varcave.support-info');
     

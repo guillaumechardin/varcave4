@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Helpers\VarcaveApiResponse;
 use App\Models\Cave;
+use App\Models\ListValue;
+use App\Models\Setting;
 use App\Models\UserBookmark;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -39,11 +42,45 @@ class ProfileController extends Controller
             ];
         }
 
+        $settingNames = Setting::getValue('user_overridable_settings');
+            $rawSettings = DB::table('settings')
+                        ->whereIn('name', $settingNames)
+                        ->orderBy('category', 'asc')
+                        ->get();
+        
+        $availableSettings = array();
+        foreach($rawSettings as $s){
+            $availableSettings[$s->category][] = $s;
+        }
+
+
+        $listSettings = Setting::where('type', 'list')->get(['name', 'type', 'value']);
+        //build a list of available settings
+        $lists = [];
+        foreach($listSettings as $list){
+            $listValueName = 'setting.' . $list['name'];
+            //then fetch all available list option for each list
+            $listValues = ListValue::where('list_name', $listValueName)->get()->toArray();
+            $listValuesA[] = $listValues;
+            foreach($listValues as &$lv){
+                if($lv['i18n_key'] != null && (isset($lv['i18n_key']) && Lang::has($lv['i18n_key'])) ){
+                    $lv['i18n_key'] = Str::upper(__($lv['i18n_key']));
+                }else{
+                    $lv['i18n_key'] = $lv['value'];
+                }
+            }
+            $lists[$listValueName] = $listValues; 
+        }  
+
         return view('varcave.profile', [
-                'user' => $request->user(),
-                'bookmarks' => $bookmarks,
-                'roles' => $request->user()->getRoles(),
-            ]);
+            'pageTitle' => __('varcave.profile.page_title'),
+            'user' => $request->user(),
+            'bookmarks' => $bookmarks,
+            'roles' => $request->user()->getRoles(),
+            'userSettings' => $request->user()->site_settings ?? [] ,
+            'availableSettings' => $availableSettings,
+            'listsDetails' => $lists,
+        ]);
     }
 
     public function showUpdatePassword(){
@@ -192,6 +229,18 @@ class ProfileController extends Controller
         return redirect(
             route('varcave.profile') . '#tab-security')
             ->with('success', __('varcave.general.opSuccess'));
+    }
+
+    public function updateSetting(Request $request)
+    {
+        Log::info('User update EULA', ['username' => $request->user()->username]);
+
+        $settings = json_decode(Setting::get('user_overridable_settings'));
+
+        $validated = $request->validate([
+            'theme' => ['required', 'string', 'in:dark,light,system'],
+        ]);
+
     }
 
 }

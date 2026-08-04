@@ -2,6 +2,7 @@
     'users',
     'datatablesLang',
     'user_cols',
+    'datatablesListSelector',
 ])
 
 $(document).ready(function(){
@@ -28,12 +29,12 @@ $(document).ready(function(){
                 }
             }
         ],
-        pageLength: {{ $UserPreference::get('datatables_max_items', 'datatables_max_items') }},  // default number lines
+        pageLength: {{ $UserPreference::get('datatables_items_selector') }}, //default nbr line shown
         layout: {
             topStart: { 
                 pageLength: {
                     @php
-                        $menu = array_map('intval', json_decode($settings->get('datatables_items_selector'), true));
+                        $menu = array_map('intval', $datatablesListSelector);
                         sort($menu, SORT_NUMERIC);
                     @endphp
                     menu: @json($menu),

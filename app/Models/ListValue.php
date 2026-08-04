@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use phpDocumentor\Reflection\Types\Boolean;
 
 class ListValue extends Model
@@ -32,19 +34,30 @@ class ListValue extends Model
            throw (new ModelNotFoundException())->setModel(self::class);
         }
 
-        /**
-         * Not transformed for now keep i18n in view
-        $list->transform(function (ListValue $item) {
-            $item->i18n_key = __($item->i18n_key);
-            return $item;
-        });
-        */
-
         if($asArray){
             return $list->toArray();
         }
         else{
             return $list;
         }
+    }
+
+    public static function getListValues(string $name){
+        Log::debug(__METHOD__ . ' called.');
+        $listElement = self::where('list_name', trim($name))
+            ->orderBy('sort_order','asc')
+            ->get();
+        
+        $list = [];
+        foreach($listElement as $el){
+                if($el['i18n_key'] != null && (isset($el['i18n_key']) && Lang::has($el['i18n_key'])) ){
+                    $list[] = Str::upper(__($el['i18n_key']));
+                }else{
+                    $list[] = $el['value'];
+                }
+        }  
+
+        return $list;
+    
     }
 }

@@ -126,7 +126,7 @@ class StaticMapService
     public function __construct(array $cave, array $option = [])
     {
         Log::debug(__METHOD__ . ' called.');
-        $this->zoom = Setting::get('pdf_map_zoom');
+        $this->zoom = UserPreferenceService::get('pdf_map_zoom');
         $this->lat = 0;
         $this->lon = 0;
         $this->width = 500;

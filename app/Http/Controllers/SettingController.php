@@ -37,13 +37,14 @@ class SettingController extends Controller
             $listValues = ListValue::where('list_name', $listValueName)->get()->toArray();
             $listValuesA[] = $listValues;
             foreach($listValues as &$lv){
-                if(isset($lv['i18n_key']) && Lang::has($lv['i18n_key']) ){
+                if($lv['i18n_key'] != null && (isset($lv['i18n_key']) && Lang::has($lv['i18n_key'])) ){
                     $lv['i18n_key'] = Str::upper(__($lv['i18n_key']));
+                }else{
+                    $lv['i18n_key'] = $lv['value'];
                 }
             }
             $lists[$listValueName] = $listValues; 
         }     
-
 
         return view('varcave.admin.settings',
             [
@@ -54,12 +55,12 @@ class SettingController extends Controller
         );
     }
 
-    public function update(Request $request, Setting $setting)
+    public function updateValue(Request $request, Setting $setting)
     {
         Log::debug(__METHOD__ . ' called.');
 
         $type = $setting->type;
-        if($setting->type =='list'){
+        if($setting->type == 'list'){
             $type = 'string';
         }
 
@@ -76,6 +77,26 @@ class SettingController extends Controller
                 Str::ucfirst(__('varcave.general.opSuccess')),
                 Str::ucfirst(__('varcave.settings.settings_saved')),
                 $validated['value'],
+        );
+    }
+
+    public function updateOverridable(Request $request, Setting $setting){
+        Log::debug(__METHOD__ . ' called.');
+
+        $validated = $request->validate([
+            'is_overridable' => ['required', 'boolean'],
+        ]);
+        sleep(1);
+
+        Log::info('Update user override value for:'. $setting->name . ' with value: '. $validated['is_overridable']);
+        $setting->is_user_overridable = $validated['is_overridable'];
+        $setting->save();
+
+        return VarcaveApiResponse::ajaxResponse(
+                'success',
+                Str::ucfirst(__('varcave.general.opSuccess')),
+                Str::ucfirst(__('varcave.settings.settings_saved')),
+                ['id' => $setting->id, 'value' => $setting->is_user_overridable ],
         );
     }
 
