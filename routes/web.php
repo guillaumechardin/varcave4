@@ -71,7 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('varcave.profile');
     route::get('/profile/eula', [ProfileController::class, 'showEULA'])->name('varcave.profile.eula.show');
     Route::patch('/profile/eula', [ProfileController::class, 'updateEULA'])->name('varcave.profile.eula.update');
-    Route::patch('/profile/setting', [ProfileController::class, 'updateSetting'])->name('varcave.profile.updateSetting');
+    Route::patch('/profile/preference', [ProfileController::class, 'updatePreference'])->name('varcave.profile.updatePreference');
     Route::delete('/profile/bookmark/{bookmark}', [ProfileController::class, 'deleteBookmark'])->name('varcave.profile.bookmark.delete');
     Route::post('/profile/theme', [ProfileController::class, 'storeTheme'])->name('varcave.profile.theme.store');
     Route::post('/profile/bookmark', [ProfileController::class, 'storeBookmark'])->name('varcave.profile.bookmark.store');

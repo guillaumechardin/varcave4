@@ -9,7 +9,12 @@
     <div class="column">
         <div class="settings-wrapper">
             <h3 class="title is-3">{{ Str::ucfirst(__('varcave.profile.settings') ) }}</h3>
-            
+            <div id="reset-prefs" class="field">
+                <input id="settingname-reset" type="hidden" value="true"/>
+                <button  class="button is-warning save-button" data-target-setting="reset">
+                    {{ __('varcave.profile.reset_prefs') }}
+                </button>
+            </div>
             @foreach($availableSettings as $category => $settingsCategory )
                 <div class="box">
                     <h5 class="title is-5">

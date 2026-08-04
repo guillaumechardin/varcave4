@@ -7,19 +7,22 @@ $(document).ready(function() {
         const targetName = $(this).data('target-setting');
         const val = $(this).closest('.field').find('#settingname-'+targetName).val();
         Logger.debug('update ' + targetName + ':' + val);
+        
+        let data = {};
 
-       
+        if(targetName == 'reset'){
+            data.reset = true;
+        }else{
+            data.prefName = targetName;
+            data.prefValue = val;
+        }
+        
         checkWorkInProgress();
         setWorkInProgress();
 
-        const data = {
-            prefName: targetName,
-            prefValue: val,
-        };
-
         showProgressBar($(this).closest('.field'));
 
-        url = '{{ route('varcave.profile.updateSetting')}}';
+        url = '{{ route('varcave.profile.updatePreference')}}';
 
         sendAjaxRequest(url, 'patch', data, updatePrefSucceed, updatePrefFailed); 
 

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
@@ -231,16 +232,84 @@ class ProfileController extends Controller
             ->with('success', __('varcave.general.opSuccess'));
     }
 
-    public function updateSetting(Request $request)
+    public function updatePreference(Request $request)
     {
-        Log::info('User update EULA', ['username' => $request->user()->username]);
+        Log::info('User update prefs', ['username' => $request->user()->username]);
 
-        $settings = json_decode(Setting::get('user_overridable_settings'));
+        $fields = json_decode(Setting::get('user_overridable_settings'));
+        $settings = Setting::whereIn('name', $fields)->get();
 
-        $validated = $request->validate([
-            'theme' => ['required', 'string', 'in:dark,light,system'],
+        $setting = $settings->firstWhere('name', $request->prefName);
+
+        $validatedReset = $request->validate([
+            'reset' => [
+                'sometimes',
+                'accepted',
+            ],
         ]);
 
+        //fetch user prefs
+        $user = $request->user();
+        $userPrefs = $user->preferences;
+
+
+        if(isset($validatedReset['reset']) && (bool)$validatedReset['reset'] == true){
+            $user->preferences = null;
+            $user->save();
+
+            return VarcaveApiResponse::ajaxResponse(
+                'success',
+                Str::ucfirst(__('varcave.general.opSuccess')),
+                Str::ucfirst(__('varcave.profile.pref_saved')) . '. ' . __('varcave.general.redirecting') ,
+                'null',
+                200,
+                '',
+                route('varcave.profile'),
+            );
+        }
+        
+
+        //bad user request, unauthorized pref name
+        if(!$setting){
+            abort(422, 'Invalid preference');
+        }
+
+        $rules = [
+            'prefName' => [
+                'required',
+                Rule::in($fields),
+            ],
+            'prefValue' => [
+                'required',
+            ],
+        ];
+
+
+        //custom validation rule (to move to form request ?)
+        //special case for list, that is not strictly a laravel list validator, but a ref to List table
+        if ($setting->type === 'list'){
+            $validationArray = ListValue::where('list_name', 'setting.' . $setting->name)
+                ->pluck('value')
+                ->toArray();
+
+            $rules['prefValue'][] = Rule::in($validationArray);
+        }else{
+            $rules['prefValue'][] = $setting->type;
+        }
+        $validated = $request->validate($rules);
+
+        //merge/replace with new value
+        
+        $userPrefs[$validated['prefName']] = $validated['prefValue'];
+        $user->preferences = $userPrefs;
+        $user->save();
+
+        return VarcaveApiResponse::ajaxResponse(
+                'success',
+                Str::ucfirst(__('varcave.general.opSuccess')),
+                Str::ucfirst(__('varcave.profile.pref_saved')),
+                'null',
+        );
     }
 
 }

@@ -28,7 +28,7 @@ return new class extends Migration
         [
             'pdf_coords_system',
             'include_GPX_details',
-            'datatables_max_items',
+            'datatables_items_selector',
             'pdf_map_zoom',
             'ol_zoom_map_lvl',
         ];
@@ -51,6 +51,12 @@ return new class extends Migration
             'value'=> 5,
             'type' => 'list',
             'is_advanced_option' => 0,
+        ]);
+
+        DB::table('settings')
+        ->where('name', ' 	ol_zoom_map_lvl')
+        ->update([
+            'type' => 'numeric',
         ]);
 
         $listName = 'setting.datatables_items_selector';

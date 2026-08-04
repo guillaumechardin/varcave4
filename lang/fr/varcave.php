@@ -47,7 +47,8 @@ return [
         'reminder' => 'rappel',
         'information' => 'information',
         'email_sent' => 'Votre message à été envoyé',
-        'email_not_sent' => 'Votre message n\'a pas été envoyé', 
+        'email_not_sent' => 'Votre message n\'a pas été envoyé',
+        'redirecting' => 'Vous allez être redirigé, patientez...',
     ],
 
     'homepage' => [
@@ -210,7 +211,8 @@ return [
         'eula_was_accepted_at' => 'Vous avez accepté la charte d\'utilisation le:',
         'eula_not_yet_accepted' => 'Vous n\'avez pas encore accepté la charte d\'utilisation.',
         'page_subtitle' => 'Paramètres et sécurité du compte',
-
+        'pref_saved' => 'Préférence enregistrée',
+        'reset_prefs' => 'Reinitialiser param.',
     ],
 
     /*
