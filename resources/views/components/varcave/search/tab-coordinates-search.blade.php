@@ -11,17 +11,11 @@
                 <div class="control">
                     <div class="select" >
                     <select id="select-coord-searchtype" name="select-coord-searchtype">
-                        <option value="" disabled >FR Choisir une option</option>
-                        <option value="polygon">FR par zone</option>
-                        <option value="single" selected>FR autour d-un point</option>
+                        <option value="" disabled selected>FR Choisir une option</option>
+                        <option value="single">FR autour d-un point</option>
                     </select>
                     </div>
                 </div>
-            </div>
-
-            <div class="field is-hidden" id="wrapper-coords-polygon">
-                <label class="label"></label>
-                    <textarea id="search-type-polygon" name="textarea-coords-search" class="textarea" placeholder="FR entrer coords[[4.4355,43.5588],[4.4758,43.6698]]"></textarea>
             </div>
             
             <div class="field is-hidden" id="wrapper-coords-single">

@@ -16,7 +16,7 @@
             <style>
                 #map {
                     width: 100%;
-                    height: 50vh; /* par défaut */
+                    height: 70vh; /* par défaut */
                 }
             </style>
             <div id="map-wrapper" class="is-skeleton">
@@ -208,7 +208,42 @@
                     source: new ol.source.Vector({ features: nearCaveFeatures_a }),
                     title: "{{ __('varcave.caveshow.nearCaves') }}"
                 });
+                
+                /**
+                 * IGN SPECIFIC ITEMS
+                 */
+                const resolutions = [];
+                const matrixIds = [];
 
+                const proj3857 = ol.proj.get("EPSG:3857");
+                const maxResolution =
+                    ol.extent.getWidth(proj3857.getExtent()) / 256;
+
+                for (let i = 0; i < 20; i++) {
+                    matrixIds[i] = i.toString();
+                    resolutions[i] = maxResolution / Math.pow(2, i);
+                }
+
+                const ignTileGrid = new ol.tilegrid.WMTS({
+                    origin: [-20037508, 20037508],
+                    resolutions: resolutions,
+                    matrixIds: matrixIds
+                });
+
+                const ignSource = new ol.source.WMTS({
+                    url: "https://data.geopf.fr/wmts",
+                    layer: "GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2",
+                    matrixSet: "PM",
+                    format: "image/png",
+                    projection: "EPSG:3857",
+                    tileGrid: ignTileGrid,
+                    style: "normal",
+                    attributions:
+                        '<a href="https://www.ign.fr/" target="_blank">' +
+                        '<img src="https://data.geopf.fr/annexes/ressources/logos/ign.gif" ' +
+                        'title="Institut national de l’information géographique et forestière" ' +
+                        'alt="IGN"></a>'
+                });
 
                 //map rendering
                 var map = new ol.Map({
@@ -216,8 +251,27 @@
                     layers: [
                         new ol.layer.Tile({ 
                             source: new ol.source.OSM(),
+                            attributions: [
+                                "© OpenStreetMap & his contributors"
+                            ],
                             title: 'Open Street Map',
                         }),
+                        new ol.layer.Tile({
+                            source: new ol.source.XYZ({
+                                url: "https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png",
+                                attributions: [
+                                    "© OpenTopoMap and OpenStreetMap contributors"
+                                ],
+                                
+                            }),
+                            
+                            title: "OpenTopoMap",
+                        }),
+                        new ol.layer.Tile({
+                            source: ignSource,
+                            title: "IGN Plan IGN",
+                        }),
+                        
                         caveLayer,
                         nearCavesLayer
                     ],

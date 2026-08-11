@@ -127,6 +127,9 @@ class CaveController extends Controller
         );  
     }
 
+    /**
+     * to be removed later 11-08-2026
+     **/
     public function deprecated__search(Request $request): View|JsonResponse
     {
         Log::debug(__METHOD__ . ' called');
@@ -340,7 +343,7 @@ class CaveController extends Controller
         ); 
     }
 
-    public function searchByCoords(Request $request): View|JsonResponse
+    public function searchByCoords(Request $request): JsonResponse
     {
         Log::debug(__METHOD__ . ' called');
         
@@ -353,58 +356,41 @@ class CaveController extends Controller
         $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
         $availFormFields = array_keys($pmSearchForm);
 
-        //no Gate, accessible to all authenticated users 
         $validated = $request->validate([
-            'select-coord-searchtype' => ['required', 'string', 'in:single,polygon'],
+            'select-coord-searchtype' => ['required', 'string', 'in:single,file'],
         ]);
 
-       
         $query = null;
         //$query->select($availFormFields);
 
-        switch($validated['select-coord-searchtype'])
-        {
-            case 'single':
-            $validated = $request->validate([
-                'search-type-long' => ['required', 'numeric'],
-                'search-type-lat' => ['required', 'numeric'],
-                'search-max-radius' => ['required', 'numeric', 'between:1,3500'],
-            ]);
-            
-            //build CaveCoordinate get() array
-            $centerPoint = collect(
-                array(
-                    [
-                        'id'   => -1,
-                        'x'    => (float) $validated['search-type-long'],
-                        'y'    => (float) $validated['search-type-lat'],
-                        'lon'  => (float) $validated['search-type-long'],
-                        'lat'  => (float) $validated['search-type-lat'],
-                        'z'    => (float) 0,
-                    ],
-                )
+        $validated = $request->validate([
+            'search-type-long' => ['required', 'numeric'],
+            'search-type-lat' => ['required', 'numeric'],
+            'search-max-radius' => ['required', 'numeric', 'between:1,3500'],
+        ]);
+        
+        //build CaveCoordinate get() array
+        $centerPoint = collect(
+            array(
+                [
+                    'id'   => -1,
+                    'x'    => (float) $validated['search-type-long'],
+                    'y'    => (float) $validated['search-type-lat'],
+                    'lon'  => (float) $validated['search-type-long'],
+                    'lat'  => (float) $validated['search-type-lat'],
+                    'z'    => (float) 0,
+                ],
+            )
+        );
+
+        $query = CaveCoordinates::findNearCaves(
+            $centerPoint,
+            $validated['search-max-radius'],
+            -1, //dummy max caves, will be replaced by dattables value later with $request->input('length'
+            -1, //no cave excluded from results
+            asQueryBuilder: true,
             );
 
-            $query = CaveCoordinates::findNearCaves(
-                $centerPoint,
-                $validated['search-max-radius'],
-                -1, //dummy max caves, will be replaced by dattables value later with $request->input('length'
-                -1, //no cave excluded from results
-                asQueryBuilder: true,
-                );
-
-            break;
-
-            case 'polygon':
-
-            break;
-            
-            default:
-            //validation rule should not accept other values
-            //and should never gets here
-            abort(422, 'Invalid search type.');
-
-        }
 
         //get fields for search form
         $page = new Page();
@@ -434,9 +420,6 @@ class CaveController extends Controller
             ->filter()
             ->values();
 
-    
-        //dd([$cavesById, $cavesSrch]);
-
         Log::debug(' SQL query:', [$query->toSql(), 'bindings' => $query->getBindings(),]);
         
         $cs = new CaveService($caveObj, $request->user(), true);
@@ -463,6 +446,42 @@ class CaveController extends Controller
             ]
         ); 
         
+
+    }
+
+    public function spacialSearchShow(Request $request): View
+    {
+       Log::debug(__METHOD__ . ' called');
+
+        //get fields for search form
+        $page = new Page();
+        $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
+        $availFormFields = array_keys($pmSearchForm); // we only query fields that will be available in datatables
+
+        //fetch cols for datatables results only, must be present for view form construction
+        $pageDatatable = new Page();
+        $pmDatatablesTable = $pageDatatable->setPageModelFor('searchResultsColumns', 'main', true)->getModelFields();
+
+        $datatablesLang = json_encode(__('varcave.searchPage.datatables'), JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE) ;
+
+        $datatablesListSelector = ListValue::getListValues('setting.datatables_items_selector');
+
+        return view('varcave.spacialSearch',
+            [
+                'pageTitle' => Str::ucfirst(__('varcave.searchPage.title')),
+                'searchFormFields' => $pmSearchForm ?? null,
+                'datatablesFields' => $pmDatatablesTable ?? null,
+                'datatablesLang' => $datatablesLang,
+                //'request' => $request,
+                'datatablesListSelector' => $datatablesListSelector,
+            ]
+        );
+
+    }
+
+    public function spacialSearch(Request $request)
+    {
+        Log::debug(__METHOD__ . ' called');
 
     }
 

@@ -21,7 +21,9 @@ Route::group([], function (){
     //*** search page***
     Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');
     Route::get('/caves/search', [CaveController::class, 'showSearchPage'])->name('varcave.caves.search');
-    Route::post('/caves/search', [CaveController::class, 'stdSearch'])->name('varcave.caves.stdSearch');
+    Route::post('/caves/search', [CaveController::class, 'stdSearch'])->middleware('throttle:9,1')->name('varcave.caves.stdSearch');
+    Route::post('/caves/search-by-coords', [CaveController::class, 'searchByCoords'])->name('varcave.caves.searchByCoords');
+    
     
     //*** Cave info display ***
     Route::get('/caves/{uuid}', [CaveController::class, 'show'])->whereUuid('uuid')->name('varcave.caves.show');
@@ -50,7 +52,8 @@ Route::group([], function (){
 
 Route::middleware('auth')->group(function () {
     //SEARCH by COORDINATES
-    Route::post('/caves/search-by-coords', [CaveController::class, 'searchByCoords'])->name('varcave.caves.searchByCoords');
+    Route::get('/caves/spacial-search', [CaveController::class, 'spacialSearchShow'])->name('varcave.caves.spacialSearchShow');
+    Route::post('/caves/spacial-search', [CaveController::class, 'spacialSearch'])->middleware('throttle:3,1')->name('varcave.caves.spacialSearch');
 
     //CAVES
     Route::post('/caves/', [CaveController::class, 'create'])->name('varcave.caves.create');

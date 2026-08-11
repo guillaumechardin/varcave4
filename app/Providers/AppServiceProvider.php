@@ -30,5 +30,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('cave-editor-access', function ($user) {
             return $user->hasRole('cave-editor') || $user->hasRole('admin') ;
         });
+
+        //simple gate that's check user user membership
+        Gate::define('user-access', function ($user) {
+            return $user->hasRole('user') || $user->hasRole('admin') ;
+        });
     }
 }

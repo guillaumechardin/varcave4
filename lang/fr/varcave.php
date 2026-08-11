@@ -184,6 +184,7 @@ return [
         'pagefields' => 'Gestion aff. des champs',
         'more_menu' => 'divers',
         'about_page' => 'a propos de ce site',
+        'spacial_search' => 'Recherche spaciale',
     ],
 
     /**

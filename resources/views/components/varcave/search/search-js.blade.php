@@ -37,17 +37,8 @@ $(document).ready(function($){
         type = $(this).val();
         Logger.debug('Change coords search type:' + type);
         
-        if(type == 'polygon'){
-            $('#wrapper-coords-single').addClass('is-hidden');
-            $('#wrapper-coords-polygon').removeClass('is-hidden');
-        }else if(type == 'single'){
-            $('#wrapper-coords-single').removeClass('is-hidden');
-            $('#wrapper-coords-polygon').addClass('is-hidden');
-
-        }else{
-            Logger.error('type not supported');
-        }
-    })
+        $('#wrapper-coords-single').removeClass('is-hidden');
+    });
 
     /**
      * Handle search form button and process search request

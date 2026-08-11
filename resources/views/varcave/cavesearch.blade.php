@@ -50,7 +50,7 @@
         <div id="tab-search-form" class="tab-content mx-2 mt-2">
                 <x-varcave.search.tab-search-form :searchFormFields="$searchFormFields" />
         </div>
-
+        
         <div id="tab-coordinates-search" class="tab-content mx-2 mt-2">
                 <x-varcave.search.tab-coordinates-search />
         </div>

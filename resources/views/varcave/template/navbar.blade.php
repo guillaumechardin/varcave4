@@ -36,6 +36,9 @@
           <a class="navbar-item" href="{{ route('varcave.caves.search') }}">
             {{ Str::ucfirst( __('varcave.navbar.search')) }}
           </a>
+          <a class="navbar-item" href="{{ route('varcave.caves.spacialSearch') }}">
+            {{ Str::ucfirst( __('varcave.navbar.spacialSearch')) }}
+          </a>
           <a class="navbar-item" href="{{ route('varcave.caves.statistics') }}">
             {{ Str::ucfirst( __('varcave.navbar.statistics')) }}
           </a>
