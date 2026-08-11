@@ -28,6 +28,14 @@
                 </a>
             </li>
             <li>
+                <a data-tabs-target="tab-coordinates-search" class="button is-disabled">
+                    <span class="icon is-small">
+                        <i class="bi bi-table" aria-hidden="true"></i>
+                    </span>
+                    <span>{{ Str::ucfirst(__('varcave.searchPage.by_coords')) }}</span>
+                </a>
+            </li>
+            <li>
                 <a data-tabs-target="tab-search-results" class="button is-disabled">
                     <span class="icon is-small">
                         <i class="bi bi-table" aria-hidden="true"></i>
@@ -41,6 +49,10 @@
     <div id="tabs-contents">
         <div id="tab-search-form" class="tab-content mx-2 mt-2">
                 <x-varcave.search.tab-search-form :searchFormFields="$searchFormFields" />
+        </div>
+
+        <div id="tab-coordinates-search" class="tab-content mx-2 mt-2">
+                <x-varcave.search.tab-coordinates-search />
         </div>
         
         <div id="tab-search-results" class="tab-content mx-2 mt-2 ">

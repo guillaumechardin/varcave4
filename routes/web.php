@@ -8,7 +8,6 @@ use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\PageFieldsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
-use App\Http\Controllers\StaticMapController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,15 +18,21 @@ Route::group([], function (){
     Route::get('/', [HomepageController::class, 'show'])->name('varcave.homepage');
     
     //CAVES PUBLIC PAGES
-    Route::get('/caves/search', [CaveController::class, 'search'])->name('varcave.caves.search');
-    Route::get('/caves/{uuid}', [CaveController::class, 'show'])->whereUuid('uuid')->name('varcave.caves.show');
-    Route::get('/caves', [CaveController::class, 'search'])->name('varcave.caves.all');
-    Route::get('/vm', [CaveController::class, 'vm'])->name('varcave.vm');
+    //*** search page***
     Route::get('/caves/quicksearch', [CaveController::class, 'quicksearch'])->name('varcave.caves.quicksearch');
+    Route::get('/caves/search', [CaveController::class, 'showSearchPage'])->name('varcave.caves.search');
+    Route::post('/caves/search', [CaveController::class, 'stdSearch'])->name('varcave.caves.stdSearch');
+    
+    //*** Cave info display ***
+    Route::get('/caves/{uuid}', [CaveController::class, 'show'])->whereUuid('uuid')->name('varcave.caves.show');
+    Route::get('/caves', [CaveController::class, 'showSearchPage'])->name('varcave.caves.all');
     Route::post('/caves/{uuid}/update-request', [CaveController::class, 'emailUpdateRequest'])
     ->whereUuid('uuid')
     ->middleware('throttle:3,5')
-    ->name('varcave.caves.emailUpdateRequest');    
+    ->name('varcave.caves.emailUpdateRequest'); 
+
+    //no more used
+    //Route::get('/vm', [CaveController::class, 'vm'])->name('varcave.vm');
     
     //PUBLIC RESOURCES PAGES
     Route::get('/resources/{fileResource}', [FileResourcesController::class, 'get'])->name('varcave.resource.download');
@@ -44,6 +49,9 @@ Route::group([], function (){
 
 
 Route::middleware('auth')->group(function () {
+    //SEARCH by COORDINATES
+    Route::post('/caves/search-by-coords', [CaveController::class, 'searchByCoords'])->name('varcave.caves.searchByCoords');
+
     //CAVES
     Route::post('/caves/', [CaveController::class, 'create'])->name('varcave.caves.create');
     Route::get('/caves/{uuid}/map', [CaveController::class, 'getMap'])->whereUuid('uuid')->middleware('throttle:20,1')->name('varcave.caves.map');

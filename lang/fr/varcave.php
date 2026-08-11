@@ -327,6 +327,7 @@ return [
                 ],
             
         ],
+        'by_coords' => 'recherche par coordonnées',
     ],
 
     'coordinateSystems' => [

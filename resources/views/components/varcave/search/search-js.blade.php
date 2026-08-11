@@ -8,22 +8,46 @@ $(document).ready(function($){
     $('[data-bulma="tabs"]').bulmaVar('Tabs', 'init', 'tab-search-form');
 
     /**
-     * This process a search request when using quick search input in navbar
+     * Process a search request when using quick search input in navbar
      */
     const urlParams = new URLSearchParams(window.location.search);
     Logger.debug('url params:');
     Logger.debug(urlParams);
-    
     if (urlParams.has('quicksearch')) {
         if(urlParams.get('value_name') != ''){
-            $('#cavesearch-tabs').bulmaVar('Tabs', 'goToTabById', 'tab-search-results');
-            formData = urlParams.toString();
-            doSearch(formData, "{{ route('varcave.caves.search') }}" );
+            $('#cavesearch-tabs').bulmaVar('Tabs', 'goToTabById', 'tab-search-results');            
+            
+            //convert get/url search parameters in array for dt POST processing
+            formData = Object.fromEntries(urlParams.entries());
+
+            doSearch(formData, "{{ route('varcave.caves.stdSearch') }}" );
         }else{
             Logger.error('Unsupported cave search');
         }
+    }else{
+        Logger.info('**** nothing to do ****');
+        //nothing to do
     }
 
+
+    /**
+     * Select coordinates search type option either polygon or single
+     */
+    $('#select-coord-searchtype').on('change', function(e){
+        type = $(this).val();
+        Logger.debug('Change coords search type:' + type);
+        
+        if(type == 'polygon'){
+            $('#wrapper-coords-single').addClass('is-hidden');
+            $('#wrapper-coords-polygon').removeClass('is-hidden');
+        }else if(type == 'single'){
+            $('#wrapper-coords-single').removeClass('is-hidden');
+            $('#wrapper-coords-polygon').addClass('is-hidden');
+
+        }else{
+            Logger.error('type not supported');
+        }
+    })
 
     /**
      * Handle search form button and process search request
@@ -32,9 +56,10 @@ $(document).ready(function($){
         e.preventDefault();
         Logger.debug('Form submited');
         
+        //keep only populated data
         var formData = getFilteredFormData($('#search-form'));
         
-        formData = $.param(formData);
+        Logger.debug('filtered inputs');
         Logger.debug(formData);        
 
         $('#cavesearch-tabs').bulmaVar(
@@ -46,13 +71,40 @@ $(document).ready(function($){
         doSearch(formData, "{{ route('varcave.caves.search') }}" );
     });
 
+
+    /**
+     * Handle coords search request
+     */
+    $('#search-coordinates-form').submit(function(e){
+        e.preventDefault();
+        Logger.debug('Coord search form submited');
+        
+        var form = $('#search-coordinates-form');
+        var formData = {};
+
+        form.serializeArray().forEach(function(item) {
+            formData[item.name] = item.value;
+        });
+
+        console.log(formData);        
+
+        $('#cavesearch-tabs').bulmaVar(
+            'Tabs',
+            'goToTabById',
+            'tab-search-results'
+        );
+                
+        doSearch(formData, "{{ route('varcave.caves.searchByCoords') }}");
+    });
+
+
     /**
      *  Handles click on row and open cave in new tab
      */
     /*$('#results-table tbody').on('click', 'tr', function () {
         let data = resultsTable.row(this).data();
         if (data && data.uuid) {
-            const target = caveShowTemplaceUrl.replace('__UUID__', data.uuid);
+            const target = caveShowTemplateUrl.replace('__UUID__', data.uuid);
             window.open(target, '_blank');
         }
     });*/
@@ -72,7 +124,7 @@ $(document).ready(function($){
 
         let data = resultsTable.row($tr).data();
         if (data && data.uuid) {
-            const target = caveShowTemplaceUrl.replace('__UUID__', data.uuid);
+            const target = caveShowTemplateUrl.replace('__UUID__', data.uuid);
             window.open(target, '_blank');
         }
     });
@@ -119,26 +171,35 @@ $(document).ready(function($){
         return data;
     }
 
-    
     /**
      *  Start a search request agains server an populate Datatables if any valid return available
      */
     var resultsTable;
-    function doSearch(formData, url){
-        
+    var formData;
+    var method;
+    function doSearch(_formData, url){
+        formData = _formData;
         if ( $.fn.DataTable.isDataTable('#results-table') ) {
-           resultsTable = $('#results-table').DataTable().ajax.url(url + '?' + formData).load();
+            Logger.warn('Already instanciated dt, please check !!!!');
+            
+            resultsTable = $('#results-table').DataTable().ajax.url(url).load();
+
         } else {
+            Logger.debug('instanciate dt');
             resultsTable = $('#results-table').DataTable({
                 ajax: {
-                    url:url + '?' + formData,
-                    method: 'get',
-                    //dataSrc: '',
+                    url: url,
+                    type: 'POST',
+                    data: function(data, settings) {//ajax.data must be a function to be updated see :https://datatables.net/ref/core/option/ajax.data#top
+                        Object.assign(data, formData);
+                    },
                     error: function (xhr, textStatus, errorThrown) {
+                        console.error("DataTables AJAX error:", xhr.status, errorThrown);
                         resultsTable.clear();
-                        resultsTable.rows.add([]).draw();
-                        resultsTable.processing(false);
-                        
+                        resultsTable.processing(); //using processing(false) seems to not work as expected
+                        console.log('error msg:');
+                        console.log(xhr);
+                        showGenericErrorMsg(xhr.responseJSON.message);
                     },
                 },
                 processing: true,
@@ -192,8 +253,9 @@ $(document).ready(function($){
 
     {{-- url search all caves --}}
     @if(url()->current() == route('varcave.caves.all') )
+        Logger.info('Request all caves results');
         $('#cavesearch-tabs').bulmaVar('Tabs', 'goToTabById', 'tab-search-results');
-        formData = new URLSearchParams({caves: "all"}).toString();
+        formData = {'allCaves': true};
         
         doSearch(formData, "{{ route('varcave.caves.search') }}")
     @endif

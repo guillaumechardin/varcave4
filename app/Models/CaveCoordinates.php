@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Cave;
+use App\Models\CaveCoordinates;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\belongsTo;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\belongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CaveCoordinates extends Model
 {
@@ -98,6 +101,7 @@ class CaveCoordinates extends Model
      * @param Collection $origin Origin coordinates used as the search center.
      *                           Expected to contain the coordinate values required
      *                           by the distance calculation logic.
+     *                   $origin is a collection issued by CaveCoordinates::get()
      * @param float $maxRadius Maximum search radius around the origin coordinates.
      * @param int $maxCavesToFind Maximum number of caves to return.
      * @param int $excludeCaveId Cave ID to exclude from the search results.
@@ -110,8 +114,9 @@ class CaveCoordinates extends Model
         float $maxRadius,
         int $maxCavesToFind,
         int $excludeCaveId,
-        bool $jsarray = false
-    ): Collection
+        bool $jsarray = false,
+        bool $asQueryBuilder = false,
+    ): Collection|Builder
     {
         if ($origin->isEmpty()) {
             return collect(); 
@@ -124,6 +129,7 @@ class CaveCoordinates extends Model
         $caves = DB::table('cave_coordinates as cc')
             ->join('caves', 'cc.cave_id', '=', 'caves.id')
             ->select(
+                'caves.id',
                 'caves.uuid',
                 'caves.name',
                 'cc.z',
@@ -135,10 +141,15 @@ class CaveCoordinates extends Model
             ->where('caves.id', '<>', $excludeCaveId)
             ->havingRaw("distance < ?", [$maxRadius])
             ->orderBy('distance', 'asc')
-            //->orderBy('cave.name', 'asc')
+            //->orderBy('caves.name', 'asc')
             ->limit($maxCavesToFind)
-            ->setBindings([$originLon, $originLat], 'select') // bindings for ST_Distance_Sphere
-            ->get();
+            ->setBindings([$originLon, $originLat], 'select'); // bindings for ST_Distance_Sphere
+
+        if($asQueryBuilder === true){
+            return $caves;
+        }
+        $caves = $caves->get();
+
 
         return $caves->map(fn($c) => [
                 'uuid' => $c->uuid,

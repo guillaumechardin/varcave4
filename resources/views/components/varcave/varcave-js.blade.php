@@ -1,5 +1,5 @@
 const generalLogLevel =  "{{ env('LOG_LEVEL') }}" ;
-const caveShowTemplaceUrl = "{{route('varcave.caves.show', '__UUID__')}}";
+const caveShowTemplateUrl = "{{route('varcave.caves.show', '__UUID__')}}";
 var workInProgress = false;
 
 $(document).ready(function() {
@@ -59,16 +59,16 @@ $(document).ready(function() {
   });
 
   /**
-   * Enable autocomplete on search input in naavbar
+   * Enable autocomplete on search input in navbar
    */
     $("#quick-search-value").autocomplete({
       minLength: 2, // max char before request
-      delay: 150,   // small delay to prevent server spamming
+      delay: 100,   // small delay to prevent server spamming
       source: "{{route('varcave.caves.quicksearch')}}",
       select: function( event, ui ) {
         Logger.debug( "Selected: " + ui.item.value + " aka " + ui.item.id );
         if (ui.item.uuid) {
-          const target = caveShowTemplaceUrl.replace('__UUID__', ui.item.uuid);
+          const target = caveShowTemplateUrl.replace('__UUID__', ui.item.uuid);
           window.open(target, '_blank');
         }
       },
@@ -77,11 +77,13 @@ $(document).ready(function() {
     /**
      * Send search form with enter key
      */
+    /*
+     * duplicate with bellow fn
     $('#quick-search-value').on('keydown', function (e) {
       if (e.key === 'Enter') {
           e.preventDefault();
       }
-    });
+    });*/
 
     /**
      * Start result processing from quicksearch,  
@@ -96,8 +98,9 @@ $(document).ready(function() {
       
       if(value != ''){
         window.location.href = "{{ route('varcave.caves.search') }}?quicksearch=1&type_name=LIKE&value_name=" + value;
+      }else{
+        Logger.info('Empty request');
       }
-      Logger.info('Empty request');
       return false;
     })
 

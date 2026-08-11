@@ -127,9 +127,9 @@ class CaveController extends Controller
         );  
     }
 
-    public function search(Request $request): View|JsonResponse
+    public function deprecated__search(Request $request): View|JsonResponse
     {
-        Log::debug(__METHOD__ . 'called');
+        Log::debug(__METHOD__ . ' called');
         Log::debug('request',['$request' => $request->toArray()]);
         
         $allCaves = strtolower($request->query('caves')) === 'all';
@@ -142,7 +142,7 @@ class CaveController extends Controller
         //fetch cols for datatables results only, must be present for view form construction
         $pageDatatable = new Page();
         $pmDatatablesTable = $pageDatatable->setPageModelFor('searchResultsColumns', 'main', true)->getModelFields();
-        
+
         $datatablesLang = json_encode(__('varcave.searchPage.datatables'), JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE) ;
         
         //Reply to a user search request Form
@@ -181,7 +181,8 @@ class CaveController extends Controller
             }
             
             $caves = null;
-            $caveObj = Cave::find(1)->firstOrFail();  //"random" cave just to get required fields list
+            //$caveObj = Cave::find(1)->firstOrFail();  //"random" cave just to get required fields list
+            $caveObj = Cave::firstOrFail(); //"random" cave just to get required fields list
 
             //handling limits
             $start  = (int) $request->input('start', 0);
@@ -231,7 +232,240 @@ class CaveController extends Controller
             ]
         );
     }
-  
+
+    public function showSearchPage(Request $request): View
+    {
+        Log::debug(__METHOD__ . ' called');
+
+        //get fields for search form
+        $page = new Page();
+        $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
+        $availFormFields = array_keys($pmSearchForm); // we only query fields that will be available in datatables
+
+        //fetch cols for datatables results only, must be present for view form construction
+        $pageDatatable = new Page();
+        $pmDatatablesTable = $pageDatatable->setPageModelFor('searchResultsColumns', 'main', true)->getModelFields();
+
+        $datatablesLang = json_encode(__('varcave.searchPage.datatables'), JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE) ;
+
+        $datatablesListSelector = ListValue::getListValues('setting.datatables_items_selector');
+
+        return view('varcave.cavesearch',
+            [
+                'pageTitle' => Str::ucfirst(__('varcave.searchPage.title')),
+                'searchFormFields' => $pmSearchForm ?? null,
+                'datatablesFields' => $pmDatatablesTable ?? null,
+                'datatablesLang' => $datatablesLang,
+                //'request' => $request,
+                'datatablesListSelector' => $datatablesListSelector,
+            ]
+        );
+    }
+    
+    public function stdSearch(Request $request): JsonResponse
+    {
+        Log::debug(__METHOD__ . ' called');
+        Log::debug('request',['$request' => $request->toArray()]);
+        $query = Cave::query();
+        
+        $allCaves = $request->input('allCaves');
+
+        //get fields for search form
+        $page = new Page();
+        $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
+        $availFormFields = array_keys($pmSearchForm);
+        $query->select($availFormFields);      
+        
+        //fetch cols for datatables results only, must be present for view form construction
+        $pageDatatable = new Page();
+        $pmDatatablesTable = $pageDatatable->setPageModelFor('searchResultsColumns', 'main', true)->getModelFields();
+
+        if($allCaves){ //overload query if user search param present, if not, query return all caves
+            Log::debug('All caves requested');
+            $query->whereNotNull('id');
+        }else{
+            // Search and apply dynamic filters
+            foreach ($availFormFields as $field) {
+                $value = $request->input('value_'.$field);
+                $type = $request->input('type_'.$field);
+
+                if ($value !== null && $value !== '') {
+                    switch ($type) {
+                        case 'LIKE': $query->where($field, 'like', "%$value%"); break;
+                        case 'NOTEQUAL': $query->where($field, '!=', $value); break;
+                        case '>': case '<': case '>=': case '<=': $query->where($field, $type, $value); break;
+                        case '=':
+                        default: $query->where($field, $value); //defaults to equal 
+                    }
+                }
+            }
+        }
+        
+        
+        $caves = null;
+        $caveObj = Cave::firstOrFail(); //"random" cave just to get required fields list
+
+        //handling limits
+        $start  = (int) $request->input('start', 0);
+        $length = (int) $request->input('length', 5);
+        $draw   = (int) $request->input('draw', 1);
+
+        $totalRecords = $query->count(); // count before limit
+
+        $cavesSrch = $query
+        ->offset($start)
+        ->limit($length)
+        ->get();
+
+        Log::debug(' Sql query:', [$query->toSql(), 'bindings' => $query->getBindings(),]);
+        //set_time_limit(220); // 120 secondes, allcaves can be very long to process
+        $cs = new CaveService($caveObj, $request->user(), true);
+        foreach ($cavesSrch as $cave) {
+            $_cave = array();
+            //quick format data
+            foreach($pmDatatablesTable as $key => $field){
+                $_cave[$key] = $cs->formatValue($cave->{$key}, $key, $field );
+            }
+            $caves[] = $_cave;
+        }
+        
+        // JSON return for DataTables
+        return response()->json(
+            [
+                "draw" => $draw,
+                "recordsTotal" => $totalRecords,
+                "recordsFiltered" => $totalRecords,
+                "data" => $caves,
+            ]
+        ); 
+    }
+
+    public function searchByCoords(Request $request): View|JsonResponse
+    {
+        Log::debug(__METHOD__ . ' called');
+        
+        //fetch cols for datatables results only, must be present for view form construction
+        $pageDatatable = new Page();
+        $pmDatatablesTable = $pageDatatable->setPageModelFor('searchResultsColumns', 'main', true)->getModelFields();
+        
+        //get fields for search form
+        $page = new Page();
+        $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
+        $availFormFields = array_keys($pmSearchForm);
+
+        //no Gate, accessible to all authenticated users 
+        $validated = $request->validate([
+            'select-coord-searchtype' => ['required', 'string', 'in:single,polygon'],
+        ]);
+
+       
+        $query = null;
+        //$query->select($availFormFields);
+
+        switch($validated['select-coord-searchtype'])
+        {
+            case 'single':
+            $validated = $request->validate([
+                'search-type-long' => ['required', 'numeric'],
+                'search-type-lat' => ['required', 'numeric'],
+                'search-max-radius' => ['required', 'numeric', 'between:1,3500'],
+            ]);
+            
+            //build CaveCoordinate get() array
+            $centerPoint = collect(
+                array(
+                    [
+                        'id'   => -1,
+                        'x'    => (float) $validated['search-type-long'],
+                        'y'    => (float) $validated['search-type-lat'],
+                        'lon'  => (float) $validated['search-type-long'],
+                        'lat'  => (float) $validated['search-type-lat'],
+                        'z'    => (float) 0,
+                    ],
+                )
+            );
+
+            $query = CaveCoordinates::findNearCaves(
+                $centerPoint,
+                $validated['search-max-radius'],
+                -1, //dummy max caves, will be replaced by dattables value later with $request->input('length'
+                -1, //no cave excluded from results
+                asQueryBuilder: true,
+                );
+
+            break;
+
+            case 'polygon':
+
+            break;
+            
+            default:
+            //validation rule should not accept other values
+            //and should never gets here
+            abort(422, 'Invalid search type.');
+
+        }
+
+        //get fields for search form
+        $page = new Page();
+        $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
+        $availFormFields = array_keys($pmSearchForm); // we only query fields that will be available in datatables
+        $caveObj = Cave::firstOrFail();
+        $caves = null;
+
+        $start  = (int) $request->input('start', 0);
+        $length = (int) $request->input('length', 5);
+        $draw   = (int) $request->input('draw', 1);
+
+        $totalRecords = $query->count(); // count before limit
+
+        $cavesSrch = $query
+        ->offset($start)
+        ->limit($length)
+        ->get();
+
+        //remap array in respect with initial sorting
+        $cavesById = Cave::whereIn('id', $cavesSrch->pluck('id'))
+            ->get()
+            ->keyBy('id');
+        //and build a result as Cave models instead og special array from CaveCoord::findNearCaves
+        $results = $cavesSrch
+            ->map(fn ($result) => $cavesById->get($result->id))
+            ->filter()
+            ->values();
+
+    
+        //dd([$cavesById, $cavesSrch]);
+
+        Log::debug(' SQL query:', [$query->toSql(), 'bindings' => $query->getBindings(),]);
+        
+        $cs = new CaveService($caveObj, $request->user(), true);
+        
+        Log::debug('details');
+        Log::debug('availFormFields', [$availFormFields]);
+        Log::debug('pmDatatablesTable', [$pmDatatablesTable]);
+        foreach ($results as $cave) {
+            $_cave = array();
+            //quick format data to reduce processing time (by not using caveService)
+            foreach($pmDatatablesTable as $key => $field){
+                $_cave[$key] = $cs->formatValue($cave->{$key}, $key, $field );
+            }
+            $caves[] = $_cave;
+        }
+        
+        // JSON return for DataTables
+        return response()->json(
+            [
+                "draw" => $draw,
+                "recordsTotal" => $totalRecords,
+                "recordsFiltered" => $totalRecords,
+                "data" => $caves,
+            ]
+        ); 
+        
+
+    }
+
     public function quicksearch(Request $request)
     {
         
