@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Cave;
-use App\Models\CaveCoordinates;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\belongsTo;
@@ -177,4 +176,33 @@ class CaveCoordinates extends Model
 
         return self::findOrFail($id);
     }
+
+    public static function findInPolygon(string $wktPolygon): \Illuminate\Database\Eloquent\Builder
+    {
+        Log::debug(__METHOD__ . ' called.');
+        Log::info('Start a polygon search in db');
+
+        $caves = Cave::query()
+        ->join("cave_coordinates", "caves.id", "=", "cave_coordinates.cave_id")
+        ->select(
+            "caves.id",
+            "caves.uuid",
+            "caves.name"
+        )
+        ->whereRaw(
+            "ST_Contains(
+                ST_SRID(
+                    ST_GeomFromText(?),
+                    4326
+                ),
+                cave_coordinates.location
+            )",
+            [$wktPolygon]
+        );
+
+        return $caves;
+    }
+
 }
+
+    

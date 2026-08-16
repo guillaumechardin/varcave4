@@ -2,16 +2,15 @@
 
 namespace App\Services;
 
-use phpGPX\phpGPX;
-use phpGPX\Models\Link;
-use phpGPX\Models\Point;
-use phpGPX\Models\GpxFile;
-use phpGPX\Models\Metadata;
-use InvalidArgumentException;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use App\Models\Cave;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use phpGPX\Models\GpxFile;
+use phpGPX\Models\Link;
+use phpGPX\Models\Metadata;
+use phpGPX\Models\Point;
+use phpGPX\phpGPX;
 
 /**
  * Service to generate GPX files from Cave or Coordinates data
@@ -40,7 +39,7 @@ class GpxService
      * @param bool $useCaveRefAsPointName Use cave reference instead of name for waypoints
      * @return string GPX XML content
      */
-    public function createGPX(array $caves,/* string $caveName = 'TO BE REMOVED',*/ bool $useCaveRefAsPointName = false ): string
+    public function createGPX(array $caves, bool $useCaveRefAsPointName = false ): string
     {
         Log::debug(__METHOD__ . ' start GPX creation process');
         $gpxFile = new GpxFile();

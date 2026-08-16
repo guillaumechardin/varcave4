@@ -36,9 +36,11 @@
           <a class="navbar-item" href="{{ route('varcave.caves.search') }}">
             {{ Str::ucfirst( __('varcave.navbar.search')) }}
           </a>
-          <a class="navbar-item" href="{{ route('varcave.caves.spacialSearch') }}">
-            {{ Str::ucfirst( __('varcave.navbar.spacialSearch')) }}
-          </a>
+          @can('user-access')
+            <a class="navbar-item" href="{{ route('varcave.caves.spatialSearchShow') }}">
+              {{ Str::ucfirst( __('varcave.navbar.spatial_search')) }}
+            </a>
+          @endcan
           <a class="navbar-item" href="{{ route('varcave.caves.statistics') }}">
             {{ Str::ucfirst( __('varcave.navbar.statistics')) }}
           </a>

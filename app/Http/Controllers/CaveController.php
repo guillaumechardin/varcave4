@@ -14,14 +14,15 @@ use App\Models\Field;
 use App\Models\ListValue;
 use App\Models\Page;
 use App\Models\Setting;
-use App\Models\User;
 use App\Services\CaveService;
 use App\Services\GpxService;
+use App\Services\SpatialFileService;
 use App\Services\StaticMapService;
 use App\Services\VarcaveTcpdf;
-use Com\Tecnick\Pdf\Tcpdf;
 use Exception;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -31,7 +32,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
+use Nette\Utils\ProcessFailedException;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use ZipArchive;
 
 class CaveController extends Controller
 {
@@ -449,26 +453,21 @@ class CaveController extends Controller
 
     }
 
-    public function spacialSearchShow(Request $request): View
+    public function spatialSearchShow(Request $request): View
     {
        Log::debug(__METHOD__ . ' called');
 
-        //get fields for search form
-        $page = new Page();
-        $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
-        $availFormFields = array_keys($pmSearchForm); // we only query fields that will be available in datatables
-
         //fetch cols for datatables results only, must be present for view form construction
         $pageDatatable = new Page();
-        $pmDatatablesTable = $pageDatatable->setPageModelFor('searchResultsColumns', 'main', true)->getModelFields();
+        $pmDatatablesTable = $pageDatatable->setPageModelFor('spatialsearchColumns', 'main', true)->getModelFields();
 
         $datatablesLang = json_encode(__('varcave.searchPage.datatables'), JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE) ;
 
         $datatablesListSelector = ListValue::getListValues('setting.datatables_items_selector');
 
-        return view('varcave.spacialSearch',
+        return view('varcave.spatialsearch.spatialsearch',
             [
-                'pageTitle' => Str::ucfirst(__('varcave.searchPage.title')),
+                'pageTitle' => Str::ucfirst(__('varcave.spatial_search.pageTitle')),
                 'searchFormFields' => $pmSearchForm ?? null,
                 'datatablesFields' => $pmDatatablesTable ?? null,
                 'datatablesLang' => $datatablesLang,
@@ -479,10 +478,43 @@ class CaveController extends Controller
 
     }
 
-    public function spacialSearch(Request $request)
+    public function spatialSearch(Request $request): Builder|RedirectResponse
     {
         Log::debug(__METHOD__ . ' called');
 
+        $sfs = new SpatialFileService();
+
+        $validated = $request->validate(
+            [
+                'spatial-file' => [
+                    'required',
+                    'file',
+                    'max:' . $sfs::MAX_SPATIAL_FILE_SIZE,
+                    'extensions:' . implode(',', $sfs->filesExtensions),
+                    'mimetypes:'  . implode(',', $sfs->filesMimetypes),
+                ],
+                'user-selected-file-type' => [
+                    'required',
+                    'in:' . implode(', ', $sfs->filesExtensions),
+                ],
+            ],
+            [
+                "spatial-file.extensions" => __('varcave.spatial_search.file_types_err', [ 'types' => implode(', ', $sfs->filesExtensions) ]),
+            ],
+        );
+        
+        try{
+            $wkt = $sfs->buildWktFromFile($validated['spatial-file']);
+            
+        }catch(Exception $e){
+            return redirect()->back()
+            ->withErrors([
+                "spatial_file" => $e->getMessage(),
+            ])
+            ->withInput();
+        }
+        
+        return CaveCoordinates::findInPolygon($wkt);        
     }
 
     public function quicksearch(Request $request)

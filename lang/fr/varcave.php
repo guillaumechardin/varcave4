@@ -26,6 +26,7 @@ return [
         'choose' => 'choisir',
         'chooseFile' => 'sélectionnez un fichier',
         'choose_file_short' => 'Choisir fichier',
+        'choose_file_type' => 'Choisir le type de fichier',
         'noFileSelected' => 'pas de fichier sélectionné',
         'save' => 'enregistrer',
         'unauthorized' => 'vous n\'êtes pas autorisé à accéder à cette page',
@@ -184,7 +185,7 @@ return [
         'pagefields' => 'Gestion aff. des champs',
         'more_menu' => 'divers',
         'about_page' => 'a propos de ce site',
-        'spacial_search' => 'Recherche spaciale',
+        'spatial_search' => 'Recherche spatiale',
     ],
 
     /**
@@ -618,6 +619,18 @@ return [
         
     'about_page' => [
         'title' => 'A propos de ce site',
+    ],
+
+    'spatial_search' => [
+        'pageTitle' => 'Recherche spatiale',
+        'title' => 'Recherche spatiale',
+        'title_load_file' => 'Charger un fichier',
+        'subtitle_load_file' => 'Sélectionner un fichier de type :exts',
+        'load_file' => 'Chargement fichier de données',
+        'view_results' => 'Résultats',
+        'file_types_err' => 'Le fichier doit être de type :types',
+        'no_polygon_found' => 'Aucun polygone détecté. Les polygones doivent être situé directement à la racine du KML ou dans le premier dossier.',
+        'title_results' => 'Résultats de la recherche',
     ],
 ];
 

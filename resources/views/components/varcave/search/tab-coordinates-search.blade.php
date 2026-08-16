@@ -22,19 +22,19 @@
                 <div class="field">
                     <label class="label">FR Long</label>
                     <div class="control">
-                        <input id="search-type-long" name="search-type-long" class="input" type="number" value="5.8581521" step="any">
+                        <input id="search-type-long" name="search-type-long" class="input" type="number" placeholder="5.8581521" step="any">
                     </div>
                 </div>
                 <div class="field">
                     <label class="label">FR lat</label>
                     <div class="control">
-                        <input id="search-type-lat" name="search-type-lat" class="input" type="number" value="43.2269819" step="any">
+                        <input id="search-type-lat" name="search-type-lat" class="input" type="number" placeholder="43.2269819" step="any">
                     </div>
                 </div>
                 <div class="field">
                     <label class="label">FR rayon de recherche (m)</label>
                     <div class="control">
-                        <input id="search-max-radius" name="search-max-radius" class="input" type="number" value="700" placeholder="1500" step="any">
+                        <input id="search-max-radius" name="search-max-radius" class="input" type="number" placeholder="700" placeholder="1500" step="any">
                     </div>
                 </div>
             </div>
