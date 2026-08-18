@@ -105,7 +105,7 @@ return [
         'email_subject' => 'Demande de mise à jour de la cavité: :caveName',
         'contact_form' => 'Formulaire de contact',
         'cave_system' => 'Réseau',
-        'admin_access_info' => 'En tant qu\'admin les coordonnées affichées sont correcte et ne sont pas protégées',
+        'admin_access_info' => 'En tant qu\'administrateur, les coordonnées affichées sont correcte et ne sont pas protégées',
     ],
 
     /**

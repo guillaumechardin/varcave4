@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class CaveCoordinates extends Model
+ class CaveCoordinates extends Model
 {
     use HasFactory;
 
@@ -41,7 +41,7 @@ class CaveCoordinates extends Model
      * Retrieves cave coordinates from the database and checks user permissions
      * when the cave is geo-protected.
      *
-     * If the user is not authorized to access the coordinates, an empty
+     * If the user is not authorized to access the coordinates (role), a zeroed value
      * collection is returned. Returns null if an unexpected error occurs.
      *
      * @param string $caveUuid UUID of the cave.
@@ -50,7 +50,7 @@ class CaveCoordinates extends Model
      * @return Collection|null Collection of coordinates, an empty collection if
      *                         access is denied, or null on failure.
      */
-    public static function get(string $caveUuid, $user): ?Collection
+    public static function get(string $caveUuid, User $user): ?Collection
     {
         $cave = Cave::getByUuid($caveUuid);
         if(!$cave)
@@ -58,9 +58,10 @@ class CaveCoordinates extends Model
             return null;
         }
         
+        //set empty coords if location protected and user not in admin or cave-editor role
         if(
-            $cave->is_location_protected 
-            && !$user->hasRole('admin')
+            $user == null ||
+            ( $cave->is_location_protected && !$user->hasRole(['admin', 'cave-editor']) )
         ){
             return collect([self::$emptyCoords]);
         }
