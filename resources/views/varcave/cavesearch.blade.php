@@ -56,6 +56,20 @@
         </div>
         
         <div id="tab-search-results" class="tab-content mx-2 mt-2 ">
+            @can('user-access') {{-- save to gpx button only for authenticated users --}}
+                <div id="dl-gpx-results" class="mr-2 mb-3 is-hidden">
+                    <hr>
+                    <div class="is-flex is-align-items-flex-end">
+                        <a href="{{ route('varcave.caves.searchToGpx', ['origin' => 'stdsearch' ]) }}" target="_blank" class="button is-link mr-2">
+                            {{ Str::ucfirst(__('varcave.general.download')) }} 
+                        </a>
+                        <span>{{ __('varcave.spatial_search.download_gpx') }} 
+                        </span>
+                    </div>
+                    <div id="load-gpx-msg">
+                    </div>
+                </div>
+            @endcan
             <table id="results-table" class="table is-fullwidth is-striped is-hoverable">
                 <thead>
                     <tr class="is-info">

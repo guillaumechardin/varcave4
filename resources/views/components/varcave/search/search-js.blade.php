@@ -190,6 +190,10 @@ $(document).ready(function($){
                         resultsTable.processing(); //using processing(false) seems to not work as expected
                         console.log('error msg:');
                         console.log(xhr);
+                        {{-- button is only available to authenticated user, so this fn too  --}}
+                        @can('user-access')
+                            $('#dl-gpx-results').removeClass('is-hidden');
+                        @endcan
                         showGenericErrorMsg(xhr.responseJSON.message);
                     },
                 },
@@ -237,7 +241,23 @@ $(document).ready(function($){
                     },
                 }, 
                 responsive: true,
-
+                on: {
+                    xhr:  function (e, settings, json, xhr) {
+                        //code bellow is executed when ajax success Search get some results, 
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            {{-- button is only available to authenticated user, so this fn too  --}}
+                            console.log('reload');
+                            console.log(json.data);
+                            @can('user-access')
+                            if(json.data != null){
+                                $('#dl-gpx-results').removeClass('is-hidden');
+                            }else{
+                                $('#dl-gpx-results').addClass('is-hidden');
+                            }
+                            @endcan
+                        }
+                    },
+                },
             })
         }
     }

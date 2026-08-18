@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
     //SEARCH by COORDINATES
     Route::get('/caves/spatial-search', [CaveController::class, 'spatialSearchShow'])->name('varcave.caves.spatialSearchShow');
     Route::post('/caves/spatial-search', [CaveController::class, 'spatialSearch'])->middleware('throttle:5,1')->name('varcave.caves.spatialSearch');
-    Route::get('/caves/spatial-search/gpx', [CaveController::class, 'spatialSearchGpx'])->middleware('throttle:5,1')->name('varcave.caves.spatialSearchGpx');
+    Route::get('/caves/search/{origin}/gpx', [CaveController::class, 'searchToGpx'])->middleware('throttle:20,1')->name('varcave.caves.searchToGpx');
 
     //CAVES
     Route::post('/caves/', [CaveController::class, 'create'])->name('varcave.caves.create');

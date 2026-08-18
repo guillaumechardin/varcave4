@@ -7,7 +7,7 @@
 <div id="dl-gpx-results" class="mr-2 mb-3 is-hidden">
     <hr>
     <div class="is-flex is-align-items-flex-end">
-        <a href="{{ route('varcave.caves.spatialSearchGpx') }}" target="_blank" class="button is-link mr-2">
+        <a href="{{ route('varcave.caves.searchToGpx', ['origin' => 'spatialsearch' ]) }}" target="_blank" class="button is-link mr-2">
             {{ Str::ucfirst(__('varcave.general.download')) }} 
         </a>
         <span>{{ __('varcave.spatial_search.download_gpx') }} 

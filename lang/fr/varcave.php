@@ -303,6 +303,7 @@ return [
         'title' => 'recherche avancée',
         'topTitle' => 'Recherche',
         'results' => 'résultats de recherche',
+        'no_results_avail' => 'Résultats de recherche indisponible.',
         'datatables' => [
             
                 "decimal"=>        "",

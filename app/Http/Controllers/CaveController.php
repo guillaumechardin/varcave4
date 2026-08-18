@@ -243,7 +243,10 @@ class CaveController extends Controller
     public function showSearchPage(Request $request): View
     {
         Log::debug(__METHOD__ . ' called');
-
+        
+        //delete last search session
+        session()->forget('stdSearchResults');
+        
         //get fields for search form
         $page = new Page();
         $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
@@ -281,7 +284,7 @@ class CaveController extends Controller
         $page = new Page();
         $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
         $availFormFields = array_keys($pmSearchForm);
-        $query->select($availFormFields);      
+            
         
         //fetch cols for datatables results only, must be present for view form construction
         $pageDatatable = new Page();
@@ -308,8 +311,6 @@ class CaveController extends Controller
             }
         }
         
-        
-        $caves = null;
         $caveObj = Cave::firstOrFail(); //"random" cave just to get required fields list
 
         //handling limits
@@ -318,22 +319,37 @@ class CaveController extends Controller
         $draw   = (int) $request->input('draw', 1);
 
         $totalRecords = $query->count(); // count before limit
+        
+        //save request for gpx download
+        //before limit, save some performance data
+        $saveStart = microtime(true);
+        session()->put('stdSearchResults', 
+            [
+                'results' => $query->select('caves.id')->pluck('id')->all(),
+                'created_at' => now(),
+            ],
+        );
+        $durationMs = round( (microtime(true) - $saveStart) * 1000, 2);
+        Log::info('Save search to session. Duration: ' . $durationMs . 'ms');
 
         $cavesSrch = $query
+        ->select($availFormFields)
         ->offset($start)
         ->limit($length)
         ->get();
 
-        Log::debug(' Sql query:', [$query->toSql(), 'bindings' => $query->getBindings(),]);
-        //set_time_limit(220); // 120 secondes, allcaves can be very long to process
+        Log::debug('Sql query: ', ['raw_query' => $query->toSql(), 'bindings' => $query->getBindings(),]);
+        
         $cs = new CaveService($caveObj, $request->user(), true);
+        
+        $cavesData = null;
         foreach ($cavesSrch as $cave) {
             $_cave = array();
             //quick format data
             foreach($pmDatatablesTable as $key => $field){
                 $_cave[$key] = $cs->formatValue($cave->{$key}, $key, $field );
             }
-            $caves[] = $_cave;
+            $cavesData[] = $_cave;
         }
         
         // JSON return for DataTables
@@ -342,7 +358,7 @@ class CaveController extends Controller
                 "draw" => $draw,
                 "recordsTotal" => $totalRecords,
                 "recordsFiltered" => $totalRecords,
-                "data" => $caves,
+                "data" => $cavesData,
             ]
         ); 
     }
@@ -504,64 +520,53 @@ class CaveController extends Controller
                 "spatial-file.extensions" => __('varcave.spatial_search.file_types_err', [ 'types' => implode(', ', $sfs->filesExtensions) ]),
             ],
         );
-        
-        
-        //$draw   = (int) $request->input('draw', 1);
 
-        try{
-            /*$spatialSearch = $request->session()->get('lastSpacialSearchQuery');
+        try{            
+            Log::info('Perform full search from any geo file');
+            $wktPolygon = $sfs->buildWktFromFile($validated['spatial-file']);
+
+            //get fields for spatial search results dt
+            $page = new Page();
+            $pmSearchForm= $page->setPageModelFor('spatialsearchColumns', 'main', true)->getModelFields();
+            $availFormFields = array_keys($pmSearchForm);
             
-            //check if user already have done any search request
-            if( $spatialSearch ){
-                Log::info('Run/resume search from pagination by datatable');
-                dd('end one');
-            }else{*/                
-                Log::info('Perform full search from any geo file');
-                $wktPolygon = $sfs->buildWktFromFile($validated['spatial-file']);
+            $query = Cave::query();
 
-                //get fields for spatial search results dt
-                $page = new Page();
-                $pmSearchForm= $page->setPageModelFor('spatialsearchColumns', 'main', true)->getModelFields();
-                $availFormFields = array_keys($pmSearchForm);
-                
-                $query = Cave::query();
+            $query->select($availFormFields)
+            ->join(
+                "cave_coordinates",
+                "caves.id",
+                "=",
+                "cave_coordinates.cave_id"
+            )
+            ->whereRaw(
+                "ST_CONTAINS(
+                    ST_SRID(ST_GeomFromText(?), 4326),
+                    cave_coordinates.location
+                )",
+                [$wktPolygon]
+            )
+            ->distinct(); //caves can have more that one coord
 
-                $query->select($availFormFields)
-                ->join(
-                    "cave_coordinates",
-                    "caves.id",
-                    "=",
-                    "cave_coordinates.cave_id"
-                )
-                ->whereRaw(
-                    "ST_CONTAINS(
-                        ST_SRID(ST_GeomFromText(?), 4326),
-                        cave_coordinates.location
-                    )",
-                    [$wktPolygon]
-                )
-                ->distinct(); //caves can have more that one coord
+            $totalRecords = $query->count(); // count before limit
+            $caveSearch = $query->get();
 
-                $totalRecords = $query->count(); // count before limit
-                $caveSearch = $query->get();
-
-                Log::debug(' Sql query:', [$query->toSql(), 'bindings' => $query->getBindings()]);
-                //set_time_limit(220); // 120 secondes, allcaves can be very long to process
-                $caveObj = Cave::firstOrFail();
-                $pageDatatable = new Page();
-                $pmDatatablesTable = $pageDatatable->setPageModelFor('spatialsearchColumns', 'main', true)->getModelFields();
-                $cs = new CaveService($caveObj, $request->user(), true);
-                
-                $caves = array();
-                foreach ($caveSearch as $cave) {
-                    $_cave = array();
-                    //quick format data to avoid loading full page model 
-                    foreach($pmDatatablesTable as $key => $field){
-                        $_cave[$key] = $cs->formatValue($cave->{$key}, $key, $field );
-                    }
-                    $caves[] = $_cave;
+            Log::debug(' Sql query:', [$query->toSql(), 'bindings' => $query->getBindings()]);
+            
+            $caveObj = Cave::firstOrFail();
+            $pageDatatable = new Page();
+            $pmDatatablesTable = $pageDatatable->setPageModelFor('spatialsearchColumns', 'main', true)->getModelFields();
+            $cs = new CaveService($caveObj, $request->user(), true);
+            
+            $caves = array();
+            foreach ($caveSearch as $cave) {
+                $_cave = array();
+                //quick format data to avoid loading full page model 
+                foreach($pmDatatablesTable as $key => $field){
+                    $_cave[$key] = $cs->formatValue($cave->{$key}, $key, $field );
                 }
-            //}     //disabled useless not server side
+                $caves[] = $_cave;
+            }
     
             //store result to session var
             session()->put('spatialsearchResults', 
@@ -611,33 +616,56 @@ class CaveController extends Controller
         }      
     }
 
-    public function spatialSearchGpx(Request $request){
-        Log::debug(__METHOD__ . ' called');
+    public function searchToGpx(Request $request, string $origin ){
+        Log::debug(__METHOD__ . ' called');  
         
-        $spatialsearchResults = session('spatialsearchResults');
-        if( empty($spatialsearchResults) ){
-            abort(404, __('varcave.spatial_search.no_results_avail'));
+        switch($origin)
+        {
+            case 'spatialsearch':
+                $spatialsearchResults = session('spatialsearchResults');
+                if( empty($spatialsearchResults) ){
+                    abort(404, __('varcave.spatial_search.no_results_avail'));
+                }
+                
+                $ids = $spatialsearchResults['results'];
+                $fName = $spatialsearchResults['original_filename'] ?? 'spatial-search-result';
+                break;
+
+            case 'stdsearch':
+                $stdSearchResults = session('stdSearchResults');
+                if( empty($stdSearchResults['results']) ){
+                    abort(404, __('varcave.searchPage.no_results_avail'));
+                }
+                
+                $ids = $stdSearchResults['results'];
+                $date= $stdSearchResults['created_at'] ?? now();
+                $fName = $date->format('Y-m-d_H-i-s') . '_' . config('app.name');
+                break;
+            
+            default:
+                abort(419, 'FR impossible de traiter la demande origine de la requete incorrect');
+
         }
-
-        $ids = $spatialsearchResults['results'];
-
+        
         $caves = Cave::whereIn('id', $ids)->get();
 
         Log::info('Start building gpx (spatial search) for: ' .  count($caves) . ' caves');
 
         $pageMain = new Page()->setPageModelFor('gpx-build', 'main', true);        
-
+        
+        $start = microtime(true);
         $csCaves =  [];
         foreach($caves as $cave){
             $_cs = new CaveService($cave, $request->user(), CaveService::ADD_COORDS);
             $csCaves[] = $_cs->renderForPage($pageMain);
-
         }
-
+        
         $gpxService = new GpxService();
         $gpxFile = $gpxService->createGPX( $csCaves);
         
-        $fName = $spatialsearchResults['original_filename'] ?? 'spatial-search-result';
+        $durationMs = round( (microtime(true) - $start) * 1000, 2);
+        Log::info('gpx build duration: ' . $durationMs . 'ms');
+
         $dwnlFileName = Str::limit( Str::slug($fName), 40, '') . '.gpx';
         return response($gpxFile, 200)
             ->header('Content-Type', 'application/xml')
