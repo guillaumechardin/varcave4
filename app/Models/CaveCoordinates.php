@@ -78,7 +78,7 @@ class CaveCoordinates extends Model
             return collect([self::$emptyCoords]);
         }
         
-        return $coords->get()->map(function ($c) {
+        $coordSet = $coords->get()->map(function ($c) {
             return [
                 'id'   => $c->id,
                 'x'    => (float) $c->x,
@@ -88,6 +88,8 @@ class CaveCoordinates extends Model
                 'z'    => (float) $c->z,
             ];
         });
+        
+        return $coordSet;
     }
 
     /**

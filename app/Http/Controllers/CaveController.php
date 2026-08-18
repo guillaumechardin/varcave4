@@ -471,31 +471,33 @@ class CaveController extends Controller
                 'searchFormFields' => $pmSearchForm ?? null,
                 'datatablesFields' => $pmDatatablesTable ?? null,
                 'datatablesLang' => $datatablesLang,
-                //'request' => $request,
                 'datatablesListSelector' => $datatablesListSelector,
             ]
         );
 
     }
 
-    public function spatialSearch(Request $request): Builder|RedirectResponse
+    public function spatialSearch(Request $request)
     {
         Log::debug(__METHOD__ . ' called');
-
+        
         $sfs = new SpatialFileService();
+        
+        //remove last serach if any
+        session()->forget('spatialsearchResults');
 
         $validated = $request->validate(
             [
-                'spatial-file' => [
-                    'required',
-                    'file',
-                    'max:' . $sfs::MAX_SPATIAL_FILE_SIZE,
-                    'extensions:' . implode(',', $sfs->filesExtensions),
-                    'mimetypes:'  . implode(',', $sfs->filesMimetypes),
+               'spatial-file' => [
+                        'required',
+                        'file',
+                        'max:' . $sfs::MAX_SPATIAL_FILE_SIZE,
+                        'extensions:' . implode(',', $sfs->filesExtensions),
+                        'mimetypes:'  . implode(',', $sfs->filesMimetypes),
                 ],
                 'user-selected-file-type' => [
                     'required',
-                    'in:' . implode(', ', $sfs->filesExtensions),
+                    'in:' . implode(',', $sfs->filesExtensions),
                 ],
             ],
             [
@@ -503,18 +505,144 @@ class CaveController extends Controller
             ],
         );
         
+        
+        //$draw   = (int) $request->input('draw', 1);
+
         try{
-            $wkt = $sfs->buildWktFromFile($validated['spatial-file']);
+            /*$spatialSearch = $request->session()->get('lastSpacialSearchQuery');
+            
+            //check if user already have done any search request
+            if( $spatialSearch ){
+                Log::info('Run/resume search from pagination by datatable');
+                dd('end one');
+            }else{*/                
+                Log::info('Perform full search from any geo file');
+                $wktPolygon = $sfs->buildWktFromFile($validated['spatial-file']);
+
+                //get fields for spatial search results dt
+                $page = new Page();
+                $pmSearchForm= $page->setPageModelFor('spatialsearchColumns', 'main', true)->getModelFields();
+                $availFormFields = array_keys($pmSearchForm);
+                
+                $query = Cave::query();
+
+                $query->select($availFormFields)
+                ->join(
+                    "cave_coordinates",
+                    "caves.id",
+                    "=",
+                    "cave_coordinates.cave_id"
+                )
+                ->whereRaw(
+                    "ST_CONTAINS(
+                        ST_SRID(ST_GeomFromText(?), 4326),
+                        cave_coordinates.location
+                    )",
+                    [$wktPolygon]
+                )
+                ->distinct(); //caves can have more that one coord
+
+                $totalRecords = $query->count(); // count before limit
+                $caveSearch = $query->get();
+
+                Log::debug(' Sql query:', [$query->toSql(), 'bindings' => $query->getBindings()]);
+                //set_time_limit(220); // 120 secondes, allcaves can be very long to process
+                $caveObj = Cave::firstOrFail();
+                $pageDatatable = new Page();
+                $pmDatatablesTable = $pageDatatable->setPageModelFor('spatialsearchColumns', 'main', true)->getModelFields();
+                $cs = new CaveService($caveObj, $request->user(), true);
+                
+                $caves = array();
+                foreach ($caveSearch as $cave) {
+                    $_cave = array();
+                    //quick format data to avoid loading full page model 
+                    foreach($pmDatatablesTable as $key => $field){
+                        $_cave[$key] = $cs->formatValue($cave->{$key}, $key, $field );
+                    }
+                    $caves[] = $_cave;
+                }
+            //}     //disabled useless not server side
+    
+            //store result to session var
+            session()->put('spatialsearchResults', 
+                [
+                    'results' => $query->select("caves.id")->pluck("id")->all(),
+                    'created_at' => now(),
+                    'original_filename' => $sfs->getOriginalFileName(),
+                ],
+            );
+
+            // JSON return for DataTables
+            return response()->json(
+                [
+                    "recordsTotal" => $totalRecords,
+                    "recordsFiltered" => $totalRecords,
+                    "data" => $caves,
+                ]
+            ); 
+
             
         }catch(Exception $e){
+            //special case of ajax request/endpoint
+            if ($request->expectsJson()) {
+                $success = 'fail';
+                $title = Str::ucfirst(__('varcave.general.opFailed'));
+                $msg = Str::ucfirst(__('varcave.general.opFailed') . ' <br>(' . $e->getMessage() . ')');
+                $data = '';
+                $code = 500;
+            
+                Log::error('Operation failure', ['message' => $e->getMessage()]);
+                
+                return VarcaveApiResponse::ajaxResponse(
+                    $success,
+                    $title,
+                    $msg,
+                    $data,
+                    $code,
+                );
+            }
+            
+            // simple redirect back to validation message error display
             return redirect()->back()
             ->withErrors([
                 "spatial_file" => $e->getMessage(),
             ])
             ->withInput();
-        }
+        }      
+    }
+
+    public function spatialSearchGpx(Request $request){
+        Log::debug(__METHOD__ . ' called');
         
-        return CaveCoordinates::findInPolygon($wkt);        
+        $spatialsearchResults = session('spatialsearchResults');
+        if( empty($spatialsearchResults) ){
+            abort(404, __('varcave.spatial_search.no_results_avail'));
+        }
+
+        $ids = $spatialsearchResults['results'];
+
+        $caves = Cave::whereIn('id', $ids)->get();
+
+        Log::info('Start building gpx (spatial search) for: ' .  count($caves) . ' caves');
+
+        $pageMain = new Page()->setPageModelFor('gpx-build', 'main', true);        
+
+        $csCaves =  [];
+        foreach($caves as $cave){
+            $_cs = new CaveService($cave, $request->user(), CaveService::ADD_COORDS);
+            $csCaves[] = $_cs->renderForPage($pageMain);
+
+        }
+
+        $gpxService = new GpxService();
+        $gpxFile = $gpxService->createGPX( $csCaves);
+        
+        $fName = $spatialsearchResults['original_filename'] ?? 'spatial-search-result';
+        $dwnlFileName = Str::limit( Str::slug($fName), 40, '') . '.gpx';
+        return response($gpxFile, 200)
+            ->header('Content-Type', 'application/xml')
+            ->header('Content-Disposition', 'attachment; filename="' . $dwnlFileName . '"');
+
     }
 
     public function quicksearch(Request $request)

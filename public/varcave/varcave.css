@@ -55,6 +55,7 @@
   }
 }
 
+#spatial-results-table tbody tr:hover,
 #results-table tbody tr:hover {
   cursor: pointer;
 }

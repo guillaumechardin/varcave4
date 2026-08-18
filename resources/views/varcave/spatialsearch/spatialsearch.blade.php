@@ -1,8 +1,14 @@
 @include('varcave.template.header')
 @include('varcave.template.navbar')
 
+
+<script src="/lib/DataTables/datatables.min.js"></script>
+<link   href="/lib/DataTables/datatables.min.css" rel="stylesheet">
 <script>
-    <x-varcave.spatialsearch.js />
+    <x-varcave.spatialsearch.js :datatablesLang="$datatablesLang" 
+                                :datatablesFields="$datatablesFields"
+                                :datatablesListSelector="$datatablesListSelector"
+    />
 </script>
 
 <section class="section">
@@ -12,7 +18,7 @@
         </div>
     </section>
 
-    <div class="tabs is-centered is-toggle is-toggle-rounded is-centered is-fullwidth" data-bulma="tabs">
+    <div id="spatial-search-tabs" class="tabs is-centered is-toggle is-toggle-rounded is-centered is-fullwidth" data-bulma="tabs">
         <ul>
             <li>
                 <a data-tabs-target="load-file">
@@ -42,7 +48,8 @@
             </li>
             <li>
                 <div id="results" class="tab-content mx-2 mt-2">
-                    <x-varcave.spatialsearch.results />
+                    
+                    <x-varcave.spatialsearch.results :datatablesFields="$datatablesFields"  />
                 </div>
             </li> 
         </ul>

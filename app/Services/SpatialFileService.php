@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
+use SimpleXMLElement;
 use ZipArchive;
 
 class SpatialFileService
@@ -136,52 +137,34 @@ class SpatialFileService
         $xml = simplexml_load_string($kmlContent); 
         
         //check if folder present keep only first one
-        $data = null;
-        if(isset($xml->Document->Folder)){
-            Log::info('KML data is inside folder. processings folder and any subs');  
-            $data = $this->recursiveKmlFolders($xml->Document);
-        }
-        else{
-            Log::info('KML do not user folder');
-            $data = $xml->Document; //no folder
-        }
-        
+        Log::info('Collect all polygons data');
+        $allPolygons = [];
+        $this->kmlFindPolygons($xml, $allPolygons);
 
-        //Merge Polygons into one array
-        $polygonsGeometry = [];
-        foreach($data as $key => $d){
-            if(isset($d->MultiGeometry) ){
-                Log::info('Use multiple geometry');
-                foreach($d->MultiGeometry->Polygon as $p){
-                    $polygonsGeometry[] = $p;
-                }
-            }elseif( isset($d->Polygon) ){
-                Log::info('Use single geometry');
-                foreach($d->Polygon as $p){
-                    $polygonsGeometry[] = $p;
-                }
-            }
-            else{
-                throw new RuntimeException(__('varcave.spatial_search.no_polygon_found'));                
-            }
+        if( count($allPolygons) == 0){
+            throw new RuntimeException(__('varcave.spatial_search.no_polygon_found'));            
         }         
-        
 
         //loop over collected polygons to collect outer and inner (holes)
         $polygons =  [];
-        Log::info('Found: ' . count($polygonsGeometry) . ' polygons in file');
+        Log::info('Found: ' . count($allPolygons) . ' polygons in file');
 
-        foreach($polygonsGeometry as $pkey => $p){
-            $outer =  [];
-            $outerPoints = [];
+        /**
+         * Convert long0,lat0,x0 long1,lat1,x1 ...
+         *   to array
+         * [long0, lat0], [long1, lat1], ...
+         */
+        foreach($allPolygons as $pkey => $p){
+            $outerPoints =  [];
             $innerPoints = [];
+            
             //outer ring bounderies
             $outerRing = trim((string)$p->outerBoundaryIs->LinearRing->coordinates); //only one outerBoundary
 
             //convert to of  `long lat` arrays
             foreach(preg_split('/\s+/', $outerRing) as $coordinate) { //only index 0 available
                 [$longitude, $latitude] = explode(",", $coordinate);
-                $outer[] = "{$longitude} {$latitude}";
+                $outerPoints[] = "{$latitude} {$longitude}";
             }
             
             //inner  ring bounderie
@@ -195,21 +178,25 @@ class SpatialFileService
                     $inner = [];
                     foreach(preg_split('/\s+/', $ringCoords) as $coordinate) {
                         [$longitude, $latitude] = explode(",", $coordinate);
-                        $inner[] = "{$longitude} {$latitude}";
+                        $inner[] = "{$latitude} {$longitude}";
                     }
                     $innerPoints[$i] = $inner;
                     $i++;
                 }
             }
             $polygons[$pkey] = [
-                'outer' => $outer,
+                'outer' => $outerPoints,
                 'inners' => $innerPoints,
             ];   
         }
         
-
         //convert to WKT
         $wktPolygons = [];
+        /**
+         * Convert long/lat arrays [long0, lat0], [long1, lat1], ...
+         *   to wkt arrays
+         *  `(long0 lat0,  long1 lat1)`
+         */
         foreach ($polygons as $polyId => $polygon) {
             $rings = [];
 
@@ -229,27 +216,16 @@ class SpatialFileService
             */
             $wktPolygons[$polyId] = $rings;   
         }
-            
-        
-        //dd($wktPolygons);
 
         if(count($wktPolygons) > 1){
             /**
-             * MultiPolygon(
-             *      (
-             *          (0 0,0 3,3 3,3 0,0 0),
-             *          (1 1,1 2,2 2,2 1,1 1)
-             *      )
-             * )';
              * 
-             * 
-             * 
-                multipolygon syntax is MULTIPOLYGON( 
-                                            ( (outerpoly1), (inner1)),
-                                            ( (outerpoly2), (inner2)),
-                                            [...]
-                                    )
-            */
+             *   multipolygon syntax is MULTIPOLYGON( 
+             *                              ( (outerpoly1), (inner1) ),
+             *                              ( (outerpoly2), (inner2a), (inner2b) ),
+             *                              [...]
+             *                      )
+             */
             $wktString = "MULTIPOLYGON (\n";
             $pol = [];
             foreach($wktPolygons as $polygon){
@@ -274,6 +250,18 @@ class SpatialFileService
         return $wktString;
     }
 
+    private function kmlFindPolygons(SimpleXMLElement $node, array &$polygons = []): void
+    {
+        foreach ($node->children() as $child) {
+
+            if ($child->getName() === "Polygon") {
+                $polygons[] = $child;
+            }
+
+            $this->kmlFindPolygons($child, $polygons);
+        }
+    }
+    
     private function polygonsCoordinatesToWkt(array $coordinates): string
     {
         return '(' . implode(',', $coordinates) . ')';
@@ -309,6 +297,11 @@ class SpatialFileService
     {
         Log::debug(__METHOD__ . ' called.');
         return '';
+    }
+
+    public function getOriginalFileName(): string
+    {
+        return $this->originalFileName ;
     }
 
 }

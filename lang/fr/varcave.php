@@ -631,6 +631,8 @@ return [
         'file_types_err' => 'Le fichier doit être de type :types',
         'no_polygon_found' => 'Aucun polygone détecté. Les polygones doivent être situé directement à la racine du KML ou dans le premier dossier.',
         'title_results' => 'Résultats de la recherche',
+        'download_gpx' => 'Télécharger le gpx de la recherche',
+        'no_results_avail' => 'Aucun résultat de recherche spatiale disponible.',
     ],
 ];
 

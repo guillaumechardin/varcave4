@@ -21,12 +21,10 @@ class ClearExpiredSpatialSearch
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $spatialSearch = $request->session()->get("spatial_search");
+        $spatialSearch = $request->session()->get('lastSpacialSearchQuery');
 
-        if (
-            $spatialSearch && now()->greaterThan($spatialSearch["expires_at"])
-        ) {
-            $request->session()->forget("spatial_search");
+        if ($spatialSearch && now()->greaterThan($spatialSearch['expires_at'])){
+            $request->session()->forget('lastSpacialSearchQuery');
         }
 
         return $next($request);
