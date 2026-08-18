@@ -421,7 +421,7 @@
                         </div>                      
                     @endforeach
                 </ul>
-                @can('admin-access')
+                @can('cave-editor-access')
                     @if($isLocationProtected)
                         <div class="admin-info">
                             <span class="is-size-7 has-text-primary">
