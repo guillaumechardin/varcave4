@@ -191,7 +191,13 @@
             @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}} 
                 <li>
                     <div id="tab-cave-access" class="tab-content mx-2 mt-2">
-                            <x-varcave.caveshow.tab-access :caveAccess="$caveAccess['attributes']" :caveCoords="$caveData['coordinates']" :caveName="$caveName" :crs="$crs"/>
+                            <x-varcave.caveshow.tab-access 
+                                    :caveAccess="$caveAccess['attributes']"
+                                    :caveCoords="$caveData['coordinates']" 
+                                    :caveName="$caveName"
+                                    :crs="$crs"
+                                    :isLocationProtected="(bool)$caveObj->is_location_protected"
+                            />
                     </div>
                 </li>
                 <li>

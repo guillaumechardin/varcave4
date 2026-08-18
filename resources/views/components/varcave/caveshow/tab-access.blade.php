@@ -4,6 +4,7 @@
     'caveAccess',
     'caveCoords',
     'crs',
+    'isLocationProtected',
 ])
 
 <div class="box">
@@ -420,6 +421,15 @@
                         </div>                      
                     @endforeach
                 </ul>
+                @can('admin-access')
+                    @if($isLocationProtected)
+                        <div class="admin-info">
+                            <span class="is-size-7 has-text-primary">
+                                {{ __('varcave.caveshow.admin_access_info') }}
+                            </span>
+                        </div>
+                    @endif
+                @endcan
             <hr>
             
             <p class="title is-5"> {{ Str::ucfirst($caveAccess['model']['access_text']['i18n_label']) }} : </p>
