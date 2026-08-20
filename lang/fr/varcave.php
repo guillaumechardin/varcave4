@@ -23,6 +23,7 @@ return [
         'yes' => 'oui',
         'no' => 'non',
         'action' => 'action',
+        'select_choose_opt' => 'choisir une option',
         'choose' => 'choisir',
         'chooseFile' => 'sélectionnez un fichier',
         'choose_file_short' => 'Choisir fichier',
@@ -71,7 +72,7 @@ return [
         'caveFound' => 'cavité trouvée',
         'caveNotFound' => 'cavité non trouvée',
         'informations' => 'informations',
-        'change_history'    => 'historique des modifications',
+        'change_history' => 'historique des modifications',
         'description' => 'description',
         'access' => 'accès',
         'caveMaps' => 'topographies',
@@ -332,6 +333,11 @@ return [
             
         ],
         'by_coords' => 'recherche par coordonnées',
+        'select_title' => 'choix type recherche',
+        'around_poi' => 'Autour d\'un point',
+        'longitude' => 'Longitude',
+        'latitude' => 'Latitude',
+        'radius' => 'Rayon de recherche',
     ],
 
     'coordinateSystems' => [
