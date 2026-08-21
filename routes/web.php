@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutPageController;
+use App\Http\Controllers\CaveChangelogController;
 use App\Http\Controllers\CaveController;
 use App\Http\Controllers\EulaController;
 use App\Http\Controllers\FileResourcesController;
@@ -23,6 +24,8 @@ Route::group([], function (){
     Route::get('/caves/search', [CaveController::class, 'showSearchPage'])->name('varcave.caves.search');
     Route::post('/caves/search', [CaveController::class, 'stdSearch'])->middleware('throttle:9,1')->name('varcave.caves.stdSearch');
     Route::post('/caves/search-by-coords', [CaveController::class, 'searchByCoords'])->name('varcave.caves.searchByCoords');
+
+    Route::get('/caves/changelogs', [CaveChangelogController::class, 'show'])->name('varcave.changelogs.show');
     
     
     //*** Cave info display ***

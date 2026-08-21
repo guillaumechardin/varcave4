@@ -41,6 +41,10 @@
               {{ Str::ucfirst( __('varcave.navbar.spatial_search')) }}
             </a>
           @endcan
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="{{ route('varcave.changelogs.show') }}">
+            {{ Str::ucfirst( __('varcave.navbar.changes_logs')) }}
+          </a>
           <a class="navbar-item" href="{{ route('varcave.caves.statistics') }}">
             {{ Str::ucfirst( __('varcave.navbar.statistics')) }}
           </a>

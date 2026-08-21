@@ -188,6 +188,7 @@ return [
         'more_menu' => 'divers',
         'about_page' => 'a propos de ce site',
         'spatial_search' => 'Recherche spatiale',
+        'changes_logs' => 'Historique des modif.'
     ],
 
     /**
@@ -641,6 +642,12 @@ return [
         'title_results' => 'Résultats de la recherche',
         'download_gpx' => 'Télécharger le gpx de la recherche',
         'no_results_avail' => 'Aucun résultat de recherche spatiale disponible.',
+    ],
+
+
+    'change_logs' => [
+        'pageTitle' => 'Historique des modifications',
+        'title' => 'Liste des :nbr dernieres modifications'
     ],
 ];
 
