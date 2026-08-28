@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('cave_coordinates', function (Blueprint $table) {
+            $table->point('location', 4326)->change();
             $table->spatialIndex('location', 'idx_cave_coordinates_location');
         });
     }
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('cave_coordinates', function (Blueprint $table) {
             $table->dropIndex('idx_cave_coordinates_location');
+            $table->point('location', 4326)->change();
         });
     }
 };
