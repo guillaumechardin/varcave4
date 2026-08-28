@@ -4,7 +4,7 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-one-third">
-
+        
         <div class="notification is-warning">
           Si vous êtes fédéré et qu'il s'agit de votre premiere connexion, vous devez utiliser votre date de naissance comme mot de passe
           au format JJMMAAAA, votre nom d'utilisateur est votre numéro de licence.
@@ -46,6 +46,14 @@
               </div>
             </div>
 
+            @if ($errors->any())
+                @foreach ($errors->all() as $error)
+                    <div class="has-text-danger my-2">
+                        {{ $error }}
+                    </div>
+                @endforeach
+            @endif
+
             <div class="field mt-5">
               <div class="control">
                 <button class="button is-link is-fullwidth">{{__("varcave.login.login")}}</button>
@@ -55,7 +63,6 @@
             <div class="field has-text-centered mt-2">
               <a href="{{ route('password.email') }}">{{__("varcave.login.forgotten")}}</a>
             </div>
-
           </form>
         </div>
       </div>

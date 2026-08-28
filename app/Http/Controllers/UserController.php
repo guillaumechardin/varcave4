@@ -103,9 +103,6 @@ class UserController extends Controller
         ]);
     }
 
-
-    
-
     /**
      * Delete a User ressources
      */

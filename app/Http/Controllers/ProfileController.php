@@ -89,18 +89,21 @@ class ProfileController extends Controller
     }
 
     public function updatePassword(Request $request){
+        Log::info('user try to change password');
         Log::debug('User obj:', [$request->user()]);
         Log::debug('inputs:', [$request->input()]);
         try{
             $updateUserPassword = new UpdateUserPassword();
             $updateUserPassword->update($request->user(), $request->input());
+
+            Log::info('Password update succeed');
             return redirect()
                 ->route('varcave.profile')
                 ->with('status', 'password-updated');
         }
         catch(Exception $e)
         {
-            Log::error('Echec de la modif', [$e->getMessage()]);
+            Log::error('Fail to update password', [$e->getMessage()]);
             throw ValidationException::withMessages([
                 'password' => $e->getMessage(),
             ]);

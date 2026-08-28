@@ -6,12 +6,11 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
-
-use App\Actions\Varcave\MigrateLegacyUserPassword;
 use App\Actions\Varcave\CheckUserCanAuthenticate;
-
+use App\Actions\Varcave\MigrateLegacyUserPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -63,6 +62,7 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::confirmPasswordView(function () {
+            Log::info('user access confirm password zone');
             return view('varcave.confirm-password');
         });
 
