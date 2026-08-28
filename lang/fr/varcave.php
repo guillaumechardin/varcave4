@@ -647,7 +647,7 @@ return [
 
     'change_logs' => [
         'pageTitle' => 'Historique des modifications',
-        'title' => 'Liste des :nbr dernieres modifications'
+        'title' => 'Liste des :nbr dernières modifications'
     ],
 ];
 

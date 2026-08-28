@@ -25,7 +25,7 @@ class SpatialFileService
      * to cache last spatial search request. Do not set it to a `large` value
      * see: SPATIAL_SEARCH_SESSION_TTL and middleware ClearExpiredSpatialSearch
      */
-    public const MAX_SPATIAL_FILE_SIZE  = 350; 
+    public const MAX_SPATIAL_FILE_SIZE  = 5000; 
 
     /**
      * Spatial search session lifetime in seconds before deletion
@@ -63,7 +63,7 @@ class SpatialFileService
         return self::PERMITTED_MIME_TYPES;
     }
 
-    public function buildWktFromFile(UploadedFile $file): string
+    public function buildWktFromFile(UploadedFile $file): array
     {
         Log::debug(__METHOD__ . ' called.');
 
@@ -95,7 +95,7 @@ class SpatialFileService
     /**
      * 
      */
-    public function processFileKml(): string
+    public function processFileKml(): array
     {
         Log::debug(__METHOD__ . ' called.');
         if(mime_content_type($this->filePath) == self::PERMITTED_MIME_TYPES['kmz']){
@@ -146,7 +146,7 @@ class SpatialFileService
         }         
 
         //loop over collected polygons to collect outer and inner (holes)
-        $polygons =  [];
+        $_polygons =  [];
         Log::info('Found: ' . count($allPolygons) . ' polygons in file');
 
         /**
@@ -154,6 +154,7 @@ class SpatialFileService
          *   to array
          * [long0, lat0], [long1, lat1], ...
          */
+        Log::debug('Build polygons from kml 1st step');
         foreach($allPolygons as $pkey => $p){
             $outerPoints =  [];
             $innerPoints = [];
@@ -161,10 +162,30 @@ class SpatialFileService
             //outer ring bounderies
             $outerRing = trim((string)$p->outerBoundaryIs->LinearRing->coordinates); //only one outerBoundary
 
+            //max bounding box for this polygon
+            $bbox = [
+                'minLon' => INF,
+                'maxLon' => -INF,
+                'minLat' => INF,
+                'maxLat' => -INF,
+            ];
+
             //convert to of  `long lat` arrays
             foreach(preg_split('/\s+/', $outerRing) as $coordinate) { //only index 0 available
+                //kml store coords like :
+                //5.783855717638864,43.17411316578551,0 5.785481385503788,43.11241103046611,0
                 [$longitude, $latitude] = explode(",", $coordinate);
-                $outerPoints[] = "{$latitude} {$longitude}";
+                
+                $outerPoints[] = "{$longitude} {$latitude}";
+                
+                //process bbox calculation
+                $longitude = (float) $longitude;
+                $latitude = (float) $latitude;
+                $bbox['minLon'] = min($bbox['minLon'], $longitude);
+                $bbox['maxLon'] = max($bbox['maxLon'], $longitude);
+
+                $bbox['minLat'] = min($bbox['minLat'], $latitude);
+                $bbox['maxLat'] = max($bbox['maxLat'], $latitude);
             }
             
             //inner  ring bounderie
@@ -177,18 +198,20 @@ class SpatialFileService
                     //convert to `long lat` arrays
                     $inner = [];
                     foreach(preg_split('/\s+/', $ringCoords) as $coordinate) {
-                        [$longitude, $latitude] = explode(",", $coordinate);
-                        $inner[] = "{$latitude} {$longitude}";
+                        [$longitude, $latitude] = explode(",", $coordinate); //6.25895512514388,43.261592645669
+                        $inner[] = "{$longitude} {$latitude}";
                     }
                     $innerPoints[$i] = $inner;
                     $i++;
                 }
             }
-            $polygons[$pkey] = [
-                'outer' => $outerPoints,
+            $_polygons[$pkey] = [
+                'outer'  => $outerPoints,
                 'inners' => $innerPoints,
+                'bbox'  => $bbox,
             ];   
         }
+        Log::debug('Done building polygons from kml');
         
         //convert to WKT
         $wktPolygons = [];
@@ -197,7 +220,9 @@ class SpatialFileService
          *   to wkt arrays
          *  `(long0 lat0,  long1 lat1)`
          */
-        foreach ($polygons as $polyId => $polygon) {
+        Log::debug('Consolidate WKT from inner/outer');
+        $polygons = [];
+        foreach ($_polygons as $polyId => $polygon) {
             $rings = [];
 
             // Outer ring
@@ -206,48 +231,25 @@ class SpatialFileService
             // Inner rings
             foreach ($polygon['inners'] as $inner) {
                 $rings[] = $this->polygonsCoordinatesToWkt($inner);   // 2nd and later represents holes in polygon
-                
             }
             
             //wktPolygons results are similar to
             /*
                 0 => "(5.9121901390197 43.190147991026,5.9121910240984 43.19012059975)", //outer
-                1 => "(5.8810700034542 43.161425669995,5.8811426549785 43.161383637121)" //subsequent holes
+                1 => "(5.8810700034542 43.161425669995,5.8811426549785 43.161383637121)" //subsequent inner holes
             */
-            $wktPolygons[$polyId] = $rings;   
-        }
-
-        if(count($wktPolygons) > 1){
-            /**
-             * 
-             *   multipolygon syntax is MULTIPOLYGON( 
-             *                              ( (outerpoly1), (inner1) ),
-             *                              ( (outerpoly2), (inner2a), (inner2b) ),
-             *                              [...]
-             *                      )
-             */
-            $wktString = "MULTIPOLYGON (\n";
-            $pol = [];
-            foreach($wktPolygons as $polygon){
-                $pol[] =  '(' . implode(',', $polygon) . ')';
-            }
-            $wktString .= implode(",\n", $pol);
-            $wktString .= ")"; //close multipolygon
-        }else{
-           /**
-                polygon syntax is POLYGON( 
-                                             (outerpoly1), (inner1),
-                                    )
-            */
-
+            //dd($rings);
+            //$wktPolygons[$polyId]['rings'] = $;
             $wktString = "POLYGON (";
-            foreach($wktPolygons as $polygon){
-                $wktString .=  implode(",", $polygon);
-            }
+            $wktString .=  implode(",", $rings);
+            
             $wktString .= ")  "; //close polygon
+            $polygons[$polyId]['wktstring'] = $wktString;
+            $polygons[$polyId]['bbox'] = $polygon['bbox'];
         }
-        
-        return $wktString;
+        Log::debug('Ended consolidate rings');
+
+        return $polygons;
     }
 
     private function kmlFindPolygons(SimpleXMLElement $node, array &$polygons = []): void
@@ -293,10 +295,10 @@ class SpatialFileService
         return $data;
     }
 
-    public function processFileGeojson(): string
+    public function processFileGeojson(): array
     {
         Log::debug(__METHOD__ . ' called.');
-        return '';
+        return [];
     }
 
     public function getOriginalFileName(): string

@@ -48,5 +48,9 @@ return new class extends Migration
         DB::table('page_fields')
         ->where('page_key', 'spatialsearchColumns')
         ->delete();
+
+        DB::table('pages')
+        ->where('key', 'spatialsearchColumns')
+        ->delete();
     }
 };

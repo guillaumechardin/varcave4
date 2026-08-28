@@ -501,7 +501,8 @@ class CaveController extends Controller
         
         //remove last serach if any
         session()->forget('spatialsearchResults');
-
+        
+        Log::debug('start validation');
         $validated = $request->validate(
             [
                'spatial-file' => [
@@ -523,41 +524,101 @@ class CaveController extends Controller
 
         try{            
             Log::info('Perform full search from any geo file');
-            $wktPolygon = $sfs->buildWktFromFile($validated['spatial-file']);
+            $polygons = $sfs->buildWktFromFile($validated['spatial-file']);
 
             //get fields for spatial search results dt
             $page = new Page();
             $pmSearchForm= $page->setPageModelFor('spatialsearchColumns', 'main', true)->getModelFields();
             $availFormFields = array_keys($pmSearchForm);
+
+            $queries = [];
+            $bindings = [];
+
+            //build query that use index on spatial search
+            foreach ($polygons as $pol) {
+                $bbox = $pol['bbox'];
+
+                $rectangleWkt = sprintf(
+                    'POLYGON((%F %F,%F %F,%F %F,%F %F,%F %F))',
+                    $bbox['minLon'], $bbox['minLat'],
+                    $bbox['maxLon'], $bbox['minLat'],
+                    $bbox['maxLon'], $bbox['maxLat'],
+                    $bbox['minLon'], $bbox['maxLat'],
+                    $bbox['minLon'], $bbox['minLat']
+                );
+
+                // search caves located in polygon but first use MBR (Max Bounding Rectangle)
+                // to "pre-fetch" caves that can be in the final polygon
+                // and btw prevent to loop on all caves_coordinates lines with ST_contains
+                $queries[] = '
+                    SELECT cc.cave_id
+                    FROM cave_coordinates AS cc
+                    WHERE
+                        MBRContains(
+                            ST_GeomFromText(
+                                ?,
+                                4326,
+                                "axis-order=long-lat"
+                            ),
+                            cc.location
+                        )
+                        AND ST_Contains(
+                            ST_GeomFromText(
+                                ?,
+                                4326,
+                                "axis-order=long-lat"
+                            ),
+                            cc.location
+                        )
+                ';
+
+                //for each polygon get a max bbox rectangle
+                //then add linked wkstring.
+                $bindings[] = $rectangleWkt;
+                $bindings[] = $pol['wktstring'];
+            }
+
+
+            $fields = collect($availFormFields)
+            ->map(fn ($field) => 'c.' . $field)
+            ->implode(', ');
             
-            $query = Cave::query();
+            //run query with index used, get only id field,
+            //other fields will be processed later
+            $dbQuery = '
+                SELECT DISTINCT c.id,c.name
+                FROM caves AS c
+                INNER JOIN (
+                    ' . implode(' UNION ALL ', $queries) . '
+                ) AS results
+                    ON results.cave_id = c.id
+                WHERE c.deleted_at IS NULL
+                ORDER BY name ASC
+            ';
+            $results = DB::select($dbQuery, $bindings);
+            $ids = collect($results)->pluck('id')->all();
 
-            $query->select($availFormFields)
-            ->join(
-                "cave_coordinates",
-                "caves.id",
-                "=",
-                "cave_coordinates.cave_id"
-            )
-            ->whereRaw(
-                "ST_CONTAINS(
-                    ST_SRID(ST_GeomFromText(?), 4326),
-                    cave_coordinates.location
-                )",
-                [$wktPolygon]
-            )
-            ->distinct(); //caves can have more that one coord
+            Log::debug('SQL spatial data and query :', [
+                'query' => $dbQuery,
+                'bindings' => $bindings,
+                'results: ' => $ids,
+            ]);
 
-            $totalRecords = $query->count(); // count before limit
-            $caveSearch = $query->get();
+            
+            //get coresponding Caves object collection
+            $query = Cave::whereIn('id', $ids)
+            ->select($availFormFields);
 
-            Log::debug(' Sql query:', [$query->toSql(), 'bindings' => $query->getBindings()]);
+            Log::debug('Sql Cave query:', [$query->toSql(), 'bindings' => $query->getBindings()]);
+
+            $caveSearch = $query->get();    
             
             $caveObj = Cave::firstOrFail();
             $pageDatatable = new Page();
             $pmDatatablesTable = $pageDatatable->setPageModelFor('spatialsearchColumns', 'main', true)->getModelFields();
             $cs = new CaveService($caveObj, $request->user(), true);
             
+            //format cave data for Datatables data
             $caves = array();
             foreach ($caveSearch as $cave) {
                 $_cave = array();
@@ -580,8 +641,8 @@ class CaveController extends Controller
             // JSON return for DataTables
             return response()->json(
                 [
-                    "recordsTotal" => $totalRecords,
-                    "recordsFiltered" => $totalRecords,
+                    "recordsTotal" => null,
+                    "recordsFiltered" => null,
                     "data" => $caves,
                 ]
             ); 
@@ -589,14 +650,13 @@ class CaveController extends Controller
             
         }catch(Exception $e){
             //special case of ajax request/endpoint
+            Log::error('Operation failure', ['message' => $e->getMessage()]);
             if ($request->expectsJson()) {
                 $success = 'fail';
                 $title = Str::ucfirst(__('varcave.general.opFailed'));
                 $msg = Str::ucfirst(__('varcave.general.opFailed') . ' <br>(' . $e->getMessage() . ')');
                 $data = '';
                 $code = 500;
-            
-                Log::error('Operation failure', ['message' => $e->getMessage()]);
                 
                 return VarcaveApiResponse::ajaxResponse(
                     $success,
