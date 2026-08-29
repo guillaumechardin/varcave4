@@ -13,6 +13,13 @@
                         </span>
                     </p>
                 </div>
+                @if ($errors->any())
+                    @foreach ($errors->all() as $error)
+                        <div class="has-text-danger my-2">
+                            {{ $error }}
+                        </div>
+                    @endforeach
+                @endif
                 
                 <div class="field">
                     <p class="control">

@@ -104,6 +104,11 @@ class ProfileController extends Controller
         catch(Exception $e)
         {
             Log::error('Fail to update password', [$e->getMessage()]);
+            //
+            return redirect()
+                ->route('varcave.profile.password-update')
+                ->with('password', $e->getMessage() );
+
             throw ValidationException::withMessages([
                 'password' => $e->getMessage(),
             ]);
