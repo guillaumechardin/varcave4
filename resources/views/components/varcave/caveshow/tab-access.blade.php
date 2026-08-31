@@ -9,7 +9,7 @@
 
 <div class="box">
     <div class="columns">
-        <div class="column is-two-fifths">
+        <div class="column is-three-fifths">
             <script src="/lib/openlayers/10.7.0/dist/ol.js"></script>
             <link rel="stylesheet" href="/lib/openlayers/10.7.0/ol.css" type="text/css">
             <script src="/lib/ol-layerswitcher/4.1.2/dist/ol-layerswitcher.js"></script>
@@ -17,7 +17,7 @@
             <style>
                 #map {
                     width: 100%;
-                    height: 70vh; /* par défaut */
+                    height: 80vh; /* vh = percentage of the visible browser window height (viewport) */
                 }
             </style>
             <div id="map-wrapper" class="is-skeleton">
