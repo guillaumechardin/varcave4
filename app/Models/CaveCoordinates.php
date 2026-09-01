@@ -89,7 +89,7 @@ use Illuminate\Support\Facades\Log;
                 'z'    => (float) $c->z,
             ];
         });
-        
+
         return $coordSet;
     }
 

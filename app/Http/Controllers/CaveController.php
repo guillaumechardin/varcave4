@@ -557,16 +557,14 @@ class CaveController extends Controller
                         MBRContains(
                             ST_GeomFromText(
                                 ?,
-                                4326,
-                                "axis-order=long-lat"
+                                4326
                             ),
                             cc.location
                         )
                         AND ST_Contains(
                             ST_GeomFromText(
                                 ?,
-                                4326,
-                                "axis-order=long-lat"
+                                4326
                             ),
                             cc.location
                         )
