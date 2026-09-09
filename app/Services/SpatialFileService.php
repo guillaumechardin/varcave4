@@ -357,23 +357,21 @@ class SpatialFileService
                 Log::warning('Current feature does not respect minimum structure, skiping');
                 continue;
             }
-
-            $geometry = $feature->geometry;
             
-            if (strtolower($geometry->type) == "polygon") {
-                dd(['single', $geometry]);
-                // First ring is the exterior ring, remaining rings are holes
-                $outer = $this->polygonsCoordinatesToWkt($geometry->coordinates[0]);
-                dd($outer);
-                $inners = $this->polygonsCoordinatesToWkt(array_slice($geometry->coordinates, 1)); ;
-                $polygons[] = [
-                    "outer" => $outer,
-                    "inners" => $inners,
-                ];
-            } elseif (strtolower($geometry->type) == "multipolygon") {
+            $geometry = $feature->geometry;
+            $type = strtolower($geometry->type);
+            
+            if ($type === 'polygon') {
+                $polygonsDataList = [$geometry->coordinates];
+            } elseif ($type === 'multipolygon') {
+                $polygonsDataList = $geometry->coordinates;
+            } else {
+                Log::error('unconsistent geometry type');
+                continue;
+            }
+
                 // loop trhougth rings 1st ring is exterior ring, subsequents are holes
-                Log::info('Feature is MultiPolygon');
-                foreach ($geometry->coordinates as $polygonsData) {
+                foreach ($polygonsDataList as $polygonsData) {
                     // convert outer array from geojson representation to simple ["x0 y0", "x1 y1"] array
                     // outer is at polygonsData[0] index
                     $outerCoordinates = array_map(
@@ -441,7 +439,7 @@ class SpatialFileService
                     ];
                 }
             }
-        }
+        
         return $polygons;
         
     }
