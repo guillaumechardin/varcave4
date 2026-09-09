@@ -29,7 +29,7 @@
             <select required id="user-selected-file-type" name="user-selected-file-type">
                 <option selected disabled value="">--{{ __('varcave.general.choose') }}--</option>
                 @foreach(array_keys(\App\Services\SpatialFileService::getPermitedMimeTypes()) as $ext)
-                    <option value="{{ $ext }}">{{ $ext }}</option>
+                    <option selected value="{{ $ext }}">{{ $ext }}</option>
                 @endforeach
             </select>
         </div>

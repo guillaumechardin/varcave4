@@ -642,6 +642,7 @@ return [
         'title_results' => 'Résultats de la recherche',
         'download_gpx' => 'Télécharger le gpx de la recherche',
         'no_results_avail' => 'Aucun résultat de recherche spatiale disponible.',
+        'fail_validate_geojson_data' => 'échec de la validation du format de données geojson',
     ],
 
 

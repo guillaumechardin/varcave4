@@ -131,115 +131,6 @@ class CaveController extends Controller
         );  
     }
 
-    /**
-     * to be removed later 11-08-2026
-     **/
-    public function deprecated__search(Request $request): View|JsonResponse
-    {
-        Log::debug(__METHOD__ . ' called');
-        Log::debug('request',['$request' => $request->toArray()]);
-        
-        $allCaves = strtolower($request->query('caves')) === 'all';
-
-        //get fields for search form
-        $page = new Page();
-        $pmSearchForm= $page->setPageModelFor('search', 'main', true)->getModelFields();
-        $availFormFields = array_keys($pmSearchForm); // we only query fields that will be available in datatables
-
-        //fetch cols for datatables results only, must be present for view form construction
-        $pageDatatable = new Page();
-        $pmDatatablesTable = $pageDatatable->setPageModelFor('searchResultsColumns', 'main', true)->getModelFields();
-
-        $datatablesLang = json_encode(__('varcave.searchPage.datatables'), JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE) ;
-        
-        //Reply to a user search request Form
-        if ( $request->expectsJson() | $allCaves != false) {
-            //Check is form not empty
-            if (!$allCaves &&
-                //User send an empty data set. So we return the same
-                collect($request->all())
-                    ->filter(fn ($v, $k) => str_starts_with($k, 'value_') && filled($v))
-                    ->isEmpty()){
-                return response()->json(
-                    []
-                );
-            }
-
-            //Prepare to build query and prepare a list a fields that are available to user
-            $query = Cave::query();
-            $query->select($availFormFields);            
-
-            if(! $allCaves){ //overload query if user search param present, if not, query return all caves
-                // Search and apply dynamic filters
-                foreach ($availFormFields as $field) {
-                    $value = $request->input('value_'.$field);
-                    $type = $request->input('type_'.$field);
-
-                    if ($value !== null && $value !== '') {
-                        switch ($type) {
-                            case 'LIKE': $query->where($field, 'like', "%$value%"); break;
-                            case 'NOTEQUAL': $query->where($field, '!=', $value); break;
-                            case '>': case '<': case '>=': case '<=': $query->where($field, $type, $value); break;
-                            case '=':
-                            default: $query->where($field, $value); //defaults to equal 
-                        }
-                    }
-                }
-            }
-            
-            $caves = null;
-            //$caveObj = Cave::find(1)->firstOrFail();  //"random" cave just to get required fields list
-            $caveObj = Cave::firstOrFail(); //"random" cave just to get required fields list
-
-            //handling limits
-            $start  = (int) $request->input('start', 0);
-            $length = (int) $request->input('length', 5);
-            $draw   = (int) $request->input('draw', 1);
-
-            $totalRecords = $query->count(); // count before limit
-
-            $cavesSrch = $query
-            ->offset($start)
-            ->limit($length)
-            ->get();
-
-            Log::debug(' Sql query:', [$query->toSql(), 'bindings' => $query->getBindings(),]);
-            //set_time_limit(220); // 120 secondes, allcaves can be very long to process
-            $cs = new CaveService($caveObj, $request->user(), true);
-            foreach ($cavesSrch as $cave) {
-                $_cave = array();
-                //quick format data
-                foreach($pmDatatablesTable as $key => $field){
-                    $_cave[$key] = $cs->formatValue($cave->{$key}, $key, $field );
-                }
-                $caves[] = $_cave;
-            }
-            
-            // JSON return for DataTables
-            return response()->json(
-                [
-                    "draw" => $draw,
-                    "recordsTotal" => $totalRecords,
-                    "recordsFiltered" => $totalRecords,
-                    "data" => $caves,
-                ]
-            ); 
-        }
-
-        $datatablesListSelector = ListValue::getListValues('setting.datatables_items_selector');
-
-        return view('varcave.cavesearch',
-            [
-                'pageTitle' => Str::ucfirst(__('varcave.searchPage.title')),
-                'searchFormFields' => $pmSearchForm ?? null,
-                'datatablesFields' => $pmDatatablesTable ?? null,
-                'datatablesLang' => $datatablesLang,
-                'request' => $request,
-                'datatablesListSelector' => $datatablesListSelector,
-            ]
-        );
-    }
-
     public function showSearchPage(Request $request): View
     {
         Log::debug(__METHOD__ . ' called');
@@ -652,7 +543,7 @@ class CaveController extends Controller
             if ($request->expectsJson()) {
                 $success = 'fail';
                 $title = Str::ucfirst(__('varcave.general.opFailed'));
-                $msg = Str::ucfirst(__('varcave.general.opFailed') . ' <br>(' . $e->getMessage() . ')');
+                $msg = Str::ucfirst(__('varcave.general.opFailed') . ' <br>(' . $e->getMessage() . '):' . $e->getFile() . ': ' .$e->getLine());
                 $data = '';
                 $code = 500;
                 
