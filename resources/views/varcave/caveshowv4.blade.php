@@ -4,7 +4,10 @@
 <link rel="stylesheet" href="/lib/glightbox/3.3.0/dist/css/glightbox.css" />
 <script src="/lib/glightbox/3.3.0/dist/js/glightbox.min.js"></script>
 <script>
-    <x-varcave.caveshow.caveshow-js :caveName="$caveName" :uuid="$caveObj->uuid" />
+    <x-varcave.caveshow.caveshow-js 
+        :caveName="$caveName" 
+        :uuid="$caveObj->uuid" 
+    />
     const caveUuid = "{{ $caveObj->uuid }}";
 </script>
 
@@ -197,6 +200,7 @@
                                     :caveName="$caveName"
                                     :crs="$crs"
                                     :isLocationProtected="(bool)$caveObj->is_location_protected"
+                                    :caveTraces="$caveTraces"
                             />
                     </div>
                 </li>

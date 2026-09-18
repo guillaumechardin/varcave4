@@ -5,6 +5,7 @@
     'caveCoords',
     'crs',
     'isLocationProtected',
+    'caveTraces',
 ])
 
 <div class="box">
@@ -210,6 +211,9 @@
                     title: "{{ __('varcave.caveshow.nearCaves') }}"
                 });
                 
+                const caveTraces = @json($caveTraces, JSON_PRETTY_PRINT);
+                var caveTraceLayer = buildTraceLayer(caveTraces);
+
                 /**
                  * IGN SPECIFIC ITEMS
                  */
@@ -274,7 +278,8 @@
                         }),
                         
                         caveLayer,
-                        nearCavesLayer
+                        nearCavesLayer,
+                        caveTraceLayer,
                     ],
                     view: new ol.View({
                         center: ol.proj.fromLonLat([{{ $caveCoords['entrance'][0]['lon'] . ',' . $caveCoords['entrance'][0]['lat'] }} ]),
@@ -346,7 +351,72 @@
                         Logger.error('clipbaord send failed');
                     });
                 });
+                
+                //return a list of formated OL vector layer obj
+                function buildTraceLayer(caveTraces)
+                {
+                    Logger.info('Build cave trace layer');
+                    Logger.debug(caveTraces);
 
+                    const vectorSource = new ol.source.Vector();
+
+                    const colors = [
+                        '#ff0000',
+                        '#0000ff',
+                        '#00aa00'
+                    ];
+
+                    caveTraces.forEach((element, index) => {
+                        let format;
+
+                        if (element.extension.toLowerCase() === 'gpx') {
+                            format = new ol.format.GPX();
+                        } else if (element.extension.toLowerCase() === 'kml') {
+                            format = new ol.format.KML({
+                                extractStyles: true
+                            });
+                        } else {
+                            Logger.error('Unsupported file format: ' + element.extension);
+                            return;
+                        }
+
+                        const traceStyle = new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                color: colors[index % colors.length],
+                                width: 3
+                            })
+                        });
+
+                        fetch(element.url)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Unable to load ${element.url}`);
+                                }
+
+                                return response.text();
+                            })
+                            .then(data => {
+                                const features = format.readFeatures(data, {
+                                    featureProjection: 'EPSG:3857'
+                                });
+
+                                features.forEach(feature => {
+                                    feature.set('traceName', element.name);
+                                    feature.setStyle(traceStyle);
+                                });
+
+                                vectorSource.addFeatures(features);
+                            })
+                            .catch(error => {
+                                Logger.error(error);
+                            });
+                    });
+
+                    return new ol.layer.Vector({
+                        source: vectorSource,
+                        title: '{{ __('varcave.cave_files.cave_traces') }}'
+                    });
+                }
             </script>
         </div>
         <div class="column">

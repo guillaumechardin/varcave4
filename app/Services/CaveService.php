@@ -161,6 +161,7 @@ class CaveService
                 foreach($allFiles as $key => $file){
                     $this->outputRaw['caveFiles'][ $file['file_type'] ][] =  [
                         'file_id' => $file['id'],
+                        'file_category' => $file['file_type'],
                         'file_path' => $file['file_path'],
                         'file_note' => $file['file_note'],
                         'created_at' => $file['created_at'],

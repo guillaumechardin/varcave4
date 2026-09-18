@@ -583,6 +583,7 @@ return [
         'biologyDocuments'  => 'document biologie',
         'documents'         => 'document généraux',
         'rescue_data'       => 'données secours',
+        'cave_traces'       => 'Trace topo cavité',
     ],
 
     'contact_form' => [

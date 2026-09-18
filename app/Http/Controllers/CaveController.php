@@ -90,11 +90,12 @@ class CaveController extends Controller
 
         $caveDocsPhotos = array();
         $caveDocsFiles = array();
+        $caveTraces = array();
         
         //or unauthenticated user
         if($caveData['caveFiles'] === null) $caveData['caveFiles'] = array();
 
-        foreach($caveData['caveFiles']  as $key => $docTypes){
+        foreach($caveData['caveFiles'] as $key => $docTypes){
             if( in_array($key, ['cave_maps','photos']) ) continue; //skip specific documents type
             
             foreach($docTypes as $doc){
@@ -110,7 +111,23 @@ class CaveController extends Controller
                     $doc['is_img'] = false;
                     $caveDocsFiles[] = $doc;
                 }
+
+                //build cave Trace data
+                if($doc['file_category'] == 'cave_traces'){
+                    $caveTraces[] = [
+                        'name' => $doc['file_note'],
+                        'url' => asset('storage/' . $doc['file_path']),
+                        'extension' => $doc['extension'],
+                    ];
+                }
             }
+            
+
+            
+        }
+
+        if( isset($caveData['caveFiles']['cave_traces']) ){
+            
         }
 
         return view('varcave.caveshowv4',
@@ -121,6 +138,7 @@ class CaveController extends Controller
                 'caveData' => $caveData,
                 'caveDocsPhotos' => $caveDocsPhotos,
                 'caveDocsFiles' => $caveDocsFiles,
+                'caveTraces' => $caveTraces,
                 'rescueFiles' => $caveData['caveFiles']['rescue_files'] ?? [],
                 'caveBibliography' => $caveBibliography ?? null,
                 'caveDescription' => $caveDescription ?? null,
