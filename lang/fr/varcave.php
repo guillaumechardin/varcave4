@@ -342,7 +342,7 @@ return [
     ],
 
     'coordinateSystems' => [
-        'wgs84' => 'wgs84',
+        'wgs84' => 'géographique',
         'lambert3' => 'lambert 3',
         'lambert93' => 'lambert 93',
         'utm' =>   'utm',

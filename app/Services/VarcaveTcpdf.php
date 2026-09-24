@@ -481,6 +481,33 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 			$cellMetrics = $this->getLastCellBBox();
 			
 			//set Y under title
+			$this->currentY += $cellMetrics['h'] + $font['descent'] ;
+			$this->setColor(); //to black
+		}
+		//end warning block
+
+		//small warning, cave with protected coordinates
+		if((bool) $this->cave['raw']['is_location_protected']){
+			//smaller margin, text is  self::sizeS
+			$this->currentY += $font['descent'] * -0.5;
+			$x = 76;
+			$this->setFont(size: self::sizeS);
+			$this->setColor('red');
+			$font = $this->font->getCurrentFont();
+
+			$accessTxt = $this->getTextCell(
+				Setting::get('location_protected_message'),
+				$x,
+				$this->currentY,
+				90,
+				halign: 'L',
+				drawcell : true,
+				styles: ['all'=> $this->getLineStyle(['fillColor' => '#ffbb00'])],
+			);
+			$this->page->addContent($accessTxt);
+			$cellMetrics = $this->getLastCellBBox();
+			
+			//set Y under title
 			$this->currentY += $cellMetrics['h'] + $font['descent'] * -3;
 			$this->setColor(); //to black
 			
