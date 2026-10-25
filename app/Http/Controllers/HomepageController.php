@@ -8,6 +8,7 @@ use App\Models\CaveFile;
 use App\Models\FeaturedCave;
 use App\Models\HomeAnnouncement;
 use App\Models\Setting;
+use App\Services\UserPreferenceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +19,7 @@ class HomepageController extends Controller
     {
         Log::debug(__METHOD__ . ' called.');
         $homeAnnouncements = HomeAnnouncement::latestAnnouncements(Setting::get('max_news_homepage'));
-        $caveChangelogs = CaveChangelog::lastestCaveChangeLog(Setting::get('welcomePageShowLastUpdate'));
+        $caveChangelogs = CaveChangelog::lastestCaveChangeLog(UserPreferenceService::get('welcomePageShowLastUpdate'));
         
         //check if already present FeaturedCave
         $lastFeaturedCave = FeaturedCave::where('is_active', 1)->first();

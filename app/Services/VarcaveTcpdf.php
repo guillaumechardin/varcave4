@@ -350,11 +350,9 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->currentY += 5; //5mm margin bellow title
 		$colStartY = $this->currentY;
 		$col  = $yOffset = 0;
-		//process cave data horizontally to match display cave page
-		//and change col numbering on each iteration
 		
+		//process cave data verticaly
 		//build pdf data
-		$dataCol=array();
 		$itemPerCol = Page::getItemsPerCol();
 		foreach (array_chunk($this->cavedata, $itemPerCol['pdf'], true) as $chunks){
 			//process each col
