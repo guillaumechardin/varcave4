@@ -166,6 +166,9 @@ class CaveController extends Controller
 
         $datatablesListSelector = ListValue::getListValues('setting.datatables_items_selector');
 
+        //computing cave info items per cols
+        $itemPerCol = Page::getItemsPerCol();
+        
         return view('varcave.cavesearch',
             [
                 'pageTitle' => Str::ucfirst(__('varcave.searchPage.title')),
@@ -174,6 +177,7 @@ class CaveController extends Controller
                 'datatablesLang' => $datatablesLang,
                 //'request' => $request,
                 'datatablesListSelector' => $datatablesListSelector,
+                'itemPerCol' => $itemPerCol['search'],
             ]
         );
     }
