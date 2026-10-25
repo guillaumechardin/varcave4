@@ -6,7 +6,10 @@ $(document).ready(function (){
     
     pagesName.forEach(function(pagename) {
         Logger.debug( $( "#sortable-"+pagename ));
-        $( "#sortable-"+pagename ).sortable({
+        $( ".sortable-"+pagename ).sortable({
+            group:"main",
+            swapClass: 'sortable-swap',
+            swap: true,
             animation: 200,
             ghostClass: "sortable-ghost",  // Class name for the drop placeholder
 	        handle: ".sortable-handle",
@@ -35,14 +38,15 @@ $(document).ready(function (){
         let targetPage = $('#select-pagename').val();
 
         //get elements data
-        var sortedIDs = $( "#sortable-"+targetPage ).sortable( "toArray" );
+        var sortedIDs = $( ".sortable-"+targetPage ).sortable( "toArray" );
         console.log(sortedIDs);
         
-        let sortedFields = Array();
-        sortedIDs.forEach(function(fieldId, index) {
+        let sortedFields = [];
+
+        $(".sortable-" + targetPage).find(".cell").each(function(index) {
             sortedFields.push({
-                id: fieldId,
-                sort_order: index +1,
+                id: $(this).data("field-id"),
+                sort_order: index + 1,
             });
         });
         

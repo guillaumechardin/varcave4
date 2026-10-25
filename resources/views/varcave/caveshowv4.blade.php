@@ -188,7 +188,7 @@
         <ul>
             <li>
                 <div id="tab-cave-info" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveshow.tab-cave-info :caveData="$caveData" :caveObj="$caveObj"/>
+                        <x-varcave.caveshow.tab-cave-info :caveData="$caveData" :caveObj="$caveObj" :itemPerCol="$itemPerCol"/>
                 </div>
             </li>
             @can('showAllCaveDetails', $caveObj)     {{-- START OF `CAN' FEATURES --}} 

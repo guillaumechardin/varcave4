@@ -121,14 +121,10 @@ class CaveController extends Controller
                     ];
                 }
             }
-            
-
-            
         }
 
-        if( isset($caveData['caveFiles']['cave_traces']) ){
-            
-        }
+        //computing cave info items per cols
+        $itemPerCol = Page::getItemsPerCol();
 
         return view('varcave.caveshowv4',
             [
@@ -136,6 +132,7 @@ class CaveController extends Controller
                 'caveObj' => $cave,
                 'caveName' => $cave->name,
                 'caveData' => $caveData,
+                'itemPerCol' => $itemPerCol['display'],
                 'caveDocsPhotos' => $caveDocsPhotos,
                 'caveDocsFiles' => $caveDocsFiles,
                 'caveTraces' => $caveTraces,
@@ -821,6 +818,9 @@ class CaveController extends Controller
                 }
             }
         }
+
+        //computing cave info items per cols
+        $itemPerCol = Page::getItemsPerCol();
         
         return view('varcave.caveupdate',
         [
@@ -835,6 +835,7 @@ class CaveController extends Controller
             'caveFileList' => $caveFileList,
             'changelog' => $cave->changelog,
             'fileTypeList' => ListValue::getByListName('cave_files.file_type'),
+            'itemPerCol' => $itemPerCol['edit'],
         ]);
 
     }

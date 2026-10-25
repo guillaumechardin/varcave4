@@ -18,11 +18,16 @@ class PageFieldsController extends Controller
     {
         Log::debug(__METHOD__ . ' called.');
 
+        $itemsPerColByPage = Page::getItemsPerCol();
+        
+        //builds two arrays with some specific details for i18n. One array for visibles items, second for non-displaeyed ones.
+        // These two arrays will be processed in view
+        $pageFields = array();
         $pagesName = Page::all()
         ->pluck('key')
         ->toArray();
-
-        $pageFields = array();
+        
+        
         foreach($pagesName as $page){
             $pageFields[$page] = PageField::with('field')
             ->where([
@@ -32,9 +37,7 @@ class PageFieldsController extends Controller
             ->orderBy('sort_order', 'asc')
             ->get();
         }
-        
-        
-        
+
         $pagesF  = array();
         foreach($pageFields as $pageName => $page )
         {
@@ -71,7 +74,9 @@ class PageFieldsController extends Controller
 
         return view('varcave.admin.pageFields', [
             'pagesName' => $pagesName,
-            'pageFields'  => $pagesF ,
+            'pageFields'  => $pagesF,
+            'itemsPerColByPage' => $itemsPerColByPage,
+
         ]);
 
 

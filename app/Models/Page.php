@@ -170,6 +170,47 @@ class Page extends Model
         return $this->ListNames;
     }
 
+    /**
+     * Compute number of items per column for each page.
+     *
+     * Only fields belonging to the 'main' section are counted.
+     * The number of columns is defined by the page's 'display_columns'
+     * attribute, or defaults to 4 if not specified.
+     *
+     * The result is rounded up to ensure all fields can be displayed.
+     *
+     * @return array<string, int> Associative array mapping each page key
+     *                            to its number of items per column.
+     */
+    public static function getItemsPerCol(): array
+    {
+        $pages = self::all();
+
+        $pageFields = [];
+        foreach ($pages as $page) {
+            $pageFields[$page->key] = PageField::with('field')
+                ->where([
+                    ['page_key', $page->key],
+                    ['section_key', 'main'],
+                ])
+                ->orderBy('sort_order', 'asc')
+                ->get();
+        }
+
+        $itemsPerColByPage = [];
+        foreach($pages as $page) {
+            if($page->display_columns !== null){
+                $displayColumns = $page->display_columns;
+            }else{
+                $displayColumns = 4;
+            }
+
+            $itemsPerColByPage[$page->key] = (int) ceil( count($pageFields[$page->key]) / $displayColumns );
+        }
+
+        return $itemsPerColByPage;
+    }
+    
     
 }
 

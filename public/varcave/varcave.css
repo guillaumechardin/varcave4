@@ -115,6 +115,10 @@
 	cursor: grab;
 }
 
+.sortable-swap {
+  background-color: greenyellow;
+}
+
 
 /*
  * force tag wrap for mobile only (bibliography), prevent text overflow outside screen

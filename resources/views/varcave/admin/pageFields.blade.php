@@ -48,7 +48,7 @@
             </div>
         </div>
     </div>
-    
+
     @foreach ($pageFields as $pageName => $pageField)
         <div id="page-field-{{ $pageName }}"
              @class([
@@ -56,46 +56,55 @@
                 'is-hidden' => !$loop->first
             ])
         >
-            <h1 class="title is-5">{{ __('varcave.page_fields.field_page', ['pagename' => $pageName]) }}</h1>
-            <div class="fixed-grid has-2-cols-mobile has-5-cols-desktop">
-                <div class="grid grid-vertical" id="sortable-{{ $pageName }}">
-                        @foreach ($pageField as  $pf)
-                            <div class="cell" data-field-id="{{ $pf['id'] }}">
-                                <div class="control">
-                                    <div class="tags has-addons">
-                                        <i @class([
-                                            'bi',
-                                            'bi-arrows-move',
-                                            'tag',
-                                            'sortable-handle',
-                                            'is-medium',
-                                            'is-info' => $pf['is_visible'],
-                                            'is-warning' => !$pf['is_visible'],
-                                            ])
-                                        >
-                                            {{ $pf['i18n_name'] }}
-                                        </i>
-                                        <i @class([
-                                            'tag',
-                                            'is-medium',
-                                            'bi',
-                                            'toggle-visibility',
-                                            'is-icon-clickable',
-                                            'bi-eye' => !$pf['is_visible'],
-                                            'bi-eye-slash' => $pf['is_visible'],
-                                            ])
-                                            @if($pf['is_visible'])
-                                                title="{{ __('varcave.page_fields.hide_field') }}"
-                                            @else
-                                                title="{{ __('varcave.page_fields.show_field') }}"
-                                            @endif
-                                        >
-                                        </i>
+            <h1 class="title is-5">
+                {{ __('varcave.page_fields.field_page', ['pagename' => $pageName]) }}
+            </h1>
+
+            <div class="columns" id="sortable-{{ $pageName }}">
+                @foreach (array_chunk($pageField, $itemsPerColByPage[$pageName], true) as $column)
+                    <div class="column"> 
+                        <div class="fixed-grid has-1-cols">
+                            <div class="grid sortable-{{ $pageName }}">
+                                @foreach ($column as  $pf)
+                                    <div class="cell" data-field-id="{{ $pf['id'] }}">
+                                        <div class="control">
+                                            <div class="tags has-addons">
+                                                <i @class([
+                                                    'bi',
+                                                    'bi-arrows-move',
+                                                    'tag',
+                                                    'sortable-handle',
+                                                    'is-medium',
+                                                    'is-info' => $pf['is_visible'],
+                                                    'is-warning' => !$pf['is_visible'],
+                                                    ])
+                                                >
+                                                    {{ $pf['i18n_name'] }}
+                                                </i>
+                                                <i @class([
+                                                    'tag',
+                                                    'is-medium',
+                                                    'bi',
+                                                    'toggle-visibility',
+                                                    'is-icon-clickable',
+                                                    'bi-eye' => !$pf['is_visible'],
+                                                    'bi-eye-slash' => $pf['is_visible'],
+                                                    ])
+                                                    @if($pf['is_visible'])
+                                                        title="{{ __('varcave.page_fields.hide_field') }}"
+                                                    @else
+                                                        title="{{ __('varcave.page_fields.show_field') }}"
+                                                    @endif
+                                                >
+                                                </i>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                @endforeach
                             </div>
-                        @endforeach        
-                </div>
+                        </div> 
+                    </div>
+                @endforeach
             </div>
         </div>
     @endforeach

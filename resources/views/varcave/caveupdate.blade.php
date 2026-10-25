@@ -94,7 +94,7 @@
         <ul>
             <li>
                 <div id="tab-cave-info" class="tab-content mx-2 mt-2">
-                        <x-varcave.caveupdate.tab-cave-info :caveData="$caveData" :caveDescription="$caveDescription" :caveObj="$caveObj"/>
+                        <x-varcave.caveupdate.tab-cave-info :caveData="$caveData" :caveDescription="$caveDescription" :caveObj="$caveObj" :itemPerCol="$itemPerCol"/>
                 </div>
             </li>
             

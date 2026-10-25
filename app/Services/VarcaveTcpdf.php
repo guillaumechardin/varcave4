@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\CoordinateSystemHandler;
+use App\Models\Page;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -347,63 +348,63 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
 		$this->setFont(size: self::sizeM);
 		$font = $this->font->getCurrentFont();
 		$this->currentY += 5; //5mm margin bellow title
-		
+		$colStartY = $this->currentY;
 		$col  = $yOffset = 0;
 		//process cave data horizontally to match display cave page
 		//and change col numbering on each iteration
 		
-		foreach($this->cavedata as $key => $data){
-			if ($col >= $maxCol){
-				$col = 0;
+		//build pdf data
+		$dataCol=array();
+		$itemPerCol = Page::getItemsPerCol();
+		foreach (array_chunk($this->cavedata, $itemPerCol['pdf'], true) as $chunks){
+			//process each col
+			foreach ($chunks as $key=> $data){
+				//process each col element
+				//add item title
+				$this->setFont(size: self::sizeM);
+				$this->setColor('grey');
 
+				$str = Str::upper($this->cave['attributes']['model'][$key]['i18n_label']) . ':';
+				$keyTxt = $this->getTextLine(
+					$str,
+					$colDef['col'][$col]['xStart'],
+					$this->currentY,
+					0, //justification off
+				);
+				$this->page->addContent($keyTxt);
 				
-				//check if multilined data do not overflow over next title 
-				if ($this->currentY < ($this->currentY + $yOffset)){
-					//overflow
-					$this->currentY += $yOffset + ($font['ascent'] * 0.3);
-				}
-				else{
-					$this->currentY += $font['ascent'];
-				}
-				$yOffset = 0;
+				$this->currentY += -1 ;
+
+				//add item data
+				$this->setFont(size: 9);
+				$this->setColor();
+				$dataTxt = $this->getTextCell(
+					$data,
+					//"($this->currentX, $this->currentY)",
+					$colDef['col'][$col]['xStart'] -1,
+					$this->currentY,
+					$colDef['colWidth'] * 0.9,
+					halign: 'L',
+					drawcell : true,
+					styles: ['all'=> $this->getLineStyle(['fillColor' => '#0ffeee'])],
+				);
+				$this->page->addContent($dataTxt);
+				$cellMetrics = $this->getLastCellBBox();
+				
+				$this->currentY += $cellMetrics['h'] * 1.55;
+				$yOffset = max($this->currentY , $yOffset);
 			}
 
-			//add item title
-			$this->setFont(size: self::sizeM);
-			$this->setColor('grey');
-
-			$str = Str::upper($this->cave['attributes']['model'][$key]['i18n_label']) . ':';
-			$keyTxt = $this->getTextLine(
-				$str,
-				$colDef['col'][$col]['xStart'],
-				$this->currentY,
-				0, //justification off
-			);
-			$this->page->addContent($keyTxt);
-			
-			//add item data
-			$this->setFont(size: 9);
-			$this->setColor();;
-			$dataTxt = $this->getTextCell(
-				$data,
-				$colDef['col'][$col]['xStart'] -1,
-				$this->currentY,
-				$colDef['colWidth'] * 0.9,
-				halign: 'L',
-				drawcell : true,
-				styles: ['all'=> $this->getLineStyle(['fillColor' => '#0ffeee'])],
-			);
-			$this->page->addContent($dataTxt);
-			$cellMetrics = $this->getLastCellBBox();
-			$yOffset = max($yOffset, $cellMetrics['h']);
-
 			$col++;
+			$this->currentY = $colStartY ;
 		}
+
+		$this->currentY = $yOffset;
 	}
 
 	private function addAccess(): void
 	{
-		$this->currentY += 13; //offset
+		$this->currentY += 5; //offset
 		$this->setFont(size: self::sizeTitle1);
 		$this->setColor();
 		
