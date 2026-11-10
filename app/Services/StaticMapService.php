@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\CaveService;
+use App\Services\CurlHandle;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -393,6 +394,7 @@ class StaticMapService
         }
         
         if ($tile && $this->useTileCache) {
+            $this->logCurlMetrics($ch);
             $this->writeTileToCache($url, $tile);
         }
         return $tile;
@@ -447,12 +449,35 @@ class StaticMapService
         return $path;
     }
 
-    public function setTileSource(string $tileSrcName){
+    public function setTileSource(string $tileSrcName)
+    {
         if(array_key_exists($tileSrcName, $this->tileSrcUrl)){
                 $this->maptype = $tileSrcName;
         } else {
             $msg = 'Argument $tileSrc must be one of:' . implode(', ', array_keys($this->tileSrcUrl));
             throw new InvalidArgumentException($msg);
         }
+    }
+
+    protected function logCurlMetrics(\CurlHandle $ch)
+    {
+        Log::debug(__METHOD__ . ' extract curl metric data');
+        $info = curl_getinfo($ch);
+
+        $metrics = [
+            'http_code'       => $info['http_code'],
+            'total_time'      => $info['total_time'],
+            'dns_time'        => $info['namelookup_time'],
+            'connect_time'    => $info['connect_time'],
+            //'ssl_time'        => $info['appconnect_time'],
+            'ttfb'            => $info['starttransfer_time'],
+            'download_time'   => $info['total_time'] - $info['starttransfer_time'],
+            'download_size'   => $info['size_download'],
+            'download_speed'  => $info['speed_download'],
+            'redirect_count'  => $info['redirect_count'],
+            'primary_ip'      => $info['primary_ip'],
+        ];
+
+        Log::debug(' curl metrics: ' . json_encode($metrics, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 }

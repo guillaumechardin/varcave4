@@ -883,7 +883,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
                 //if($page['orientation'] == 'L'){dd([$this->margins['left'],$y]);}
                 $line = $this->graph->getLine($this->margins['left'], $y, $xRight , $y, $gridStyle);
                 $this->page->addContent($line, $cPage['pid']);
-                Log::debug('draw H grid x/y: '. $y . '/' . $this->margins['left']);
+				//Log::debug('draw H grid x/y: '. $y . '/' . $this->margins['left']);
                 $lineNbr = $this->getTextLine(
                     $y ,
                     $this->margins['left'],
@@ -898,7 +898,7 @@ class VarcaveTcpdf extends \Com\Tecnick\Pdf\Tcpdf
             */
             for($x = $gridCell ; $x <= $page['width'] ; $x += $gridCell)
             {
-                Log::debug('draw V grid x/y: '. $x . '/' . $this->margins['top']);
+                //Log::debug('draw V grid x/y: '. $x . '/' . $this->margins['top']);
                 $line = $this->graph->getLine($x, $this->margins['top'], $x, $yBottom, $gridStyle);
                 $this->page->addContent($line, $page['pid']);
                 
