@@ -151,8 +151,8 @@ class StaticMapService
                 Log::warning('Folder [' . $folder . '] inexistant, creating');
                 if (!mkdir($folder, 0755, true)) {
                     $error = error_get_last();
-                    throw new RuntimeException('Unable to create directory :' . $folder);
                     Log::error('Unable to create folder, check perms');
+                    throw new RuntimeException('Unable to create directory :' . $folder);
                 }
             }
         }
@@ -161,6 +161,7 @@ class StaticMapService
 
     protected function parseCaveCoords()
     {
+        Log::debug(' parse cave coords for minimal data');
         if(count($this->cavedata['coordinates']['entrance']) < 1){
             Log::error(' no coordinates available');
             return null;
@@ -198,6 +199,7 @@ class StaticMapService
 
     protected function createBaseMap()
     {
+        Log::debug(__METHOD__ . '  start tile computing & fetching');
         $this->image = imagecreatetruecolor($this->width, $this->height);
         $startX = floor($this->centerX - ($this->width / $this->tileSize) / 2);
         $startY = floor($this->centerY - ($this->height / $this->tileSize) / 2);
@@ -210,16 +212,16 @@ class StaticMapService
         $this->offsetX += floor($startX - floor($this->centerX)) * $this->tileSize;
         $this->offsetY += floor($startY - floor($this->centerY)) * $this->tileSize;
 
-		error_log('-- start dl tile --');
+		
         for ($x = $startX; $x <= $endX; $x++) {
             for ($y = $startY; $y <= $endY; $y++) {
                 $url = str_replace(array('{Z}', '{X}', '{Y}'), array($this->zoom, $x, $y), $this->tileSrcUrl[$this->maptype]);
-                //dd([array('{Z}', '{X}', '{Y}'), array($this->zoom, $x, $y), $this->tileSrcUrl[$this->maptype]], $url);
                 $tileData = $this->fetchTile($url);
-				error_log($url);
                 if ($tileData) {
+                    Log::debug(' tile data was successfully downloaded');
                     $tileImage = imagecreatefromstring($tileData);
                 } else {
+                    Log::error(' tile data unavailable, creating ERR tile');
                     $tileImage = imagecreate($this->tileSize, $this->tileSize);
                     $color = imagecolorallocate($tileImage, 255, 255, 255);
                     @imagestring($tileImage, 1, 127, 127, 'err', $color);
@@ -227,9 +229,10 @@ class StaticMapService
                 $destX = ($x - $startX) * $this->tileSize + $this->offsetX;
                 $destY = ($y - $startY) * $this->tileSize + $this->offsetY;
                 imagecopy($this->image, $tileImage, $destX, $destY, 0, 0, $this->tileSize, $this->tileSize);
+
             }
         }
-		error_log('-- end  tile DL--');
+		Log::debug(__METHOD__ . ' tile computing complete');
     }
 
 
@@ -309,17 +312,26 @@ class StaticMapService
 
     protected function checkTileCache($url)
     {
+        Log::debug(__METHOD__ . ' Check if tile in cache');
         $filename = $this->tileUrlToFilename($url);
         if (file_exists($filename)) {
+            Log::info('  >Tile found in cache');
             return file_get_contents($filename);
         }
+        Log::warning('  >Tile NOT in cache');
+        return false;
     }
 
     protected function checkMapCache()
     {
+        Log::debug(__METHOD__ . ' Check map cache');
         $this->mapCacheID = md5($this->serializeParams());
         $filename = $this->mapCacheIDToFilename();
-        if (file_exists($filename)) return true;
+        if (file_exists($filename)){
+            Log::info('  >Map found in cache');
+            return true;
+        } 
+        Log::info('  >Map NOT in cache');
     }
 
     protected function serializeParams()
@@ -342,36 +354,48 @@ class StaticMapService
         return is_dir($pathname) || @mkdir($pathname, $mode);
     }
 
-    protected function writeTileToCache($url, $data)
+    protected function writeTileToCache(string $url, $data)
     {
+        Log::info(__METHOD__ . ' writing tile to cache');
+
         $filename = $this->tileUrlToFilename($url);
+        Log::debug('Writing file to:' . $filename);
+        
         $this->mkdir_recursive(dirname($filename), 0777);
         file_put_contents($filename, $data);
     }
 
-    protected function fetchTile($url)
+    protected function fetchTile(string $url)
     {
-        if ($this->useTileCache && ($cached = $this->checkTileCache($url))) return $cached;
+        Log::info(__METHOD__ . ' fetching tiles from url');
+        Log::debug( ' fetched URL:' . $url);
+        if ($this->useTileCache && ($cached = $this->checkTileCache($url) )){
+             return $cached;
+        }
+        
         //disable curl some website mishandle the request for png files
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERAGENT, "varcave/4.0 (Windows NT 10.0; Win64; x64; rv:91.0) varcave-Agent/1.0");
         
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_USERAGENT, "varcave/4.0 (Windows NT 10.0; Win64; x64; rv:91.0) varcave-Agent/1.0");
-            
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_HEADER, false);
-            
-            curl_setopt($ch, CURLOPT_URL, $url);
-            $tile = curl_exec($ch);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
         
-        //$tile = file_get_contents($url);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $tile = curl_exec($ch);
+        if ($tile === false) {
+            $errno = curl_errno($ch);
+            $errorStr = curl_error($ch);
+            Log::error(' error code: ' . $errno);
+            Log::error(' error string: ' . $errorStr);
+        }
+        
         if ($tile && $this->useTileCache) {
             $this->writeTileToCache($url, $tile);
         }
         return $tile;
-
     }
 
     protected function copyrightNotice()
@@ -382,6 +406,7 @@ class StaticMapService
 
     protected function makeMap()
     {
+        Log::debug(__METHOD__ . '  ->Making map');
         $this->initCoords();
         $this->createBaseMap();
         if (count($this->markers)) $this->placeMarkers();
@@ -390,9 +415,12 @@ class StaticMapService
 
     public function getmap()
     {
+        Log::info(__METHOD__ . ' build static map image');
         $this->parseCaveCoords();
+        $path = $this->mapsDir . '/'. $this->cavedata['raw']['uuid'] . '.png';
+
         if ($this->useMapCache) {
-            // use map cache, so check cache for map
+            Log::info(' using map caching');
             if (!$this->checkMapCache()) {
                 // map is not in cache, needs to be build
                 $this->makeMap();
@@ -400,8 +428,7 @@ class StaticMapService
                 imagepng($this->image, $this->mapCacheIDToFilename(), 9);
             }
         } else {
-            // no cache
-            $path = $this->mapsDir . '/'. $this->cavedata['raw']['uuid'] . '.png';
+            Log::info(' DO NOT use map caching');
             $isOlder = false;
             if(file_exists($path)){
                 $fileTime = filemtime($path);
@@ -411,13 +438,13 @@ class StaticMapService
             }
 
             if( !file_exists($path) || $isOlder ){
-                Log::debug(' non existant map or expired:');
+                Log::debug(' non existant map or map cache expired');
                 //maps was never built
                 $this->makeMap();
                 imagepng($this->image, $path);               
-            }
-            return $path;
+            }  
         }
+        return $path;
     }
 
     public function setTileSource(string $tileSrcName){
